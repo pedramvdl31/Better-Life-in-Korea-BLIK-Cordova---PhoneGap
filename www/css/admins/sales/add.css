@@ -1,0 +1,4 @@
+   .thumbnail-fix-height {
+	   	height: 320px !important;
+	    overflow-y: auto;
+   	} 

@@ -1,0 +1,205 @@
+@font-face {
+  font-family: oswald-light;
+  src: url(/assets/fonts/oswald/Oswald-Light.ttf);
+}
+@font-face {
+   font-family: open-sans;
+   src: url(/assets/fonts/open-sans/OpenSans-Light.ttf);
+}
+.step-no{
+	font-family: open-sans;
+    font-size: 25px;
+    font-weight: 900;
+    /*color: black;*/
+    margin-left: 10px;
+}
+.step-title{
+	font-family: oswald-light;
+	    font-size: 20px;
+    color: black;
+}
+.stepy-text-wrapper{
+
+}
+
+.stepy-wrapper-md{
+	    display: inline-flex !important;
+	    border-right: 0 !important;
+	    border-left: 0 !important;
+} 
+.stepy-wrapper{
+	    display: inline-flex !important;
+
+} 
+
+
+ul > li:first-child.active a.stepy-wrapper-md{
+		/*display: none !important;*/
+		/*border: initial !important;*/
+		border-left: 1px solid #ddd !important;
+        border-top-right-radius: 0 !important; 
+        border-top-left-radius: 3px !important; 
+
+}
+ul > li:last-child.active a.stepy-wrapper-md{
+        /*display: none !important;*/
+        /*border: initial !important;*/
+        border-right: 1px solid #ddd !important;
+        border-top-left-radius: 0 !important; 
+        border-top-right-radius: 3px !important; 
+
+}
+ul > li a.stepy-wrapper-md{
+
+        border-top-left-radius: 0 !important; 
+        border-top-right-radius: 0 !important; 
+
+}
+
+
+.stepy-right-text{
+	list-style-type:none;
+	padding-left: 10px;
+	margin-right: 20px;
+    margin-left: 20px;
+
+}
+.stepy-right-text-no{
+font-size: 18px;
+font-weight: 900;
+}
+.stepy-right-text-title{
+font-size: 14px;
+}
+li.tab-li.active>a{
+	background-color: #dff0d8!important;
+	border-right: 0 !important;
+}
+li.tab-li-sm.active>a{
+	background-color: #dff0d8!important;
+	border: 1px solid #ddd !important;
+	border-radius: 2px !important;
+}
+li > a > i.last-t.next-icon{
+	display: none !important;
+}
+.badge-new{
+    /*background-color: #5cb85c !important;*/
+    line-height: 1.5 !important;
+    border-radius: 32px !important;;
+    min-width: 45px !important;
+}
+
+li.tab-li.active>a .badge-new{
+     background-color: #5cb85c !important;
+}
+.next-icon{
+	color: #5cb85c;
+	position: absolute;
+    color: #5cb85c;
+    /* left: 0; */
+	right: -15px;
+    top: 18px;
+    font-size: 31px;
+    z-index: 999;
+    display: none;
+}
+
+.tab-pane {
+	padding: 10px;
+}
+.tab-content>.active {
+    display: block;
+    border: 1px solid #ddd !important;
+    border-top: 0 !important;
+    background: white;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+ul#myTabs{
+    background: white;
+}
+
+.tab-footer{
+  background: none;
+    border: none;  
+}
+.image-panel{
+    border: 0 !important;
+    border-radius: 0 !important; 
+}
+.my-tab{
+    border-top-left-radius: 0; 
+    border-top-right-radius: 0; 
+    border: 0;
+    margin-bottom: 0 !important;
+}
+/*==================================================
+=            Bootstrap 3 Media Queries             =
+==================================================*/
+
+
+    /*==========  Mobile First Method  ==========*/
+
+    /* Custom, iPhone Retina */ 
+    @media only screen and (min-width : 320px) {
+        
+    }
+
+    /* Extra Small Devices, Phones */ 
+    @media only screen and (min-width : 480px) {
+
+    }
+
+    /* Small Devices, Tablets */
+    @media only screen and (min-width : 768px) {
+
+    }
+
+    /* Medium Devices, Desktops */
+    @media only screen and (min-width : 992px) {
+
+    }
+
+    /* Large Devices, Wide Screens */
+    @media only screen and (min-width : 1200px) {
+
+    }
+
+
+
+    /*==========  Non-Mobile First Method  ==========*/
+
+    /* Large Devices, Wide Screens */
+    @media only screen and (max-width : 1200px) {
+
+    }
+
+    /* Medium Devices, Desktops */
+    @media only screen and (max-width : 992px) {
+
+    }
+
+    /* Small Devices, Tablets */
+    @media only screen and (max-width : 768px) {
+
+    }
+
+    /* Extra Small Devices, Phones */ 
+    @media only screen and (max-width : 580px) {
+		.my-md-tabs{
+			display: none;
+		}
+		.my-sm-tabs{
+			display: block !important;
+		}
+    }
+    /* Extra Small Devices, Phones */ 
+    @media only screen and (max-width : 480px) {
+
+    }
+
+    /* Custom, iPhone Retina */ 
+    @media only screen and (max-width : 320px) {
+        
+    }

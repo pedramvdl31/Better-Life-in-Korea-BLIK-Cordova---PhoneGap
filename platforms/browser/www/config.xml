@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.phonegap.helloworld" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
+    <name>BLIK</name>
+    <description>Better Life in Korea</description>
+    <author email="pedramkhoshnevis@gmail.com" href="http://www.webprinciples.com">BLIK</author>
+    <content src="index.html" />
+    <icon src="icon.png" />
+    <allow-navigation href="*" />
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="waze://*" />
+    <allow-intent href="waze://" />
+    <allow-intent href="waze:" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <preference name="DisallowOverscroll" value="true" />
+    <preference name="android-minSdkVersion" value="14" />
+</widget>
