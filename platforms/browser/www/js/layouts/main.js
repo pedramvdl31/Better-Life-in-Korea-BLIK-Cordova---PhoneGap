@@ -2,7 +2,7 @@ $(document).ready(function(){
 	// Components.PreLoadDom();
 	Components.InitiateApp();
 	Components.EventHandler();
-	Maps.ViewAdInit(37.554084,126.949903);
+	// Maps.ViewAdInit(37.554084,126.949903);
 });
 //GLOBAL VARIABLES
 GVar = {
@@ -21,14 +21,14 @@ Components = {
 	},
 	InitiateApp: function() {
 		InitFunctions.SetStates();
-		InitFunctions.NavbarListener();
-		InitFunctions.Dependencies();
-		InitFunctions.PageVisualSetup();
+		// InitFunctions.NavbarListener();
+		// InitFunctions.Dependencies();
+		// InitFunctions.PageVisualSetup();
 		InitFunctions.SetAjaxHeader();
 		InitFunctions.ClearUrl();
 		InitFunctions.WindowScrollListener();
-		InitFunctions.InitiateDropZones();
-		InitFunctions.InitiateAutoComplete();
+		// InitFunctions.InitiateDropZones();
+		// InitFunctions.InitiateAutoComplete();
 	},
 	EventHandler: function() {
 		Listeners.Events();
@@ -295,7 +295,7 @@ Listeners = {
 		});
 	    $('#tc').click(function(){
 	    	$('#b').removeClass('hide');
-	    	$('#a').animate({
+	    	$('#view-1').animate({
             	right: "100%"
         	});
 	    	$('#b').animate({

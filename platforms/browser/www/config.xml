@@ -4,6 +4,10 @@
     <description>Better Life in Korea</description>
     <author email="pedramkhoshnevis@gmail.com" href="http://www.webprinciples.com">BLIK</author>
     <content src="index.html" />
+    <gap:plugin name="com.phonegap.plugins.facebookconnect" version="0.9.0">
+        <param name="APP_ID" value="341730832847177" />
+        <param name="APP_NAME" value="KoraApp" />
+    </gap:plugin>
     <icon src="icon.png" />
     <allow-navigation href="*" />
     <access origin="*" />
