@@ -3,11 +3,11 @@
 /*LOADING PAGE CSS*/
 @font-face {
    font-family: oswald-light;
-   src: url(/font/oswald/Oswald-Light.ttf);
+   src: url(www/font/oswald/Oswald-Light.ttf);
 }
 @font-face {
    font-family: oswald-regular;
-   src: url(/font/oswald/Oswald-Regular.ttf);
+   src: url(www/font/oswald/Oswald-Regular.ttf);
 }
 .oswald-light{
     font-family: oswald-light;

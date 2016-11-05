@@ -54,6 +54,23 @@ var app = {
         Components.EventHandler();
         Maps.ViewAdInit(37.554084,126.949903);
         ManageAuth();
+
+
+
+        if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
+          //PHONE
+            document.addEventListener("online", onOnline, false);
+            document.addEventListener("offline", onOffline, false);
+            var connection = checkConnection();
+            if (connection==1) {
+
+            } else {
+                alert('Please connect to the Internet to continue ');
+                $('#ovwrapper').removeClass('hide');
+            }
+        } else {
+          //BROWSER
+        }
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -125,6 +142,7 @@ function SetStatusBtn(){
 }
 
 function CheckToken(a_t){
+    $('#lw').removeClass('hide');
     $.ajax({
         url: GVar.ajax_url+'/api/init',
         type: 'post',
@@ -134,21 +152,45 @@ function CheckToken(a_t){
             GVar.auth=1;
             $('#_auth').attr('data','1');
             SetStatusBtn();
+            $('#lw').addClass('hide');
         },
         error: function (xhr, ajaxOptions, thrownError) {
+            $('#lw').addClass('hide');
             GVar.auth=0;
             console.log(xhr.responseText); // <- same here, your own div, p, span, whatever you wish to use
         }
     });
 }
-
-
 (function($){
   $.isBlank = function(obj){
     return(!obj || $.trim(obj) === "");
   };
 })(jQuery);
+function checkConnection() {
+    var networkState = navigator.connection.type;
 
+    var states = {};
+    states[Connection.ETHERNET] = 1;
+    states[Connection.WIFI]     = 1;
+    states[Connection.CELL_2G]  = 1;
+    states[Connection.CELL_3G]  = 1;
+    states[Connection.CELL_4G]  = 1;
+    states[Connection.CELL]     = 1;
+    states[Connection.NONE]     = 0;
+    states[Connection.UNKNOWN]  = 0;
+
+
+    return states[networkState];
+}
+function onOffline() {
+    // Handle the offline event
+    alert('Please connect to the Internet to continue ');
+    $('#ovwrapper').removeClass('hide');
+}
+function onOnline() {
+    // Handle the online event
+    $('#ovwrapper').addClass('hide');
+}
 
 
 //FUNCTIONS
