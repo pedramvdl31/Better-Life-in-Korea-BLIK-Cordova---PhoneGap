@@ -20,8 +20,11 @@
 //GLOBAL VARIABLES
 GVar = {
     // 'ajax_url':'http://kora.app:8000',
+    
+    'baseurl':'https://www.betterlifeinkorea.com',
     'ajax_url':'https://www.betterlifeinkorea.com',
     'auth':'0',
+    'curpg':'1',
     'take':8,
     'skip':0,
     'qkpost_map':0,
@@ -30,6 +33,8 @@ GVar = {
     'scroll_load_more':1,
     'flag_image':'img/beachflag.png',
     'dash':0,
+    'uemail':0,
+    'utoken':0
 }
 var images = [];
 var $imagesDiv;
@@ -55,6 +60,7 @@ var app = {
         Maps.ViewAdInit(37.554084,126.949903);
         ManageAuth();
 
+    
 
 
         if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
@@ -143,6 +149,7 @@ function SetStatusBtn(){
 
 function CheckToken(a_t){
     $('#lw').removeClass('hide');
+    var data ={"token":a_t}
     $.ajax({
         url: GVar.ajax_url+'/api/init',
         type: 'post',
@@ -150,6 +157,7 @@ function CheckToken(a_t){
         data: a_t,
         success: function(data) {
             GVar.auth=1;
+            GVar.utoken=a_t;
             $('#_auth').attr('data','1');
             SetStatusBtn();
             $('#lw').addClass('hide');
@@ -232,7 +240,7 @@ InitFunctions = {
 
         $("#addPicture").click(function(){
             navigator.camera.getPicture(function(f) {
-                var newHtml = "<img style='border-radius:5px;margin:10px' width='100%' src='"+f+"'>";
+                var newHtml = "<img class='uimg uplimg-"+$(document).find('.uimg').length+"' style='padding:3px;border-radius:5px;' width='100%' src='"+f+"'>";
                 $imagesDiv.append(newHtml);
 
                 imageURI=f;
@@ -251,11 +259,18 @@ InitFunctions = {
                 ft.upload(imageURI, GVar.ajax_url+"/api/upload-ads-tmp", function(data){
                     var result = data['response'];
                     var parsed_result = JSON.parse(result);
-                   var new_name = parsed_result['img_name'];
-                   var old_name = parsed_result['old_name'];
-                   var base_type = parsed_result['base_type'];
-                   var new_input = HelperFuncions.create_input(new_name,old_name,base_type);
-                   $("#file-div").append(new_input);
+                    var new_name = parsed_result['img_name'];
+                    var old_name = parsed_result['old_name'];
+                    var base_type = parsed_result['base_type'];
+                    var new_input = HelperFuncions.create_input(new_name,old_name,base_type);
+                    $("#file-div").append(new_input);
+
+                    var pl = $(document).find('.uimg').length - 1;
+                    $('#qkpmb').animate({
+                    scrollTop: $(document).find('.uplimg-'+pl).offset().top + 500},
+                    'slow');
+
+
                 }, function(error){
                     console.log(JSON.stringify(error));
                 }, options);
@@ -323,6 +338,13 @@ InitFunctions = {
         //         }
         //    }
         // });
+        
+        $("#lma").click(function(){
+            if (GVar.scroll_load_more==1) {
+                ServerRequests.get_ad(GVar.skip);
+                GVar.skip = GVar.skip+8;
+            }
+        });
     },
     BindMapToDiv(){
         $('#us2').locationpicker({
@@ -455,6 +477,24 @@ InitFunctions = {
 Listeners = {
     Events(){
 
+        var exitApp = false, intval = setInterval(function (){exitApp = false;}, 1000);
+        document.addEventListener("backbutton", function (e){
+            e.preventDefault();
+            if (exitApp) {
+                // clearInterval(intval); 
+                (navigator.app && navigator.app.exitApp()) || (device && device.exitApp())
+            }
+            else {
+                exitApp = true;
+                $('.modal').modal('hide');
+                if(GVar.curpg>1 && GVar.curpg<5){
+                    var _c = GVar.curpg-1;
+                    myApp.showTab('#view-'+_c);
+                    GVar.curpg= _c;
+                }
+            } 
+        }, false);
+
         //city map functions
         $(".tt").mouseenter(function() {
           document.getElementById("p"+$(this).attr('ci')).style.fill = '#223b59';
@@ -466,6 +506,20 @@ Listeners = {
         });
         $(document).on('click','#ntdum',function(e){
             window.open('http://map.daum.net/link/map/'+$(this).attr('title')+','+$(this).attr('lat')+','+$(this).attr('lng'), "_self");
+        });
+        $('.fblogin').click(function(){
+
+            facebookConnectPlugin.login(["email"], function(response) {
+            if (response.authResponse) {
+                GVar.utoken = response.authResponse.accessToken;
+                facebookConnectPlugin.api( "me/?fields=id,email", ["email"],
+                    function (response) {
+                        $('#vw4').removeClass('active');
+                        GVar.uemail = response.email;
+                        ServerRequests.fb_login(GVar.utoken,GVar.uemail);
+                    }); 
+            }
+         });
         });
 
         $(".tt").click(function(){
@@ -488,8 +542,16 @@ Listeners = {
             }
         });
 
-
+        $('#vw1').click(function(){
+            GVar.curpg=1;
+            $('.tab-link').removeClass('active');
+            $(this).addClass('active');
+        });
+        $("#vw2").click(function(){
+            GVar.curpg=2;
+        });
         $("#vw3").click(function(){
+            GVar.curpg=3;
             $('.tab-link').removeClass('active');
             $('#vw3').addClass('active');
             if (typeof(Storage) !== "undefined") {
@@ -505,6 +567,26 @@ Listeners = {
                 alert('WEB STORAGE NOT SUPPORTED!');
             }
         });
+        $('#vw4').click(function(){
+            GVar.curpg=4;
+            $('.tab-link').removeClass('active');
+            $(this).addClass('active');
+            setTimeout(function(){
+                $('#vw4').removeClass('active');
+            }, 2000);
+            if (GVar.auth==1) {
+                GVar.auth=0;
+                $('#lginlbl').text('Login');
+                $('#_auth').attr('data','0');
+                $('#user-status').attr('value','0');
+                localStorage.removeItem('auth_token'); 
+                GVar.utoken='';
+                GVar.uemail='';           
+            } else {
+                $('#login-modal').modal('show');
+            }
+        });
+
 
         $('path').click(function(){
             var tcid = $(this).attr('c-id');
@@ -528,6 +610,7 @@ Listeners = {
             }
         });
         $('#tc').click(function(){
+            GVar.curpg=2;
             $('.tab-link').removeClass('active');
             $('#vw2').addClass('active');
         });
@@ -604,33 +687,30 @@ Listeners = {
             }
         });
 
-        $('#vw1').click(function(){
-            $('.tab-link').removeClass('active');
-            $('#vw1').addClass('active');
-        });
-        $('#vw4').click(function(){
-            $('.tab-link').removeClass('active');
-            $('#vw2').addClass('active');
-            if (GVar.auth==1) {
-                GVar.auth=0;
-                $('#lginlbl').text('Login');
-                $('#_auth').attr('data','0');
-                $('#user-status').attr('value','0');
-                localStorage.removeItem('auth_token');                
-            } else {
-                $('#login-modal').modal('show');
-            }
-        });
-        $('#flogin').click(function(){
-            var fbLoginSuccess = function (userData) {
-                alert("UserInfo: " + JSON.stringify(userData));
+
+        $('#sharetest').click(function(){
+
+            // this is the complete list of currently supported params you can pass to the plugin (all optional)
+            var options = {
+              url: 'https://www.website.com/foo/#bar?a=b',
+              chooserTitle: 'Pick an app' // Android only, you can override the default share sheet title
             }
 
-            facebookConnectPlugin.login(["public_profile"],
-                fbLoginSuccess,
-                function (error) { alert("" + error) }
-            );
+            var onSuccess = function(result) {
+              console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+              console.log("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+            }
+
+            var onError = function(msg) {
+              console.log("Sharing failed with message: " + msg);
+            }
+
+            window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+
         });
+
+
+
 
         $('#lform').submit(function(e){
             e.preventDefault();
@@ -730,6 +810,7 @@ Listeners = {
             $('.tab-cat').css('border-bottom','1px solid white');
         });
         $('.links').click(function(){
+            GVar.curpg=3;
             myApp.showTab('#view-3');
             $('#lgif').removeClass('hide');
             ServerRequests.refresh_ads($(this).attr('cat-id'));
@@ -779,9 +860,10 @@ Listeners = {
 
 //SERVER REQUESTS
 ServerRequests = {
-    app_login: function(data) {
+    fb_login: function(tkn,email) {
+        var data ={"token":tkn, "email":email}
         $.ajax({
-            url: GVar.ajax_url+'/api/login',
+            url: GVar.ajax_url+'/api/fblogin',
             type: 'post',
             dataType: 'json',
             'data': data,
@@ -797,34 +879,34 @@ ServerRequests = {
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                console.log(xhr.responseText); // <- same here, your own div, p, span, whatever you wish to use
+                alert(JSON.stringify(xhr.responseText));
             }
         });
     },
-    get_ad: function(ad_num) {
-        var token = $('meta[name=csrf-token]').attr('content');
-        $.post(
-            '/get-adds',
-            {
-                "_token": token,
-                "ad_num":ad_num,
-                "category":GVar.category
-            },
-            function(result){
-                var html = result.html_data['html'];
-                $('#loading-data').fadeOut();
-
-                //no more ads in this category
-                if (html=='') {
-                    GVar.scroll_load_more = 0;
+    app_login: function(data) {
+        $.ajax({
+            url: GVar.ajax_url+'/api/login',
+            type: 'post',
+            dataType: 'json',
+            'data': data,
+            success: function(data) {
+                var status = data.status;
+                if (status==200) {
+                    localStorage.setItem("auth_token", data.tkn);
+                    GVar.auth=1;
+                    $('#lnot').addClass('hide');
+                    $('#_auth').attr('data','1');
+                    $('#user-status').attr('value','1'); 
+                    $('#lginlbl').text('Logout');
+                    $('#login-modal').modal('hide');
+                } else {
+                    $('#lnot').removeClass('hide');
                 }
-
-                $('#madsw').append(result.html_data['html']);
-                $('.updated_ads').fadeIn();
-                $('.sin-ad').removeClass('updated_ads');
-                flag=0;
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.responseText); // <- same here, your own div, p, span, whatever you wish to use
             }
-        );
+        });
     },
     removeWishList: function(ad_id) {
         var token = $('meta[name=csrf-token]').attr('content');
@@ -850,6 +932,8 @@ ServerRequests = {
             );
     },
     refresh_ads: function(cat_id) {
+        $('#p3c').html('');
+        $('#lma').addClass('hide');
         GVar.category = cat_id;
         //new category reset load more
         GVar.scroll_load_more = 1;
@@ -866,7 +950,16 @@ ServerRequests = {
                 $('#lgif').addClass('hide');
                 var status = data.status;
                 if (status==200) {
-                    $('#p3c').html(data.ads['html']);
+                    if (data.ads['html']!='') {
+                        
+                        $('#p3c').html(data.ads['html']);
+                        if (data.ads['empty']==1) {
+                            $('#lma').addClass('hide');
+                        } else {
+                            $('#lma').removeClass('hide');
+                        }
+                    }
+
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -875,6 +968,35 @@ ServerRequests = {
             }
         });
 
+    },
+    get_ad: function(ad_num) {
+        var data ={"ad_num":ad_num, "city_id":GVar.cid, "cat_id":GVar.category}
+        $.ajax({
+            url: GVar.ajax_url+'/api/get-more-adds',
+            type: 'post',
+            dataType: 'json',
+            'data': data,
+            success: function(result) {
+                var html = result.html_data['html'];
+                //no more ads in this category
+                if (html=='') {
+                    GVar.scroll_load_more = 0;
+                    $('#lma').addClass('hide');
+                } else {
+                    if (result.html_data['empty']==1) {
+                        $('#lma').addClass('hide');
+                    }
+                    $('#lma').removeClass('hide');
+                    $('#p3c').append(result.html_data['html']);
+                    flag=0;
+                }
+                
+                // $('.sin-ad').removeClass('updated_ads');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                // alert(xhr.responseText);
+            }
+        });
     },
     refresh_ads_city: function(city_id) {
         $loading_in = HelperFuncions.create_loading_input();
@@ -1025,21 +1147,63 @@ ServerRequests = {
                 var ad_array = result.ad_array;
                 var photos = ad_array.images_array;
                 if (status==200) {
-                    //LOAD FACEBOOK COMMENT
-                    var c_div = '<div class="fb-comments modalfc" '+
-                                'data-href="'+document.getElementById('web_root').value+'/posts/'+data_id+'"'+
-                                'data-width="100%" data-numposts="5"></div>';
-                    $('.fbc').html(c_div);
-
-                    //FACEBOOK SHARE BUTTON
-                    // document.getElementById('fbShareWrap').innerHTML = ad_array['fbs'];
-
-                    FB.XFBML.parse();
-
                     //init
                     document.getElementById('postview-data').innerHTML = '';
                     
-                    
+                    //SHARING BUTTONS
+                    var slink = GVar.baseurl+'/posts/'+data_id;
+                    $('#ktalkbtn').click(function(event){
+                        window.plugins.socialsharing.shareVia(
+                            'kakao', 
+                            ad_array['title_txt'], 
+                            null, 
+                            null, 
+                            slink, 
+                        function(){
+                            console.log('share ok')
+                        }, function(msg) {
+                            alert('error: ' + msg)
+                        });
+                    });    
+
+                    $('#fbsbtn').click(function(event){
+                        var options = {
+                            method: "share",
+                            href: slink,
+                            caption: ad_array['title_txt'],
+                            description: ad_array['des_txt'],
+                            picture: ad_array['simage'],
+                            share_feedWeb: true
+                        };
+                        var onSuccess = function (userData) {
+                        }
+                        var onfailure = function (userData) {
+                        }
+                        facebookConnectPlugin.showDialog(
+                            options, 
+                            onSuccess, 
+                            onfailure);
+
+                    }); 
+
+                    $('#gshare').click(function(event){
+                        var options = {
+                          message: ad_array['title_txt'], // not supported on some apps (Facebook, Instagram)
+                          subject: 'Blik Posts', // fi. for email
+                          files: null, // an array of filenames either locally or remotely
+                          url: slink,
+                          chooserTitle: 'Pick an app' // Android only, you can override the default share sheet title
+                        }
+                        var onSuccess = function(result) {
+                          console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+                          console.log("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+                        }
+                        var onError = function(msg) {
+                          console.log("Sharing failed with message: " + msg);
+                        }
+                        window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+                    });
+                    //SHARING BUTTONS END 
 
                     var new_html = "<div class='form-group break_all' id='pt'></div>"+
                     "<div class='form-group break_all' id='pd'></div>"+

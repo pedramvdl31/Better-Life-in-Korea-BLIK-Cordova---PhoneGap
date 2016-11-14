@@ -61,8 +61,10 @@
         <link rel="stylesheet" href="Framework7-1.4.2/test/css/my-app.css">
 
         <script type="text/javascript" src="js/jquery.js"></script>
-
-
+        <script type="text/javascript" src="cordova.js"></script>
+        <script scr="phonegap.js"></script>
+<!--         <script src="cdv-plugin-fb-connect.js"></script> 
+        <script src="facebook-js-sdk.js"></script>  -->
 
 
     </head>
@@ -182,29 +184,19 @@
     <div class="statusbar-overlay"></div>
     <!-- Panels overlay-->
     <div class="panel-overlay"></div>
-    <!-- Left panel with reveal effect-->
-    <div class="panel panel-left panel-reveal">
-        <div class="content-block">
-            <p>Left panel content goes here</p>
-        </div>
-    </div>
-    <!-- Right panel with cover effect-->
-    <div class="panel panel-right panel-cover">
-        <div class="content-block">
-            <p>Right panel content goes here</p>
-        </div>
-    </div>
+
+
     <!-- Views, and they are tabs-->
     <!-- We need to set "toolbar-through" class on it to keep space for our tab bar-->
     <div class="views tabs toolbar-through">
         <!-- Your first view, it is also a .tab and should have "active" class to make it visible by default-->
-        <div id="view-1" class="view view-main tab active">
+        <div id="view-1" class="view view-main tab active ps psa" pid="1">
             <!-- Pages-->
             <div class="pages">
                 <!-- Page, data-page contains page name-->
                 <div data-page="index-1" class="page">
                     <!-- Scrollable page content-->
-                    <div class="page-content">
+                    <div class="page-content" style="">
                     <style type="text/css">
                         .button-r {
                             height: 50px;
@@ -226,7 +218,7 @@
                         }
                         #qbtn-wrap{
                             position: fixed;
-                            right: 5px;
+                            right: 9px;
                             bottom: 60px;
                             z-index: 9999;
                         }                        
@@ -234,7 +226,7 @@
                     <div id="qbtn-wrap">
                         <button class="button-r qkpost">
                             <span style="font-size: 35px;
-    line-height: 50px;">+</span>
+                            line-height: 50px;">+</span>
                         </button>
                     </div>
                     
@@ -363,7 +355,7 @@
                 </div>
             </div>
             <!-- Second view (for second wrap)-->
-            <div id="view-2" class="view tab">
+            <div id="view-2" class="view tab ps" pid="2">
                 <div class="pages navbar-through">
                     <div data-page="index-2" class="page">
                         <div class="page-content" style="padding-top: 0">
@@ -402,6 +394,7 @@
                 </div>
                 <div class="cat-text-holder"><span>Used Car</span></div>
             </div>
+
             <div style="padding:5px !important;border: 0;" class="col-md-4 col-sm-12 col-xs-12 cats-wrap-main">
                 <div class="cat-image links" cat-id="6" subcat-id="1" 
                 style="background-image: url('img/categories/category-6.jpg');">
@@ -427,17 +420,32 @@
 </div>
 </div>
 </div>
-    
+        
+    <style type="text/css">
+        .button-r{
+            box-shadow: 0 2px 8px #888888;
+        }
+        #p3c{
+            float: left;
+            position: relative;
+        }
+    </style>
     <!-- ADS VIEW -->
-    <div id="view-3" class="view tab">
+    <div id="view-3" class="view tab ps" pid="3">
         <div class="pages">
             <div data-page="index-3" class="page">
-                <div class="page-content" style="padding: 0">
+                <div class="page-content" style="padding: 0;padding-top: 4px;">
                     <div id="qbtn-wrap">
                         <button class="button-r qkpost"><i class="glyphicon glyphicon-plus" style="font-size: 14px"></i></button>
                     </div>
                     <div id="lgif" class="hide"><center><img width="200px" src="gif/g1.gif"></center></div>
                     <div id="p3c"></div>
+                    <div style="width: 100%;margin-bottom: 70px">
+                        <center>
+                            <button id="lma" class="btn btn-default btn-sm hide">Load More</button>
+                        </center>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -454,7 +462,7 @@
                 height: 100%;
             }
     </style>
-    <div id="view-4" class="view tab">
+    <div id="view-4" class="view tab ps" pid="4">
         <div class="pages navbar-fixed">
             <div data-page="index-4" class="page">
                 <div id="p4c" class="page-content" style="padding: 0">
@@ -471,19 +479,19 @@
     }
 </style>
 <div class="toolbar tabbar tabbar-labels">
-    <div class="toolbar-inner"><a id="vw1" href="#view-1" class="tab-link active"><i class="fa fa-map-o picon"></i><span class="tabbar-label">Cities</span></a>
+    <div class="toolbar-inner"><a pageid='1' id="vw1" href="#view-1" class="tab-link active"><i class="fa fa-map-o picon"></i><span class="tabbar-label">Cities</span></a>
 
-    <a id="vw2" href="#view-2" class="tab-link">
+    <a pageid='2' id="vw2" href="#view-2" class="tab-link">
         <i class="fa fa-th picon" aria-hidden="true"></i>
         <span class="tabbar-label">Categories</span>
     </a>
 
-    <a id="vw3" href="#view-4" class="tab-link"> 
+    <a pageid='3' id="vw3" href="#view-4" class="tab-link"> 
         <i class="fa fa-pencil picon" aria-hidden="true"></i>
         <span class="tabbar-label">Dashboard</span>
     </a>
 
-    <a id="vw4" href="#login" class="tab-link"> <i id="lginicon" class="picon"></i><span class="tabbar-label" id="lginlbl"></span></a></div>
+    <a pageid='4' id="vw4" href="#login" class="tab-link"> <i id="lginicon" class="picon"></i><span class="tabbar-label" id="lginlbl"></span></a></div>
 </div>
 
 
@@ -502,10 +510,13 @@
                     </div>
                     <div class="modal-body">
                     <div class="form-group">
-                    <input type="text" class="form-control form-control-login" name="email" id="email" placeholder="Email" aria-describedby="sizing-addon2">
+                        <input type="text" class="form-control form-control-login" name="email" id="email" placeholder="Email" aria-describedby="sizing-addon2">
                     </div>
                     <div class="form-group">
-                    <input type="password" class="form-control form-control-login" name="password" id="password" placeholder="Password" aria-describedby="sizing-addon2">           
+                        <input type="password" class="form-control form-control-login" name="password" id="password" placeholder="Password" aria-describedby="sizing-addon2">           
+                    </div>
+                    <div id="lnot" class="form-group hide">
+                        <span style="color: red">Wrong Username or Password</span>          
                     </div>
                     <div class="checkbox">
                     <label><input name="remember" type="checkbox" value="">Remember me</label>
@@ -514,9 +525,9 @@
                     </div>
                     <div class="modal-footer clearfix">
                         <a id="reg-btn" href="#register" class="btn btn-info pull-left btn-sm">Register</a>
-<!--                         <a id="flogin" class="btn btn-social btn-facebook btn-sm" href="#">
+                        <a class="fblogin btn btn-social btn-facebook btn-sm" href="#">
                             <span class="fa fa-facebook"></span>  Sign in with Facebook
-                        </a> -->
+                        </a>
                         <button type="submit" id="login-btn-1" class="btn btn-warning pull-right btn-sm">Login</button>
                     </div>
                 </form>
@@ -624,12 +635,19 @@
                 <!-- Reviews -->
                 <div class="fbc"></div>
               </div>
-<!--                 <div class="modal-footer clearfix">
+                <div class="modal-footer clearfix">
                     <form>
-                        <span id="fbShareWrap"></span>
-                        <a id="atwl-btn" class="btn btn-warning add-to-wishlist" data="" role="button">Add to Wishlist</a>
+                        <a class="btn" id="gshare">
+                          <img width="57px" src="img/gshare.png" />
+                        </a>
+                        <a class="btn" id="ktalkbtn">
+                          <img width="60px" src="img/ktalk.jpg" />
+                        </a>
+                        <a class="btn" id="fbsbtn">
+                          <img width="57px" src="img/fbshare.png" />
+                        </a>
                     </form>
-                </div> -->
+                </div>
             </div><!-- /.modal-content -->
           </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
@@ -788,7 +806,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">It will just take few minuts...</h4>
               </div>
-              <div class="modal-body" style="height: 78%;overflow: auto;padding-bottom: 0;margin-bottom: 5px;">
+              <div id="qkpmb" class="modal-body" style="height: 78%;overflow: auto;padding-bottom: 0;margin-bottom: 5px;">
                 <div class="body-wrapsp">
                     <div class="form-group" id="cat-wrap">
                         <select name="cat" class="form-control qp-selects" id="cats" >
@@ -933,8 +951,8 @@
                             display: block;
                         }
                     </style>
-                    <div class="hide anim 2t-wrap">
-                        <span id="addPicture" class="btn btn-default btn-file">
+                    <div class="hide anim 2t-wrap" style="float: left;width: 100%">
+                        <span id="addPicture" class="btn btn-primary btn-file" style="width:100% !important">
                             Browse Images
                         </span>
                         <div style="float: left;width: 100%;padding: 10px" id="images">
@@ -1017,9 +1035,9 @@
                   </div>
                   <div class="modal-footer clearfix">
                     <img class="hide" id="validating" src="gif/loading1.gif" width="20px;">
-<!--                     <a class="btn btn-social btn-facebook" href="/auth/facebook">
+                    <a class="fblogin btn btn-social btn-facebook" href="/auth/facebook">
                         <span class="fa fa-facebook"></span>  Sign in with Facebook
-                    </a> -->
+                    </a>
                     <a class="btn modal-btn btn-warning " id="submit-btn">Register</a>
                   </div>
                 </div><!-- /.modal-content -->
@@ -1080,6 +1098,8 @@
 
 </div>
 
+
+
 <script src="plugins/jQueryUI/jquery-ui.js"></script>
 <script src="package/bootstrap/js/bootstrap.min.js"></script>
 <script src="js/jquery.prettyPhoto.js"></script>
@@ -1088,7 +1108,7 @@
 <script src="plugins/krajee-star/star-rating.min.js"></script>
 <script src="plugins/gallery-master/js/blueimp-gallery.js"></script>
 
-<script type="text/javascript" src="cordova.js"></script>
+
 
 <script type="text/javascript" src="js/index.js"></script>
 <!-- Path to Framework7 Library JS-->
@@ -1098,14 +1118,6 @@
 <script type="text/javascript" src="js/my-app.js"></script>
 
 
-    <div id="fb-root"></div>
-    <script>(function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s); js.id = id;
-      js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=1728054614082756";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));</script>
 
 </body>
 </html>

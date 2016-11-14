@@ -1,8 +1,11 @@
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" id="com.phonegap.blik" version="1.0.0">
-  <name>BLIK</name>
+  <name>blik</name>
   <description>Better Life in Korea</description>
   <author href="http://www.webprinciples.com" email="pedramkhoshnevis@gmail.com">BLIK</author>
   <content src="index.html"/>
+
+  <preference name="SplashScreen" value="screen"/>
+  <preference name="SplashScreenDelay" value="8000"/>
 
   <!-- <plugin name="cordova-plugin-battery-status" source="npm" spec="~1.1.1"/> -->
   <plugin name="cordova-plugin-camera" source="npm" spec="~2.1.1"/>
@@ -25,29 +28,25 @@
   <plugin name="cordova-plugin-network-information" source="npm" spec="~1.2.0"/>
   <plugin name="cordova-plugin-splashscreen" source="npm" spec="~3.2.1"/>
 
-  <!--<plugin name="com.phonegap.plugins.facebookconnect" spec="0.4.0" source="pgb">
-    <param name="APP_ID" value="341730832847177" />
-    <param name="APP_NAME" value="KoraApp" />
-  </plugin> -->
 
   <gap:plugin name="com.phonegap.plugins.facebookconnect" version="0.9.0">
-      <param name="APP_ID" value="341730832847177" />
-      <param name="APP_NAME" value="KoraApp" />
+      <param name="APP_ID" value="344746595879012" />
+      <param name="APP_NAME" value="blik" />
   </gap:plugin>
+
+  <gap:plugin name="cordova-plugin-x-socialsharing" source="npm" />
+
 
   <!-- <plugin name="cordova-plugin-statusbar" source="npm" spec="~2.1.2"/> -->
   <!-- <plugin name="cordova-plugin-vibration" source="npm" spec="~2.1.0"/> -->
   <plugin name="cordova-plugin-whitelist" source="npm" spec="~1.2.1"/>
 
-  <preference name="SplashScreen" value="screen"/>
-  <preference name="SplashScreenDelay" value="10000"/>
+
 
   <icon src="icon.png" />
   <splash src="screen.png"/>
   
   <platform name="android">
-    <preference name="SplashScreen" value="screen"/>
-    <preference name="SplashScreenDelay" value="10000"/>
     <icon src="www/res/android/res/icon/ldpi/ic_launcher.png" density="ldpi"/>
     <icon src="www/res/android/res/icon/ldpi/ic_launcher.png" density="ldpi"/>
     <icon src="www/res/android/res/icon/mdpi/ic_launcher.png" density="mdpi"/>
