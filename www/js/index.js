@@ -20,7 +20,6 @@
 //GLOBAL VARIABLES
 GVar = {
     // 'ajax_url':'http://kora.app:8000',
-    
     'baseurl':'https://www.betterlifeinkorea.com',
     'ajax_url':'https://www.betterlifeinkorea.com',
     'auth':'0',
@@ -34,8 +33,17 @@ GVar = {
     'flag_image':'img/beachflag.png',
     'dash':0,
     'uemail':0,
-    'utoken':0
+    'utoken':0,
+    'lndinglat':0,
+    'lndinglng':0,
+    'utoken':0,
+    'lmarkers':[],
+    'qpmarkers':[],
+    'iswaze':0
 }
+
+
+
 var images = [];
 var $imagesDiv;
 var app = {
@@ -58,9 +66,12 @@ var app = {
         Components.InitiateApp();
         Components.EventHandler();
         Maps.ViewAdInit(37.554084,126.949903);
+        Maps.LandingInit(36.5802466,127.95776367);
         ManageAuth();
 
-    
+
+
+
 
 
         if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
@@ -108,7 +119,6 @@ Components = {
         InitFunctions.ClearUrl();
         InitFunctions.WindowScrollListener();
         InitFunctions.PhotoUpload();
-        // InitFunctions.InitiateDropZones();
         // InitFunctions.InitiateAutoComplete();
     },
     EventHandler: function() {
@@ -165,7 +175,6 @@ function CheckToken(a_t){
         error: function (xhr, ajaxOptions, thrownError) {
             $('#lw').addClass('hide');
             GVar.auth=0;
-            console.log(xhr.responseText); // <- same here, your own div, p, span, whatever you wish to use
         }
     });
 }
@@ -203,14 +212,6 @@ function onOnline() {
 
 //FUNCTIONS
 InitFunctions = {
-    // PreLoadDom(){
-    //  //PRELOADED DOMELEMETS
-    //  window.DomElements = {
-    //      'div-a': document.getElementById("a"), 
-    //      'div-b': document.getElementById("b"), 
-    //      'div-c': document.getElementById("c"), 
-    //  };
-    // },
     PageVisualSetup(){
         window.flag = 0;
         $('#nav').affix({
@@ -239,62 +240,52 @@ InitFunctions = {
         $imagesDiv = $("#images");  
 
         $("#addPicture").click(function(){
-            navigator.camera.getPicture(function(f) {
-                var newHtml = "<img class='uimg uplimg-"+$(document).find('.uimg').length+"' style='padding:3px;border-radius:5px;' width='100%' src='"+f+"'>";
-                $imagesDiv.append(newHtml);
 
-                imageURI=f;
-                var options = new FileUploadOptions();
-                options.fileKey = "file";
-                options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
-                options.mimeType = "image/jpeg";
-                console.log(options.fileName);
-                var params = new Object();
-                params.value1 = "test";
-                params.value2 = "param";
-                options.params = params;
-                options.chunkedMode = false;
+            window.imagePicker.getPictures(
+                function(results) {
+                    for (var i = 0; i < results.length; i++) {
+                        var f = results[i];
+                        var newHtml = "<img class='uimg uplimg-"+$(document).find('.uimg').length+"' style='padding:3px;border-radius:5px;' width='100%' src='"+f+"'>";
+                        $imagesDiv.append(newHtml);
+                        var imageURI=f;
+                        var options = new FileUploadOptions();
+                        options.fileKey = "file";
+                        options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+                        options.mimeType = "image/jpeg";
+                        var params = new Object();
+                        params.value1 = "test";
+                        params.value2 = "param";
+                        options.params = params;
+                        options.chunkedMode = false;
 
-                var ft = new FileTransfer();
-                ft.upload(imageURI, GVar.ajax_url+"/api/upload-ads-tmp", function(data){
-                    var result = data['response'];
-                    var parsed_result = JSON.parse(result);
-                    var new_name = parsed_result['img_name'];
-                    var old_name = parsed_result['old_name'];
-                    var base_type = parsed_result['base_type'];
-                    var new_input = HelperFuncions.create_input(new_name,old_name,base_type);
-                    $("#file-div").append(new_input);
+                        var ft = new FileTransfer();
+                        ft.upload(imageURI, GVar.ajax_url+"/api/upload-ads-tmp", function(data){
+                            var result = data['response'];
+                            var parsed_result = JSON.parse(result);
+                            var new_name = parsed_result['img_name'];
+                            var old_name = parsed_result['old_name'];
+                            var base_type = parsed_result['base_type'];
+                            var new_input = HelperFuncions.create_input(new_name,old_name,base_type);
+                            $("#file-div").append(new_input);
 
-                    var pl = $(document).find('.uimg').length - 1;
-                    $('#qkpmb').animate({
-                    scrollTop: $(document).find('.uplimg-'+pl).offset().top + 500},
-                    'slow');
-
-
-                }, function(error){
-                    console.log(JSON.stringify(error));
-                }, options);
-
-            }, function(e) {
-                alert("Error, check console.");
-                console.dir(e);
-            }, { 
-                quality: 100,
-                destinationType: navigator.camera.DestinationType.FILE_URI,
-                sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY
-            });
+                            var pl = $(document).find('.uimg').length - 1;
+                            $('#qkpmb').animate({
+                            scrollTop: $(document).find('.uplimg-'+pl).offset().top + 500},
+                            'slow');
 
 
-
-
-
-
-
-
-
+                        }, function(error){
+                            console.log(JSON.stringify(error));
+                        }, options);
+                    }
+                }, function (error) {
+                    console.log('Error: ' + error);
+                }, {
+                    maximumImagesCount: 10
+                }
+            );
 
         });
-
     },
     SetStates(){
         window.user_state = document.getElementById('user-status').value;
@@ -323,22 +314,6 @@ InitFunctions = {
         }
     },
     WindowScrollListener(){
-        // $(window).scroll(function() {
-        //     console.log('fired');
-        //    if(($('#posts-page').scrollTop() + $('#posts-page').height() > $(document).height() - 100)&&flag==0) {
-        //         if (GVar.scroll_load_more==1) {
-        //             console.log('fired 200');
-        //             GVar.skip = GVar.skip+8;
-        //             ServerRequests.get_ad(GVar.skip);
-        //             flag=1;
-        //             $('#loading-data').fadeIn();                    
-        //         } else {
-        //             console.log('fired 400');
-        //             $('#no-ads').fadeIn();
-        //         }
-        //    }
-        // });
-        
         $("#lma").click(function(){
             if (GVar.scroll_load_more==1) {
                 GVar.skip = GVar.skip+8;
@@ -358,67 +333,6 @@ InitFunctions = {
             },
             enableAutocomplete: true,
         });
-    },
-    InitiateDropZones(){
-        Dropzone.autoDiscover = false;
-          $('#post_upload_zone_image').dropzone({ 
-            url: GVar.ajax_url+"/api/upload-ads-tmp",
-            paramName: "file",
-            maxFilesize: 5,
-            acceptedFiles: "image/*",
-            maxFiles: 10,
-            addRemoveLinks: true,
-            init: function() {
-                 this.on('success', function(file, json) {
-                   var new_name = json['img_name'];
-                   var old_name = json['old_name'];
-                   var base_type = json['base_type'];
-                   var new_input = HelperFuncions.create_input(new_name,old_name,base_type);
-                   $("#file-div").append(new_input);
-                   // $('#qk-post-btn').removeAttr('disabled');
-                 });
-                  
-                 this.on('addedfile', function(file) {
-                    // $('#qk-post-btn').attr('disabled','disabled');
-                 });
-                  
-                 this.on('drop', function(file) {
-                 });
-
-                this.on("removedfile", function(file) {
-                    HelperFuncions.dropz_removefile(file);
-                }); 
-            }
-         });
-         //  $('#post_upload_zone_video').dropzone({ 
-         //    url: GVar.ajax_url+"/api/upload-ads-tmp",
-         //    paramName: "file",
-         //    maxFilesize: 30,
-         //    acceptedFiles: "video/*",
-         //    maxFiles: 3,
-         //    addRemoveLinks: true,
-         //    init: function() {
-         //         this.on('success', function(file, json) {
-         //           var new_name = json['img_name'];
-         //           var old_name = json['old_name'];
-         //           var base_type = json['base_type'];
-         //           var new_input = HelperFuncions.create_input(new_name,old_name,base_type);
-         //           $("#file-div").append(new_input);
-         //           $('#qk-post-btn').removeAttr('disabled');
-         //         });
-                  
-         //         this.on('addedfile', function(file) {
-         //            $('#qk-post-btn').attr('disabled','disabled');
-         //         });
-                  
-         //         this.on('drop', function(file) {
-         //         });
-
-         //        this.on("removedfile", function(file) {
-         //            HelperFuncions.dropz_removefile(file);
-         //        }); 
-         //    }
-         // });
     },
     InitiateAutoComplete(){
         var options = {
@@ -495,6 +409,7 @@ Listeners = {
             } 
         }, false);
 
+
         //city map functions
         $(".tt").mouseenter(function() {
           document.getElementById("p"+$(this).attr('ci')).style.fill = '#223b59';
@@ -504,11 +419,12 @@ Listeners = {
                 $("#p"+$(this).attr('ci')).css('fill','#dddddd');
             }
         });
-        $(document).on('click','#ntdum',function(e){
-            window.open('http://map.daum.net/link/map/'+$(this).attr('title')+','+$(this).attr('lat')+','+$(this).attr('lng'), "_self");
-        });
-        $('.fblogin').click(function(){
 
+        $(document).on('click','#ntdum',function(e){
+            window.open('http://map.daum.net/link/map/'+$(this).attr('title')+','+$(this).attr('lat')+','+$(this).attr('lng'), "_system");
+        });
+
+        $(".fblogin").on('touchstart', function(e) {
             facebookConnectPlugin.login(["email"], function(response) {
             if (response.authResponse) {
                 GVar.utoken = response.authResponse.accessToken;
@@ -521,7 +437,6 @@ Listeners = {
             }
          });
         });
-
         $(".tt").click(function(){
             $('path').css('fill','#dddddd');
             var ttid =  $(this).attr('ci');
@@ -671,12 +586,10 @@ Listeners = {
                 setTimeout(function(){
                     $('.2t-wrap').css('visibility','visible').css('opacity',1);
                     $('#qk-post-btn').removeAttr('disabled');
-                    // HelperFuncions.InitGoogleMap();
                     if (GVar.qkpost_map==0) {
                         GVar.qkpost_map = 1;
                         Maps.PostAdInit();
                     }
-                    
                 }, 50);
             } else {
                     $('.2t-wrap').css('visibility','hidden').css('opacity',0);
@@ -719,7 +632,7 @@ Listeners = {
         });
         
         $(document).on('click','#waze-drive-to',function(){
-            window.location.href = "waze://?ll="+$(this).attr('lat')+","+$(this).attr('lng')+"&navigate=yes";
+            OpenWazeAppOrMarket();
         });
 
         $(document).on('click','#testform',function(){
@@ -748,18 +661,15 @@ Listeners = {
             $('.fbc').html('');
             HelperFuncions.findAndViewAd(this_id);
         });
-        $(document).on('click','.qkpost',function(){
+        $(".qkpost").on('touchstart', function(e) {
             var _auth = parseInt($('#_auth').attr('data'));
             if (_auth == 1) {
                 $('#qkpost-modal').modal('show');
-                var html = '<div id="map-form-wrapper"><input id="pac-input" class="controls" type="text"'+
-                            'placeholder="Enter a location">'+
-                            '<div id="type-selector" class="controls">'+
-                            '<input type="radio" name="type" id="changetype-all" checked="checked">'+
-                            '<label for="changetype-all">All</label>'+
-                            '<input type="radio" name="type" id="changetype-establishment">'+
-                            '<label for="changetype-establishment">Establishments</label>'+
-                            '</div></div>';
+                var html = '<div id="map-form-wrapper">'+
+                                '<div id="type-selector" class="controls">'+
+                                    '<a href="#" id="qkpcl" class="btn btn-primary btn-sm"><i class="glyphicon glyphicon-map-marker"></i></a>'+
+                               '</div>'+
+                            '</div>';
                 $('#qkpost-map-container').append(html);
             } else {
                 $('#login-modal').modal('show');
@@ -781,6 +691,20 @@ Listeners = {
         $(document).on('click','.view-ad-wl',function(){
             var this_id = $(this).attr('data');
             HelperFuncions.findAndViewAd2(this_id);
+        });
+        $(document).on('touchstart','#curloc',function(){
+            CheckGPS.check(function win(){
+                var onSuccess = function(position) {
+                    Maps.LandingUpdate(position.coords.latitude,position.coords.longitude);
+                };
+                function onError(error) {
+                    calldialog();
+                }
+                navigator.geolocation.getCurrentPosition(onSuccess, onError);
+              },
+              function fail(){
+                calldialog();
+              });
         });
         $('#searchbar').keypress(function(event){
             var keycode = (event.keyCode ? event.keyCode : event.which);
@@ -938,11 +862,11 @@ ServerRequests = {
         //new category reset load more
         GVar.scroll_load_more = 1;
 
-        // document.getElementById("no-ads").style.display = 'none';
-        var data ={"city_id":GVar.cid, "cat_id":cat_id}
+        var rad = $('#lndrad').val();
+        var data ={"lat":GVar.lndinglat,"lng":GVar.lndinglng, "cat_id":cat_id,'radius':rad}
 
         $.ajax({
-            url: GVar.ajax_url+'/api/search-02',
+            url: GVar.ajax_url+'/api/search-02loc',
             type: 'post',
             dataType: 'json',
             'data': data,
@@ -1314,7 +1238,7 @@ ServerRequests = {
         $('#validating').removeClass('hide');
         $('#pos-gif').removeClass('hide');
 
-        var data ={"_form":_form}
+        var data ={"_form":_form,"tkn":localStorage.getItem("auth_token")}
 
         $.ajax({
             url: GVar.ajax_url+'/api/process-qkpost',
@@ -1322,7 +1246,7 @@ ServerRequests = {
             dataType: 'json',
             'data': data,
             success: function(data) {
-                $('#lgif').addClass('hide');
+                $('#pos-gif').addClass('hide');
                 var status = data.status;
                 switch(status){                 
                     case 200:
@@ -1345,12 +1269,13 @@ ServerRequests = {
                     break;
 
                     case 400:
+                        alert('please fill the required fields')
                         $('._required').css('color','red');
                     break;
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                $('#lgif').addClass('hide');
+                $('#pos-gif').addClass('hide');
                 console.log(xhr.responseText); // <- same here, your own div, p, span, whatever you wish to use
             }
         });
@@ -1453,13 +1378,6 @@ HelperFuncions = {
         setTimeout(function(){
             c.addClass('hide');
         }, 500);
-    },
-    InitGoogleMap(){
-        $('#us2-lat').attr('name','lat');
-        $('#us2-lon').attr('name','long');
-        lastCenter=_map.getCenter(); 
-        google.maps.event.trigger(_map, "resize");
-        _map.setCenter(lastCenter);
     },
     reset_errors(){
         $('.error-feedback').addClass('hide');
@@ -1569,28 +1487,31 @@ HelperFuncions = {
 //MAPS
 Maps = {
     PostAdInit(){
-        var myLatLng = {lat: 37.555172565547075, lng: 126.9708452528564};
+        $(document).find("#qkpcl").on('touchstart', function(e) {
+            e.preventDefault();
+            CheckGPS.check(function win(){
+                var onSuccess = function(position) {
+                    Maps.qkpmUpdate(position.coords.latitude,position.coords.longitude);
+                };
+                function onError(error) {
+                    calldialog();
+                }
+                navigator.geolocation.getCurrentPosition(onSuccess, onError);
+              },
+              function fail(){
+                calldialog();
+              });
+        });
+
+        var myLatLng = {lat: 36.5802466, lng: 127.95776367};
         document.getElementById('qkp-lat').value = myLatLng.lat;
         document.getElementById('qkp-lng').value = myLatLng.lng;
         window.map = new google.maps.Map(document.getElementById('map'), {
             center: myLatLng,
-            zoom: 12,    
-            mapTypeControl: true,
-            mapTypeControlOptions: {
-              style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-              mapTypeIds: ['roadmap', 'satellite']
-            },
+            zoom: 6,    
+            mapTypeControl: false,
             streetViewControl: false
         });
-
-
-        var geolocationDiv = document.createElement('div');
-        geolocationDiv.setAttribute("id", "mylocation1");
-        geolocationDiv.style.width = '30px';
-        geolocationDiv.style.right = '0 !important';
-       
-        var geolocationControl = new GeolocationControl(geolocationDiv, map);
-        map.controls[google.maps.ControlPosition.TOP_CENTER].push(geolocationDiv);
 
         // GOOGLE MAP RESPONSIVENESS
         google.maps.event.addDomListener(window, "resize", function() {
@@ -1598,8 +1519,7 @@ Maps = {
          google.maps.event.trigger(map, "resize");
          map.setCenter(center); 
         });
-        var input = /** @type {!HTMLInputElement} */(
-            document.getElementById('pac-input'));
+        var input =(document.getElementById('pac-input'));
         var types = document.getElementById('type-selector');
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(types);
@@ -1615,15 +1535,6 @@ Maps = {
         });
         //LOAD FROM CURRENT CITY
         var geocoder = new google.maps.Geocoder();
-        //     navigator.geolocation.getCurrentPosition(function (position) {
-        //          initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-        //          map.setCenter(initialLocation);
-
-        //          marker.setPosition(initialLocation);
-
-        //          infowindow.setContent('<div><strong>Search or Drag Marker</strong></div>');
-        //  infowindow.open(map, marker);
-        //     });
         //AFTER DRAG AND DROP SHOWS THE LAT AND LONG
         google.maps.event.addListener(PostAdMarker, 'dragend', function (event) {
             var latlng = {lat: this.getPosition().lat(), lng: this.getPosition().lng()};
@@ -1693,7 +1604,95 @@ Maps = {
         setupClickListener('changetype-all', []);
         setupClickListener('changetype-establishment', ['establishment']);
     },
+    qkpmUpdate(lat,lng){
+        document.getElementById('qkp-lat').value = lat;
+        document.getElementById('qkp-lng').value = lng;
+        Maps.qkpmClearMarker();
+        var myLatLng = {lat: lat, lng: lng};
+        map.setCenter(myLatLng);
+        map.setZoom(15);
+        var marker = new google.maps.Marker({
+          map: map,
+          icon:GVar.flag_image,
+          position:myLatLng,
+          draggable: true,
+          animation: google.maps.Animation.DROP,
+          anchorPoint: new google.maps.Point(0, -29)
+        });
+        GVar.qpmarkers.push(marker);
+    },
+    qkpmClearMarker(){
+        for (var i = 0; i < GVar.qpmarkers.length; i++) {
+          GVar.qpmarkers[i].setMap(null);
+        }
+    },
     //initiation of posts map
+    LandingInit(lat,lng){
+        $('#fpmap').css('height',($(window).height()-230));
+        $(window).resize(function() {
+            $('#fpmap').css('height',($(window).height()-230));
+        });
+
+        var myLatLng = {lat: lat, lng: lng};
+        window.LandingMap = new google.maps.Map(document.getElementById('fpmap'), {
+            center: myLatLng,
+            zoom: 6,    
+            mapTypeControl: false,
+            streetViewControl: false
+        });
+        // GOOGLE MAP RESPONSIVENESS
+        google.maps.event.addDomListener(window, "resize", function() {
+         var center = LandingMap.getCenter();
+         google.maps.event.trigger(LandingMap, "resize");
+         LandingMap.setCenter(center); 
+        });
+
+        var getlocDiv = document.createElement('div');
+        var getlocvar = new getloc(getlocDiv, LandingMap);
+
+        google.maps.event.addListener(LandingMap, 'click', function(event) {
+           placeMarker(event.latLng);
+        });
+
+        function placeMarker(location) {
+            Maps.LandingClearMarker();
+            var marker = new google.maps.Marker({
+                position: location, 
+                map: LandingMap
+            });
+            GVar.lndinglat = marker.getPosition().lat();
+            GVar.lndinglng = marker.getPosition().lng();
+            GVar.lmarkers.push(marker);
+        }
+
+        getlocDiv.index = 1;
+        LandingMap.controls[google.maps.ControlPosition.TOP_CENTER].push(getlocDiv);
+
+        //MARKER
+        var infowindow = new google.maps.InfoWindow();
+    },
+    LandingUpdate(lat,lng){
+        Maps.LandingClearMarker();
+        var myLatLng = {lat: lat, lng: lng};
+        GVar.lndinglat = lat;
+        GVar.lndinglng = lng;
+        LandingMap.setCenter(myLatLng);
+        LandingMap.setZoom(15);
+        var marker = new google.maps.Marker({
+          map: LandingMap,
+          icon:GVar.flag_image,
+          position:myLatLng,
+          draggable: true,
+          animation: google.maps.Animation.DROP,
+          anchorPoint: new google.maps.Point(0, -29)
+        });
+        GVar.lmarkers.push(marker);
+    },
+    LandingClearMarker(){
+        for (var i = 0; i < GVar.lmarkers.length; i++) {
+          GVar.lmarkers[i].setMap(null);
+        }
+    },
     ViewAdInit(lat,lng){
         var myLatLng = {lat: lat, lng: lng};
         window.PostViewMap = new google.maps.Map(document.getElementById('map-post-view'), {
@@ -1706,16 +1705,12 @@ Maps = {
             },
             streetViewControl: true
         });
-
-
-
         // GOOGLE MAP RESPONSIVENESS
         google.maps.event.addDomListener(window, "resize", function() {
          var center = PostViewMap.getCenter();
          google.maps.event.trigger(PostViewMap, "resize");
          PostViewMap.setCenter(center); 
         });
-
         //MARKER
         var infowindow = new google.maps.InfoWindow();
         var marker = new google.maps.Marker({
@@ -1848,5 +1843,72 @@ function uploadPics() {
         console.log("all things done");
         console.dir(arguments);
     });
+
+}
+
+// function calldialog() {
+//     cordova.dialogGPS();
+// }
+
+function calldialog() {
+  cordova.dialogGPS("Your GPS is Disabled, this app needs to be enable to works.",//message
+                    "Use GPS, with wifi or 3G.",//description
+                    function(buttonIndex){//callback
+                      switch(buttonIndex) {
+                        case 0: break;//cancel
+                        case 1: break;//neutro option
+                        case 2: break;//user go to configuration
+                      }},
+                      "Please Turn on GPS",//title
+                      ["Cancel","Later","Go"]);//buttons
+}
+function getloc(controlDiv, map) {
+
+// Set CSS for the control border.
+var controlUI = document.createElement('div');
+controlUI.setAttribute("id", "curloc");
+controlUI.style.backgroundColor = '#fff';
+controlUI.style.border = '2px solid #fff';
+controlUI.style.borderRadius = '3px';
+controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+controlUI.style.cursor = 'pointer';
+controlUI.style.marginBottom = '22px';
+controlUI.style.textAlign = 'center';
+controlUI.title = 'Click to recenter the map';
+controlDiv.appendChild(controlUI);
+
+// Set CSS for the control interior.
+var controlText = document.createElement('div');
+controlText.style.color = 'rgb(25,25,25)';
+controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+controlText.style.fontSize = '16px';
+controlText.style.lineHeight = '38px';
+controlText.style.paddingLeft = '5px';
+controlText.style.paddingRight = '5px';
+controlText.innerHTML = 'Current Location';
+controlUI.appendChild(controlText);
+}
+
+function OpenWazeAppOrMarket(){
+    if(device.platform === 'iOS') {
+        var scheme = 'waze';
+    }
+    else if(device.platform === 'Android') {
+        var scheme = 'com.waze';
+    }  
+    appAvailability.check(
+        scheme,       // URI Scheme or Package Name 
+        function() {  // Success callback 
+            window.location.href = "waze://?ll="+$(document).find('#waze-drive-to').attr('lat')+","+$(document).find('#waze-drive-to').attr('lng')+"&navigate=yes";
+        },
+        function() {
+            if(device.platform === 'iOS') {
+                cordova.plugins.market.open('waze');
+            }
+            else if(device.platform === 'Android') {
+                cordova.plugins.market.open('com.waze');
+            }  
+        }
+    );
 
 }

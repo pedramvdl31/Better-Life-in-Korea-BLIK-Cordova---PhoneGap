@@ -241,7 +241,7 @@ InitFunctions = {
 Listeners = {
 	Events(){
 
-		//city map functions
+
 		$(".tt").mouseenter(function() {
 		  document.getElementById("p"+$(this).attr('ci')).style.fill = '#223b59';
 		});
