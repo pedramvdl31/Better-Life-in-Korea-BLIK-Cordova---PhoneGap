@@ -33,6 +33,7 @@ GVar = {
     'flag_image':'img/beachflag.png',
     'dash':0,
     'uemail':0,
+    'fbid':'',
     'utoken':0,
     'lndinglat':0,
     'lndinglng':0,
@@ -416,12 +417,11 @@ function Events() {
             GVar.utoken = response.authResponse.accessToken;
             facebookConnectPlugin.api( "me/?fields=id,email", ["email"],
                 function (response) {
-                    // alert('rep2');
-                    // console.log(response);
                     $('#vw4').removeClass('active');
                     GVar.uemail = response.email;
-                    alert(GVar.uemail);
-                    alert(GVar.utoken);
+                    if ($.isBlank(response.email)) {
+                        GVar.uemail = response.id;
+                    }
                     fb_login(GVar.utoken,GVar.uemail);
                 }); 
         }
@@ -785,6 +785,8 @@ function fb_login(tkn,email) {
                 $('#user-status').attr('value','1'); 
                 $('#lginlbl').text('Logout');
                 $('#login-modal').modal('hide');
+            } else{
+                alert('Unable To Login');
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
