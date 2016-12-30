@@ -40,7 +40,9 @@ GVar = {
     'utoken':0,
     'lmarkers':[],
     'qpmarkers':[],
-    'iswaze':0
+    'iswaze':0,
+    'imgcounter':0,
+    'totalimgcounter':0
 }
 
 
@@ -228,48 +230,59 @@ function PhotoUpload() {
     $imagesDiv = $("#images");  
 
     $("#addPicture").click(function(){
-
+        var imcount = $(document).find('.uimg').length;
+        window.mxupld = 10 - imcount;
         window.imagePicker.getPictures(
             function(results) {
+
                 for (var i = 0; i < results.length; i++) {
-                    var f = results[i];
-                    var newHtml = "<img class='uimg uplimg-"+$(document).find('.uimg').length+"' style='padding:3px;border-radius:5px;' width='100%' src='"+f+"'>";
-                    $imagesDiv.append(newHtml);
-                    var imageURI=f;
-                    var options = new FileUploadOptions();
-                    options.fileKey = "file";
-                    options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
-                    options.mimeType = "image/jpeg";
-                    var params = new Object();
-                    params.value1 = "test";
-                    params.value2 = "param";
-                    options.params = params;
-                    options.chunkedMode = false;
+                    var auth_token = localStorage.getItem("auth_token");
+                    if (!$.isBlank(auth_token)&&GVar.dash==0) {
+                        var fxxx = results[i];
+                        var imageURI = results[i];
+                        var options = new FileUploadOptions();
+                        options.fileKey = "file";
+                        options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+                        options.mimeType = "image/jpeg";
+                        var params = new Object();
+                        params.usertoken = auth_token;
+                        options.params = params;
+                        options.chunkedMode = false;
+                        var ft = new FileTransfer();
+                        ft.upload(imageURI, GVar.ajax_url+"/api/upload-ads-tmp", function(data){
+                            var newHtml = "<img class='uimg uplimg-"+$(document).find('.uimg').length+"' style='padding:3px;border-radius:5px;' width='25%' src='"+results[GVar.imgcounter]+"'>";
+                            $imagesDiv.append(newHtml);
+                            GVar.imgcounter = GVar.imgcounter+1;
+                            GVar.totalimgcounter = GVar.totalimgcounter+1;
+                            if (GVar.totalimgcounter>9) {
+                                $("#addPicture").attr('disabled','disabled');
+                            }
+                            var result = data['response'];
+                            var parsed_result = JSON.parse(result);
+                            var new_name = parsed_result['img_name'];
+                            var old_name = parsed_result['old_name'];
+                            var base_type = parsed_result['base_type'];
+                            var new_input = create_input(new_name,old_name,base_type);
+                            $("#file-div").append(new_input);
+                            $('#qkpmb').animate({ 
+                                scrollTop: $(document).find('#qkpmb').height()
+                            },'slow');
 
-                    var ft = new FileTransfer();
-                    ft.upload(imageURI, GVar.ajax_url+"/api/upload-ads-tmp", function(data){
-                        var result = data['response'];
-                        var parsed_result = JSON.parse(result);
-                        var new_name = parsed_result['img_name'];
-                        var old_name = parsed_result['old_name'];
-                        var base_type = parsed_result['base_type'];
-                        var new_input = create_input(new_name,old_name,base_type);
-                        $("#file-div").append(new_input);
+                        }, function(error){
+                            console.log(JSON.stringify(error));
+                        }, options);
 
-                        var pl = $(document).find('.uimg').length - 1;
-                        $('#qkpmb').animate({
-                        scrollTop: $(document).find('.uplimg-'+pl).offset().top + 500},
-                        'slow');
+                    } else {
+                        alert('Please Try to Login Again.')
+                    }
+                    GVar.imgcounter = 0;
 
-
-                    }, function(error){
-                        console.log(JSON.stringify(error));
-                    }, options);
                 }
+
             }, function (error) {
                 console.log('Error: ' + error);
             }, {
-                maximumImagesCount: 10
+                maximumImagesCount: mxupld
             }
         );
 
@@ -393,7 +406,9 @@ function Events() {
         } 
     }, false);
 
-
+    $('#qkpost-modal').on('hidden.bs.modal', function () {
+        clear_qp_modal();
+    })
     //city map functions
     $(".tt").mouseenter(function() {
       document.getElementById("p"+$(this).attr('ci')).style.fill = '#223b59';
@@ -427,26 +442,6 @@ function Events() {
         }
      });
     });
-    $(".tt").click(function(){
-        $('path').css('fill','#dddddd');
-        var ttid =  $(this).attr('ci');
-        
-        if (!$("#p"+ttid).hasClass('act')) {
-            $('path').removeClass('act');
-            show_to_cat_button();
-            add_city_id(ttid);
-            document.getElementById("p"+$(this).attr('ci')).style.fill = '#223b59';
-            $("#p"+ttid).addClass('act');
-            GVar.cid=ttid;
-        } else {
-            hide_to_cat_button();
-            remove_city_id();
-            document.getElementById("p"+$(this).attr('ci')).style.fill = '#dddddd';
-            $("#p"+ttid).removeClass('act');
-            GVar.cid=0;
-        }
-    });
-
     $('#vw1').click(function(){
         GVar.curpg=1;
         $('.tab-link').removeClass('active');
@@ -492,28 +487,6 @@ function Events() {
         }
     });
 
-
-    $('path').click(function(){
-        var tcid = $(this).attr('c-id');
-        //city intent id
-        
-        $('.tt').css('fill','#000000');
-        if ($(this).hasClass('act')) {
-            hide_to_cat_button();
-            remove_city_id();
-            $(this).css('fill','#dddddd');
-            $(this).removeClass('act');
-            GVar.cid=0;
-        } else {
-            GVar.cid=tcid;
-            $('path').removeClass('act');
-            show_to_cat_button();
-            add_city_id(tcid);
-            $('path').css('fill','#dddddd');
-            $(this).css('fill','#223b59');
-            $(this).addClass('act');      
-        }
-    });
     $('#tc').click(function(){
         GVar.curpg=2;
         $('.tab-link').removeClass('active');
@@ -534,18 +507,6 @@ function Events() {
     $('#btcat').click(function(){
         hide_ads_page();
     });
-
-
-    // $("path").mouseenter(function() {
-    //   var tcid = $(this).attr('c-id');
-    //   $('text[c-id*='+tcid+']').css('fill','rgb(255, 255, 255)');
-    // });
-    // $("path").mouseout(function() {
-    //   var tcid = $(this).attr('c-id');
-    //   $('text[c-id*='+tcid+']').css('fill','#000000');
-    // });
-    //city map functions
-    
 
     $("#cats").change(function(){
         var t_v = $("#cats option:selected").val();
@@ -1011,7 +972,6 @@ function vwad2(data_id) {
                     $('#wishlist-ad-content').removeClass('hide');
                     $('#wishlist-ad-content').html(ad);
                     $('.vwad-loading').addClass('hide');
-
                 break;
 
                 case 400:
@@ -1059,42 +1019,18 @@ function vwad(data_id) {
             if (status==200) {
                 //init
                 document.getElementById('postview-data').innerHTML = '';
+
+                // var fbcomhtmllgn ='<iframe src="https://www.betterlifeinkorea.com/auth/facebook" style="position:relative; top:0px;'+
+                //                 'left:0px; bottom:0px; right:0px; width:100%; height:100%; border:none; margin:0; padding:0;'+
+                //                 'overflow:hidden; z-index:999999;"></iframe>';
+
+                var fbcomhtml ='<iframe src="https://www.betterlifeinkorea.com/api/fbcomment/'+data_id+'/'+GVar.utoken+'" style="position:relative; top:0px;'+
+                                'left:0px; bottom:0px; right:0px; width:100%; height:100%; border:none; margin:0; padding:0;'+
+                                'overflow:hidden; z-index:999999;"></iframe>';
+                $('.fbc').html(fbcomhtml);
                 
                 //SHARING BUTTONS
                 var slink = GVar.baseurl+'/posts/'+data_id;
-                $('#ktalkbtn').click(function(event){
-                    window.plugins.socialsharing.shareVia(
-                        'kakao', 
-                        ad_array['title_txt'], 
-                        null, 
-                        null, 
-                        slink, 
-                    function(){
-                        console.log('share ok')
-                    }, function(msg) {
-                        alert('error: ' + msg)
-                    });
-                });    
-
-                $('#fbsbtn').click(function(event){
-                    var options = {
-                        method: "share",
-                        href: slink,
-                        caption: ad_array['title_txt'],
-                        description: ad_array['des_txt'],
-                        picture: ad_array['simage'],
-                        share_feedWeb: true
-                    };
-                    var onSuccess = function (userData) {
-                    }
-                    var onfailure = function (userData) {
-                    }
-                    facebookConnectPlugin.showDialog(
-                        options, 
-                        onSuccess, 
-                        onfailure);
-
-                }); 
 
                 $('#gshare').click(function(event){
                     var options = {
@@ -1117,13 +1053,10 @@ function vwad(data_id) {
 
                 var new_html = "<div class='form-group break_all' id='pt'></div>"+
                 "<div class='form-group break_all' id='pd'></div>"+
-                "<div class='my-container' id='pi' style='opacity:0'></div>"+
-                "<div class='' id='pv' style='opacity:0'></div>";
+                "<div class='my-container' id='pi' style='opacity:0'></div>";
                 document.getElementById('postview-data').innerHTML = new_html;
                 document.getElementById('pt').innerHTML = ad_array['title'];
                 document.getElementById('pd').innerHTML = ad_array['des'];
-                // document.getElementById('pi').innerHTML = ad_array['images'];
-                document.getElementById('pv').innerHTML = ad_array['videos'];
                 document.getElementById('dtw').innerHTML = ad_array['drivebtn'];
 
                 var linksContainer = $('#pi');
@@ -1168,8 +1101,7 @@ function vwad(data_id) {
                     blueimp.Gallery(links, options);
                 });     
 
-
-                //LOAD MAP
+                
                 if (ad_array['lat']!='' && ad_array['lng']!='') {
                     ViewAdUpdate(parseFloat(ad_array['lat']),parseFloat(ad_array['lng']));
                     $(document).find('#waze-info').tooltip();
@@ -1204,8 +1136,6 @@ function vwad(data_id) {
                     }
                 });
                 //RENDER REVIEWS
-
-
                 setTimeout(function(){ 
                     $('#pi').css('opacity','1');
                     $('#pv').css('opacity','1');
@@ -1438,18 +1368,17 @@ function clear_qp_modal() {
     
     $('#des-wrap').addClass('hide');
     $('#des-wrap').css('visibility','hidden').css('opacity','0');
-    
-    $('.zones').addClass('hide');
-    $('.zones').css('visibility','hidden').css('opacity','0');
 
     $('.pk-form').val('');
     $(".qp-selects").val("0");
     $("#city-select-bar").val("0");
-    $("#city-select-bar").val("0");
-
-    // Dropzone.forElement("#post_upload_zone_image").removeAllFiles(true);
-    // Dropzone.forElement("#post_upload_zone_video").removeAllFiles(true);
+    $('#images').html('');
     $('#file-div').html('');
+
+    $("#addPicture").removeAttr('disabled');
+
+    GVar.imgcounter = 0;
+    GVar.totalimgcounter = 0;
 }
 function create_loading_input() {
     var loading_html =  '<div class="cssload-loader">'+
@@ -1568,15 +1497,14 @@ function PostAdInit() {
 
     // Sets a listener on a radio button to change the filter type on Places
     // Autocomplete.
-    function setupClickListener(id, types) {
-      var radioButton = document.getElementById(id);
-      radioButton.addEventListener('click', function() {
-        autocomplete.setTypes(types);
-      });
-    }
-
-    setupClickListener('changetype-all', []);
-    setupClickListener('changetype-establishment', ['establishment']);
+    // function setupClickListener(id, types) {
+    //   var radioButton = document.getElementById(id);
+    //   radioButton.addEventListener('click', function() {
+    //     autocomplete.setTypes(types);
+    //   });
+    // }
+    // setupClickListener('changetype-all', []);
+    // setupClickListener('changetype-establishment', ['establishment']);
 }
 function qkpmUpdate(lat,lng) {
     document.getElementById('qkp-lat').value = lat;
@@ -1680,9 +1608,9 @@ function ViewAdInit(lat,lng) {
     });
     // GOOGLE MAP RESPONSIVENESS
     google.maps.event.addDomListener(window, "resize", function() {
-     var center = PostViewMap.getCenter();
-     google.maps.event.trigger(PostViewMap, "resize");
-     PostViewMap.setCenter(center); 
+        var center = PostViewMap.getCenter();
+        google.maps.event.trigger(PostViewMap, "resize");
+        PostViewMap.setCenter(center); 
     });
     //MARKER
     var infowindow = new google.maps.InfoWindow();

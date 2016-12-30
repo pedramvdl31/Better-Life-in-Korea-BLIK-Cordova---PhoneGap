@@ -68,201 +68,17 @@
 
 
     </head>
-<body> 
-
-    <style type="text/css">
-        .controls {
-            margin-top: 10px;
-            border: 1px solid transparent;
-            border-radius: 2px 0 0 2px;
-            box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            height: 32px;
-            outline: none;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-          }
-          #pac-input {
-            background-color: #fff;
-            font-family: Roboto;
-            font-size: 15px;
-            font-weight: 300;
-            margin-left: 12px;
-            padding: 0 11px 0 13px;
-            text-overflow: ellipsis;
-            width: 300px;
-          }
-          #pac-input:focus {
-            border-color: #4d90fe;
-          }
-          .pac-container {
-            z-index: 9999;
-            font-family: Roboto;
-          }
-          #type-selector {
-            color: #fff;
-            background-color: #4d90fe;
-            padding: 5px 11px 0px 11px;
-          }
-          #type-selector label {
-            font-family: Roboto;
-            font-size: 13px;
-            font-weight: 300;
-          }
-          #a{
-            position: absolute;
-            width: 100%;
-            -webkit-transition: all 1s ease;
-            -moz-transition: all 1s ease;
-            -o-transition: all 1s ease;
-            -ms-transition: all 1s ease;
-            transition: all 1s ease;
-          }
-          #b{
-            position: absolute;
-            width: 100%;
-            left: 100%;
-            -webkit-transition: all 1s ease;
-            -moz-transition: all 1s ease;
-            -o-transition: all 1s ease;
-            -ms-transition: all 1s ease;
-            transition: all 1s ease;
-          }
-          #c{
-            position: absolute;
-            width: 100%;
-            left: 100%;
-            -webkit-transition: all 1s ease;
-            -moz-transition: all 1s ease;
-            -o-transition: all 1s ease;
-            -ms-transition: all 1s ease;
-            transition: all 1s ease;
-          }
-          #mylocation1{
-            right: 0 !important;
-            left:auto !important;
-          }       
-        @media only screen and (max-width : 850px) {
-            #type-selector{
-                left: 136px !important;
-                top: 32px !important;
-                width: 300px !important;
-                border-radius: 0 !important;
-            }
-
-        }
-        @media only screen and (max-width : 620px) {
-            #pac-input{
-                left:0 !important;
-                width: calc(100% - 24px) !important;
-            }
-            #type-selector{
-                left: 12px !important;
-                width: calc(100% - 24px) !important;
-            }
-            .gmnoprint.gm-style-mtc{
-                display: none;
-            }
-        }
-
-    </style>
-
-
-    <style type="text/css">
-        #overlay-blur{
-            position: absolute;
-            left: 0;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            background-color: black;
-            opacity: 0.5;
-            z-index: 9999999999;
-
-            filter: blur(10px);
-            -webkit-filter: blur(10px);
-            -moz-filter: blur(10px);
-            -o-filter: blur(10px);
-            -ms-filter: blur(10px);
-/*            filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='svgMask'><feGaussianBlur stdDeviation='10' /></filter></svg>#svgMask");*/
-        }
-        #overlay-blur-wt{
-            position: absolute;
-            left: 0;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            background-color: white;
-            opacity: 0.5;
-            z-index: 9999999999;
-
-            filter: blur(10px);
-            -webkit-filter: blur(10px);
-            -moz-filter: blur(10px);
-            -o-filter: blur(10px);
-            -ms-filter: blur(10px);
-/*            filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='svgMask'><feGaussianBlur stdDeviation='10' /></filter></svg>#svgMask");*/
-        }
-        #oltext{
-            width: 100%;
-            left: 0;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            position: absolute;
-            top: 200px;
-            color: white;
-            opacity: 1;
-            z-index: 99999999991;
-        }
-
-        #lw2{
-            position: absolute;
-            width: 100%;
-            left: 0;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            text-align: center;
-        }
-        #ltext{
-            /*padding-top: 20px;*/
-            width: 50%;
-            position: relative;
-            top: 200px;
-            color: black;
-            margin: 0 auto;
-            background: white;
-            opacity: 1;
-            z-index: 99999999991;
-            border-radius: 1px;
-            box-shadow:0px 2px 2px #949494;
-        }
-        #ltext #inner{
-            padding: 10px;
-        }
-        #ltext #inner #txt{
-            font-size: 16px;
-        }
-        #ltext #inner #gf{
-            
-        }
-
-        #qkpcl{
-        position: absolute;
-        top: 0;
-        right: 0;
-        height: 30px;
-        width: 35px;
-        border-radius: 0;
-        }
-
-        #clbtn {
-        color: #fff;
-        background-color: #4d90fe;
-        padding: 5px 11px 0px 11px;
-        }
-
-    </style>
+    <body> 
+        <!-- Left Panel with Reveal effect -->
+        <div class="panel panel-left panel-cover">
+            <div class="content-block">
+              <p>Left Panel content here</p>
+              <!-- Click on link with "close-panel" class will close panel -->
+              <p><a href="#" class="close-panel">Close me</a></p>
+              <!-- Click on link with "open-panel" and data-panel="right" attribute will open Right panel -->
+              <p><a href="#" data-panel="right" class="open-panel">Open Right Panel</a></p>
+            </div>
+        </div>
     <div id="ovwrapper" class="hide">
         <div id="overlay-blur"></div>
         <div id="oltext">
@@ -328,30 +144,7 @@
                     <!-- Scrollable page content-->
                     <div class="page-content" style="">
                         <style type="text/css">
-                            .button-r {
-                                height: 50px;
-                                width: 50px;
-                                border-radius: 50px;
-                                border:none !important;
-                                background-image: -webkit-linear-gradient(top,#5bc0de 0,#2aabd2 100%);
-                                background-image: -o-linear-gradient(top,#5bc0de 0,#2aabd2 100%);
-                                background-image: -webkit-gradient(linear,left top,left bottom,from(#5bc0de),to(#2aabd2));
-                                background-image: linear-gradient(to bottom,#5bc0de 0,#2aabd2 100%);
-                                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff5bc0de', endColorstr='#ff2aabd2', GradientType=0);
-                                filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-                                background-repeat: repeat-x;
-                                text-shadow: 0 -1px 0 rgba(0,0,0,.2);
-                                -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 1px rgba(0,0,0,.075);
-                                box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 1px rgba(0,0,0,.075);
-                                color: #fff;
-                                background-color: #5bc0de;
-                            }
-                            #qbtn-wrap{
-                                position: fixed;
-                                right: 9px;
-                                bottom: 60px;
-                                z-index: 9999;
-                            }                        
+                    
                         </style>
                         <div id="qbtn-wrap">
                             <button class="button-r qkpost">
@@ -359,45 +152,12 @@
                                 line-height: 50px;">+</span>
                             </button>
                         </div>
-                    
-
-                        <!-- map -->
-                        <style type="text/css">
-                            path:hover{
-                                fill:#223b59 !important;
-                            }
-                            .tt:hover{
-                                fill:rgb(255, 255, 255);
-                            }
-                            path,.tt { transition: fill .4s ease; }
-                            .tt{
-                                cursor: pointer;
-                            }
-
-                            #cit_svg{
-                                left: -0.5px;
-                                width: 100% !important;         
-                            }
-                            /* Extra Small Devices, Phones */ 
-                            @media only screen and (max-width : 480px) {
-                                #cit_svg{
-                                    left: -59.5px;
-                                    width: 133% !important;         
-                                }
-                            }
-
-                            /* Custom, iPhone Retina */ 
-                            @media only screen and (max-width : 320px) {
-                                #cit_svg{
-                                    left: -59.5px;
-                                    width: 133% !important;         
-                                }
-                            }
-
-                        </style>
                         <div style="margin: 10px 0;">
                             <center>
                                 <h2 class="pages-title oswald-regular" class="title text-center">Search Location</h2>
+<p><a href="#" class="open-panel">Open Left Panel</a></p>
+
+<a href="#" data-panel="left" class="link open-panel icon-only"><i class="icon icon-bars"></i></a>
 
                             </center>
                         </div>
@@ -414,15 +174,6 @@
                             
                         </div>
                         <center>
-                            <style type="text/css">
-                                .strad{
-                                    border-radius: 0;
-                                    border-top:0;
-                                }
-                                #tc{
-                                    margin-top: 4px;
-                                }
-                            </style>
                             <div class="input-group">
                               <input id="lndrad" type="text" class="strad form-control" placeholder="Set Search Radius (default 25km)" aria-describedby="basic-addon2">
                               <span class="strad input-group-addon" id="basic-addon2">km</span>
@@ -501,17 +252,7 @@
 </div>
 </div>
 </div>
-        
-    <style type="text/css">
-        .button-r{
-            box-shadow: 0 2px 8px #888888;
-        }
-        #p3c{
-            float: left;
-            position: relative;
-            margin-bottom: 50px;
-        }
-    </style>
+
     <!-- ADS VIEW -->
     <div id="view-3" class="view tab ps" pid="3">
         <div class="pages">
@@ -536,13 +277,7 @@
 
     <!-- PROFILE VIEW -->
     <style type="text/css">
-            #dif{
-                width: 100%;
-                padding: 0;
-                margin: 0;
-                border: none;
-                height: 100%;
-            }
+
     </style>
     <div id="view-4" class="view tab ps" pid="4">
         <div class="pages navbar-fixed">
@@ -555,10 +290,7 @@
     </div>
 <!-- Bottom Tabbar-->
 <style type="text/css">
-    .picon{
-        font-size: 25px;
-        padding-top: 3px;
-    }
+
 </style>
 <div class="toolbar tabbar tabbar-labels">
     <div class="toolbar-inner"><a pageid='1' id="vw1" href="#view-1" class="tab-link active"><i class="fa fa-map-o picon"></i><span class="tabbar-label">Cities</span></a>
@@ -616,81 +348,6 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->  
-
-
-    <style type="text/css">
-        /* Small Devices, Tablets */
-        @media only screen and (max-width : 768px) {
-            .qkpost_dialog{
-                width: 100% !important;
-                padding: 10px !important;
-                margin: 0 !important;
-            }
-        }
-
-        /* Extra Small Devices, Phones */ 
-        @media only screen and (max-width : 480px) {
-            .qkpost_dialog{
-                width: 100% !important;
-                padding: 2px !important;
-                margin: 0 !important;
-            }
-            .modal{
-                padding-right: 0 !important;
-            }
-        }
-
-        /* Custom, iPhone Retina */ 
-        @media only screen and (max-width : 320px) {
-          .qkpost_dialog{
-                width: 100% !important;
-                padding: 2px !important;
-                margin: 0 !important;
-            }  
-          .modal{
-                padding-right: 0 !important;
-            }
-        }
-        .col-no-padding{
-            padding-left: 0;
-            padding-right: 0;
-        }
-
-       .flex-video {
-        position: relative;
-        padding-top: 25px;
-        padding-bottom: 67.5%;
-        height: 0;
-        margin-bottom: 16px;
-        overflow: hidden;
-         }
-        .my-item{
-          cursor: zoom-in;
-        }
-
-      .flex-video.widescreen { padding-bottom: 57.25%; }
-      .flex-video.vimeo { padding-top: 0; }
-
-      .flex-video video,
-      .flex-video object,
-      .flex-video embed {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-      }
-
-      @media only screen and (max-device-width: 800px),  
-      only screen and (device-width:1024px) and (device-height: 600px), only screen 
-
-      and (width: 1280px) and (orientation: landscape), only screen 
-
-      and (device-width: 800px), only screen and (max-width: 767px) {
-
-      .flex-video { padding-top: 0; }
-    }
-    </style>
     <div class="modal fade" id="postview-modal" style="padding-left:0 !important">
           <div class="modal-dialog qkpost_dialog" style="width: 50%;margin-top: 10px;">
             <div class="modal-content">
@@ -715,74 +372,24 @@
                 <!-- Reviews -->
                 <div id="rv"></div>
                 <!-- Reviews -->
-                <div class="fbc"></div>
+                <div class="fbc" style="width: 100%; height: 400px;"></div>
               </div>
                 <div class="modal-footer clearfix">
                     <form>
                         <a class="btn" id="gshare">
                           <img width="57px" src="img/gshare.png" />
                         </a>
-                        <a class="btn" id="ktalkbtn">
+<!--                         <a class="btn" id="ktalkbtn">
                           <img width="60px" src="img/ktalk.jpg" />
                         </a>
                         <a class="btn" id="fbsbtn">
                           <img width="57px" src="img/fbshare.png" />
-                        </a>
+                        </a> -->
                     </form>
                 </div>
             </div><!-- /.modal-content -->
           </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-    <style type="text/css">
-        /* Small Devices, Tablets */
-        @media only screen and (max-width : 768px) {
-            .qkpost_dialog{
-                width: 100% !important;
-                padding: 10px !important;
-                margin: 0 !important;
-            }
-        }
-
-        /* Extra Small Devices, Phones */ 
-        @media only screen and (max-width : 480px) {
-            .qkpost_dialog{
-                width: 100% !important;
-                padding: 2px !important;
-                margin: 0 !important;
-            }
-            .modal{
-                padding-right: 0 !important;
-            }
-        }
-
-        /* Custom, iPhone Retina */ 
-        @media only screen and (max-width : 320px) {
-            .qkpost_dialog{
-                width: 100% !important;
-                padding: 2px !important;
-                margin: 0 !important;
-            }  
-            .modal{
-                padding-right: 0 !important;
-            }
-        }
-
-
-        .anim {
-            transition: all 0.5s ease !important;
-        }
-        ._required{
-            font-weight: 300;
-            font-size: 12px;        
-        }
-        #qkpost-map-container{
-            margin-top: 15px;
-        }
-        .col-no-padding{
-            padding-left: 0;
-            padding-right: 0;
-        }
-    </style>
     <div class="modal fade" id="qkpost-modal">
         <form id="pkpost-form" style="height:100%">
           <div class="modal-dialog qkpost_dialog" style="width: 94%;margin-top: 10px;height: 563px">
@@ -861,11 +468,7 @@
 
                     <div class="form-group hide anim 2t-wrap" style="width: 100%;visibility: hidden;
                         opacity: 0;">
-                        <style type="text/css">
-                            .eac-description{
-                                width: 100% !important;
-                            }
-                        </style>
+
                         <select name="city" class="form-control" id="city-select-bar" status=false>
                             <option value="0">Select City</option>
                             <option value="1">Gangwon-Do</option>
@@ -900,7 +503,6 @@
                             <div style="height:300px" id="map"></div>
                         </div>
                     </div>
-
                     <div class="form-group hide anim 2t-wrap" id="title-wrap" style="visibility: hidden;
                         opacity: 0;">
                         <label>Title: <span class="_required">*required</span></label>
@@ -914,41 +516,14 @@
                     </div>
                     <div id="file-div"></div>
                 </form>
-                    <style type="text/css">
-                        .btn-file {
-                            position: relative;
-                            overflow: hidden;
-                        }
-                        .btn-file input[type=file] {
-                            position: absolute;
-                            top: 0;
-                            right: 0;
-                            min-width: 100%;
-                            min-height: 100%;
-                            font-size: 100px;
-                            text-align: right;
-                            filter: alpha(opacity=0);
-                            opacity: 0;
-                            outline: none;
-                            background: white;
-                            cursor: inherit;
-                            display: block;
-                        }
-                    </style>
                     <div class="hide anim 2t-wrap" style="float: left;width: 100%">
-                        <span id="addPicture" class="btn btn-primary btn-file" style="width:100% !important">
+                        <a href="#" id="addPicture" class="btn btn-primary btn-file" style="width:100% !important">
                             Browse Images
-                        </span>
+                        </a>
                         <div style="float: left;width: 100%;padding: 10px" id="images">
-                            
                         </div>
                     </div>
-
-
-
                 </div>
-
-
               </div>
               <div class="modal-footer clearfix">
                    <a id="qk-post-btn" class="btn btn-warning pull-right" disabled="disabled">Post</a>
@@ -961,8 +536,6 @@
           </div><!-- /.modal-dialog -->
         
     </div><!-- /.modal -->
-
-
     <!-- The Gallery as lightbox dialog, should be a child element of the document body -->
     <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls">
         <div class="slides"></div>
@@ -973,8 +546,6 @@
         <a class="play-pause"></a>
         <ol class="indicator"></ol>
     </div>
-
-
     <div class="modal fade" id="logout-modal">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -987,14 +558,8 @@
           </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
-
-
     <div class="modal fade" id="register-modal">
-        <style type="text/css">
-            .error-feedback{
-                color: #d9534f;
-            }
-        </style>
+
         <form id="reg-form" style="height:100%">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -1028,40 +593,6 @@
             </div><!-- /.modal-dialog -->
         </form>
     </div><!-- /.modal -->
-
-
-    <style type="text/css">
-        /* Small Devices, Tablets */
-        @media only screen and (max-width : 768px) {
-            .smodal{
-                width: 30% !important;
-                margin: 30px auto;
-            }
-        }
-
-        /* Extra Small Devices, Phones */ 
-        @media only screen and (max-width : 480px) {
-            .smodal{
-                width: 50% !important;
-                margin: 30px auto;    
-            }
-            .modal{
-                padding-right: 0 !important;
-            }
-        }
-
-        /* Custom, iPhone Retina */ 
-        @media only screen and (max-width : 320px) {
-            .smodal{
-                width: 60% !important;
-                margin: 30px auto;
-            }  
-            .modal{
-                padding-right: 0 !important;
-            }
-        }
-    </style>
-
     <div class="modal fade" id="success-modal">
           <div class="modal-dialog smodal" style="width: 15%;">
             <div class="modal-content" style="background: rgb(255, 255, 255);border: 1px solid rgb(92, 184, 92);">
@@ -1075,15 +606,8 @@
             </div><!-- /.modal-content -->
           </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-
-            
 </div>
-
-
 </div>
-
-
-
 <script src="plugins/jQueryUI/jquery-ui.js"></script>
 <script src="package/bootstrap/js/bootstrap.min.js"></script>
 <script src="js/jquery.prettyPhoto.js"></script>
@@ -1091,17 +615,11 @@
 <script src="plugins/easy_autocomplete/jquery.easy-autocomplete.js"></script>
 <script src="plugins/krajee-star/star-rating.min.js"></script>
 <script src="plugins/gallery-master/js/blueimp-gallery.js"></script>
-
-
-
 <script type="text/javascript" src="js/index.js"></script>
 <!-- Path to Framework7 Library JS-->
 <script type="text/javascript" src="Framework7-1.4.2/dist/js/framework7.min.js"></script>
 <!-- Path to your app js-->
-<!-- Path to your app js-->
 <script type="text/javascript" src="js/my-app.js"></script>
-
-
 
 </body>
 </html>
