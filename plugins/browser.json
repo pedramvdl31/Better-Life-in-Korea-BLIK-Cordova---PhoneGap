@@ -9,6 +9,9 @@
     "installed_plugins": {
         "cordova-plugin-image-picker": {
             "PACKAGE_NAME": "com.phonegap.blikrel"
+        },
+        "cordova-plugin-request-location-accuracy": {
+            "PACKAGE_NAME": "com.phonegap.blikrel"
         }
     },
     "dependent_plugins": {}

@@ -12,7 +12,8 @@ module.exports = [
 module.exports.metadata = 
 // TOP OF METADATA
 {
-    "cordova-plugin-image-picker": "1.1.1"
+    "cordova-plugin-image-picker": "1.1.1",
+    "cordova-plugin-request-location-accuracy": "2.2.0"
 }
 // BOTTOM OF METADATA
 });

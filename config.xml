@@ -3,7 +3,7 @@
   xmlns="http://www.w3.org/ns/widgets" 
   xmlns:gap="http://phonegap.com/ns/1.0" 
   id="com.phonegap.blikrel" 
-  version="1.0.9">
+  version="1.1.0">
 
   <name>blik</name>
   <description>Better Life in Korea</description>
@@ -76,6 +76,11 @@
   <plugin name="cordova-plugin-appavailability"/>
   <plugin spec="https://github.com/xmartlabs/cordova-plugin-market" source="git" />
   
+  <gap:plugin name="cordova-plugin-urlhandler" source="npm" spec="~0.7.2">
+    <param name="URL_SCHEME" value="blikapp" />
+  </gap:plugin>
+
+  <plugin name="cordova-plugin-request-location-accuracy" source="npm" spec="~2.2.0"/>
 
   <icon src="icon.png" />
   <splash src="screen.png"/>
