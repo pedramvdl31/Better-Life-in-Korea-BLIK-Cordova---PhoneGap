@@ -100,39 +100,48 @@ var app = {
                 alert('Please connect to the Internet to continue ');
                 $('#ovwrapper').removeClass('hide');
             }
-            setInterval(function(){ 
-                var num = GVar.l;
-                var numll = GVar.ll;
-                if (num == 0) {
-                    if (numll==0) {
-                        $('#lw4').removeClass('hide');
-                    }
-                    CheckGPS.check(function win(){
-                        var onSuccess = function(position) {
-                            $('#lw4').addClass('hide');
-                            var nll = GVar.ll;
-                            if (nll == 0) {
-                                GVar.ll=1;
-                                LandingUpdate(position.coords.latitude,position.coords.longitude);
+
+
+
+            setTimeout(function(){ 
+                setInterval(function(){ 
+                    var num = GVar.l;
+                    var numll = GVar.ll;
+                    if (num == 0) {
+                        if (numll==0) {
+                            $('#lw4').removeClass('hide');
+                        }
+                        CheckGPS.check(function win(){
+                            var onSuccess = function(position) {
+                                $('#lw4').addClass('hide');
+                                var nll = GVar.ll;
+                                if (nll == 0) {
+                                    GVar.ll=1;
+                                    LandingUpdate(position.coords.latitude,position.coords.longitude);
+                                }
+                                GVar.l = 0;
+                            };
+                            function onError(error) {
+                                GVar.ll=0;
+                                GVar.l = 9;
+                                $('#lw4').removeClass('hide');
+                                autogpson();
+                                // calldialog();
                             }
-                            GVar.l = 0;
-                        };
-                        function onError(error) {
+                            navigator.geolocation.getCurrentPosition(onSuccess, onError);
+                          },
+                          function fail(){
                             GVar.ll=0;
                             GVar.l = 9;
                             $('#lw4').removeClass('hide');
-                            calldialog();
-                        }
-                        navigator.geolocation.getCurrentPosition(onSuccess, onError);
-                      },
-                      function fail(){
-                        GVar.ll=0;
-                        GVar.l = 9;
-                        $('#lw4').removeClass('hide');
-                        calldialog();
-                      });                
-                }
-            }, 2000);
+                            autogpson();
+                            // calldialog();
+                          });                
+                    }
+                }, 2000);
+            }, 1000);
+
+
         } else {
           //BROWSER
         }
@@ -2339,4 +2348,25 @@ function GetGPSLocationNoZoom(){
         $('#lw3').addClass('hide');
         calldialog();
       });
+}
+function autogpson(){
+    cordova.plugins.locationAccuracy.canRequest(function(canRequest){
+        if(canRequest){
+            cordova.plugins.locationAccuracy.request(function(){
+                GVar.l = 0;
+            }, function (error){
+                if(error){
+                    // // Android only
+                    // console.error("error code="+error.code+"; error message="+error.message);
+                    // if(error.code !== cordova.plugins.locationAccuracy.ERROR_USER_DISAGREED){
+
+                    // }
+                    if(error.code == cordova.plugins.locationAccuracy.ERROR_USER_DISAGREED){
+                        GVar.l = 0;
+                    }
+                }
+            }, cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY // iOS will ignore this
+            );
+        }
+    });    
 }

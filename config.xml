@@ -3,7 +3,7 @@
   xmlns="http://www.w3.org/ns/widgets" 
   xmlns:gap="http://phonegap.com/ns/1.0" 
   id="com.phonegap.blikrel" 
-  version="1.1.0">
+  version="1.1.3">
 
   <name>blik</name>
   <description>Better Life in Korea</description>
@@ -52,6 +52,8 @@
 
   
   <plugin name="cordova-plugin-camera" source="npm" spec="~2.1.1"/>
+
+  <!-- PHOTOLIBRARY_USAGE_DESCRIPTION -->
   <plugin name="cordova-plugin-console" source="npm" spec="~1.0.2"/>
   <plugin name="cordova-plugin-device" source="npm" spec="~1.1.1"/>
   <plugin name="cordova-plugin-device-orientation" source="npm" spec="~1.0.2"/>
@@ -81,6 +83,13 @@
   </gap:plugin>
 
   <plugin name="cordova-plugin-request-location-accuracy" source="npm" spec="~2.2.0"/>
+
+  <gap:config-file platform="ios" parent="NSCameraUsageDescription" overwrite="true">
+   <string>App would like to access the camera.</string>
+  </gap:config-file>
+  <gap:config-file platform="ios" parent="NSPhotoLibraryUsageDescription" overwrite="true">
+   <string>App would like to access the library.</string>
+  </gap:config-file>
 
   <icon src="icon.png" />
   <splash src="screen.png"/>

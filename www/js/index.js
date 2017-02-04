@@ -100,39 +100,48 @@ var app = {
                 alert('Please connect to the Internet to continue ');
                 $('#ovwrapper').removeClass('hide');
             }
-            setInterval(function(){ 
-                var num = GVar.l;
-                var numll = GVar.ll;
-                if (num == 0) {
-                    if (numll==0) {
-                        $('#lw4').removeClass('hide');
-                    }
-                    CheckGPS.check(function win(){
-                        var onSuccess = function(position) {
-                            $('#lw4').addClass('hide');
-                            var nll = GVar.ll;
-                            if (nll == 0) {
-                                GVar.ll=1;
-                                LandingUpdate(position.coords.latitude,position.coords.longitude);
+
+
+
+            setTimeout(function(){ 
+                setInterval(function(){ 
+                    var num = GVar.l;
+                    var numll = GVar.ll;
+                    if (num == 0) {
+                        if (numll==0) {
+                            $('#lw4').removeClass('hide');
+                        }
+                        CheckGPS.check(function win(){
+                            var onSuccess = function(position) {
+                                $('#lw4').addClass('hide');
+                                var nll = GVar.ll;
+                                if (nll == 0) {
+                                    GVar.ll=1;
+                                    LandingUpdate(position.coords.latitude,position.coords.longitude);
+                                }
+                                GVar.l = 0;
+                            };
+                            function onError(error) {
+                                GVar.ll=0;
+                                GVar.l = 9;
+                                $('#lw4').removeClass('hide');
+                                autogpson();
+                                // calldialog();
                             }
-                            GVar.l = 0;
-                        };
-                        function onError(error) {
+                            navigator.geolocation.getCurrentPosition(onSuccess, onError);
+                          },
+                          function fail(){
                             GVar.ll=0;
                             GVar.l = 9;
                             $('#lw4').removeClass('hide');
-                            calldialog();
-                        }
-                        navigator.geolocation.getCurrentPosition(onSuccess, onError);
-                      },
-                      function fail(){
-                        GVar.ll=0;
-                        GVar.l = 9;
-                        $('#lw4').removeClass('hide');
-                        calldialog();
-                      });                
-                }
-            }, 2000);
+                            autogpson();
+                            // calldialog();
+                          });                
+                    }
+                }, 2000);
+            }, 1000);
+
+
         } else {
           //BROWSER
         }
@@ -1289,71 +1298,54 @@ function ResetLandingAndReasin(){
     });
 
 
-    // google.maps.event.addListener(LandingMap, 'click', function(event) {
-    //    placeMarker(event.latLng);
-    // });
+    google.maps.event.addListener(LandingMap, 'click', function(event) {
+       placeMarker(event.latLng);
+    });
 
-    // function placeMarker(location) {
-    //     LandingClearMarker();
-    //     var marker = new google.maps.Marker({
-    //         position: location, 
-    //         map: LandingMap
-    //     });
-    //     GVar.lndinglat = marker.getPosition().lat();
-    //     GVar.lndinglng = marker.getPosition().lng();
-    //     GVar.lmarkers.push(marker);
+    function placeMarker(location) {
+        LandingClearMarker();
+        var marker = new google.maps.Marker({
+            position: location, 
+            map: LandingMap
+        });
+        GVar.lndinglat = marker.getPosition().lat();
+        GVar.lndinglng = marker.getPosition().lng();
+        GVar.lmarkers.push(marker);
 
-    //     // Add the circle for this city to the map.
-    //     var cityCircle = new google.maps.Circle({
-    //         strokeColor: '#badbff',
-    //         strokeOpacity: 0.8,
-    //         strokeWeight: 2,
-    //         fillColor: '#a0ccfb',
-    //         fillOpacity: 0.35,
-    //         map: LandingMap,
-    //         center: location,
-    //         radius: GVar.drad*1000
-    //     });
-    //     GVar.lcircle.push(cityCircle);
-    //     var zoomnum = 9;
-    //     if (GVar.drad==25) {
-    //         zoomnum=9;
-    //     } else if(GVar.drad<20 && GVar.drad >= 10){
-    //         zoomnum=10;
-    //     } else if(GVar.drad<10 && GVar.drad >= 5){
-    //         zoomnum=12;
-    //     } else if(GVar.drad<5 && GVar.drad > 0){
-    //         zoomnum=14;
-    //     } else if(GVar.drad>25 && GVar.drad <= 50){
-    //         zoomnum=8;
-    //     } else if(GVar.drad>50 && GVar.drad <= 200){
-    //         zoomnum=7;
-    //     } else if(GVar.drad>200 && GVar.drad <= 1000){
-    //         zoomnum=4;
-    //     }
+        // Add the circle for this city to the map.
+        var cityCircle = new google.maps.Circle({
+            strokeColor: '#badbff',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#a0ccfb',
+            fillOpacity: 0.35,
+            map: LandingMap,
+            center: location,
+            radius: GVar.drad*1000
+        });
+        GVar.lcircle.push(cityCircle);
+        // var zoomnum = 9;
+        // if (GVar.drad==25) {
+        //     zoomnum=9;
+        // } else if(GVar.drad<20 && GVar.drad >= 10){
+        //     zoomnum=10;
+        // } else if(GVar.drad<10 && GVar.drad >= 5){
+        //     zoomnum=12;
+        // } else if(GVar.drad<5 && GVar.drad > 0){
+        //     zoomnum=14;
+        // } else if(GVar.drad>25 && GVar.drad <= 50){
+        //     zoomnum=8;
+        // } else if(GVar.drad>50 && GVar.drad <= 200){
+        //     zoomnum=7;
+        // } else if(GVar.drad>200 && GVar.drad <= 1000){
+        //     zoomnum=4;
+        // }
 
-    //     LandingMap.setCenter(location);
-    //     LandingMap.setZoom(zoomnum);
-    // }
+        // LandingMap.setCenter(location);
+        // LandingMap.setZoom(zoomnum);
+    }
 
-    //
-    // var image = {
-    //   url: GVar.bball,
-    //   size: new google.maps.Size(40, 40),
-    //   origin: new google.maps.Point(0, 0),
-    //   anchor: new google.maps.Point(17, 34),
-    //   scaledSize: new google.maps.Size(40, 40)
-    // };
-    // for (var i = 0; i < GVar.lmarkers.length; i++) {
-    //     var marker = new google.maps.Marker({
-    //       map: LandingMap,
-    //       icon: image,
-    //       position: GVar.lmarkers[i].get('position'),
-    //       draggable: GVar.lmarkers[i].get('draggable'),
-    //       title: GVar.lmarkers[i].get('title')
-    //     });
-    //     GVar.lmarkers.push(marker);
-    // }
+
     adClearMarker();
     var ads = GVar.adsbuffer;
     if (!isBlank(ads)) {
@@ -1634,7 +1626,7 @@ function ResetView2(){
     GVar.imgcounter = 0;
     GVar.icont = 0;
     GVar.totalimgcounter = 0;
-    $('#v2pc').html(' <form id="pkpost-form" style="float: left;width: 100%"> <div class="list-block"> <ul> <li> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Category" class="item-link smart-select"> <select name="cat" class="form-control qp-selects" id="cats"> <option value="1" selected="">Bar & Pub</option> <option value="2">Car Dealership</option> <option value="3">Coffee Shop</option> <option value="4">Entertainment</option> <option value="5">Food</option> <option value="6">Gas Station</option> <option value="7">Hotel</option> <option value="8">Medical Center</option> <option value="9">Movie Theater</option> <option value="10">Nightlife Spot</option> <option value="11">Outdoors & Recreation</option> <option value="12">Parking</option> <option value="13">Pharmacy</option> <option value="14">Real Estate</option> <option value="15">Supermarket</option> <option value="16">Taxi</option> <option value="17">Transport</option> <option value="18">Travel Agency</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">Category</div><div class="item-after">Select</div></div></div></a> </li><li> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Cities" class="item-link smart-select"> <select name="city" class="form-control" id="city-select-bar" status=false> <option value="1" selected="">Gangwon-Do</option> <option value="2">Gyeonggi-Do</option> <option value="3">Seoul</option> <option value="4">Incheon</option> <option value="5">Daejeon</option> <option value="6">Chungcheong-Bukdo</option> <option value="7">Ullung-Do</option> <option value="8">Gyeongsang-Bukdo</option> <option value="9">Ulsan</option> <option value="10">Gyeongsang-Namdo</option> <option value="11">Busan</option> <option value="12">Daegu</option> <option value="13">Gwangju</option> <option value="14">Jeolla-Bukdo</option> <option value="15">Chungcheong-Namdo</option> <option value="16">Jeollanam-Do</option> <option value="17">Jeju-Do</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">City</div><div class="item-after">Select</div></div></div></a> </li></ul> </div><div class="form-group" style="float:left;width: 100%;"> <input type="hidden" id="qkp-lat" name="lat"/> <input type="hidden" id="qkp-lng" name="long"/> <div id="qkpost-map-container" style="width:80%;margin:0 auto"><input id="pac-input" class="controls" type="text" placeholder="Search Box"><div style="height:300px" id="postmap"></div></div></div><div class="form-group" id="title-wrap" style=""> <label>Title: <span class="_required">*required</span> </label> <input type="text" class="form-control pk-form" name="title" id="email" placeholder="Title" aria-describedby="sizing-addon2"> </div><div class="form-group" id="des-wrap" style=""> <label>Description: <span class="_required">*required</span> </label> <textarea style="resize:vertical;" class="form-control pk-form" name="description"></textarea> </div><div id="file-div"></div></form> <div class="" style="float: left;width: 100%"> <a href="#" id="addPicture" class="btn btn-primary btn-file" style="width:100% !important"> Browse Images </a> <div id="_upp" class="hide"> <p> Uploading... ( <span id="pco"></span> %) </p></div><div style="float: left;width: 100%;padding: 10px" id="images"> </div></div><div class="" style="float: left;width: 100%"> <a id="qk-post-btn" class="btn btn-warning pull-right" >Post</a> <div id="pos-gif" class="pull-right hide" style="line-height: 32px; margin-right: 10px;"> <img src="gif/loading1.gif" width="20px;"> </div></div>');
+    $('#v2pc').html(' <form id="pkpost-form" style="float: left;width: 100%"> <div class="list-block"> <ul> <li> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Category" class="item-link smart-select"> <select name="cat" class="form-control qp-selects" id="cats"> <option value="1" selected="">Bar & Pub</option> <option value="2">Car Dealership</option> <option value="3">Coffee Shop</option> <option value="4">Entertainment</option> <option value="5">Food</option> <option value="6">Gas Station</option> <option value="7">Hotel</option> <option value="8">Medical Center</option> <option value="9">Movie Theater</option> <option value="10">Nightlife Spot</option> <option value="11">Outdoors & Recreation</option> <option value="12">Parking</option> <option value="13">Pharmacy</option> <option value="14">Real Estate</option> <option value="15">Supermarket</option> <option value="16">Taxi</option> <option value="17">Transport</option> <option value="18">Travel Agency</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">Category</div><div class="item-after">Select</div></div></div></a> </li><li> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Cities" class="item-link smart-select"> <select name="city" class="form-control" id="city-select-bar" status=false> <option value="1" selected="">Gangwon-Do</option> <option value="2">Gyeonggi-Do</option> <option value="3">Seoul</option> <option value="4">Incheon</option> <option value="5">Daejeon</option> <option value="6">Chungcheong-Bukdo</option> <option value="7">Ullung-Do</option> <option value="8">Gyeongsang-Bukdo</option> <option value="9">Ulsan</option> <option value="10">Gyeongsang-Namdo</option> <option value="11">Busan</option> <option value="12">Daegu</option> <option value="13">Gwangju</option> <option value="14">Jeolla-Bukdo</option> <option value="15">Chungcheong-Namdo</option> <option value="16">Jeollanam-Do</option> <option value="17">Jeju-Do</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">City</div><div class="item-after">Select</div></div></div></a> </li></ul> </div><div class="form-group" style="float:left;width: 100%;"> <input type="hidden" id="qkp-lat" name="lat"/> <input type="hidden" id="qkp-lng" name="long"/> <div id="qkpost-map-container" style="width:80%;margin:0 auto"><input id="pac-input" class="controls" type="text" placeholder="Search Address"><div style="height:300px" id="postmap"></div></div></div><div class="form-group" id="title-wrap" style=""> <label>Title: <span class="_required">*required</span> </label> <input type="text" class="form-control pk-form" name="title" id="email" placeholder="Title" aria-describedby="sizing-addon2"> </div><div class="form-group" id="des-wrap" style=""> <label>Description: <span class="_required">*required</span> </label> <textarea style="resize:vertical;" class="form-control pk-form" name="description"></textarea> </div><div id="file-div"></div></form> <div class="" style="float: left;width: 100%"> <a href="#" id="addPicture" class="btn btn-primary btn-file" style="width:100% !important"> Browse Images </a> <div id="_upp" class="hide"> <p> Uploading... ( <span id="pco"></span> %) </p></div><div style="float: left;width: 100%;padding: 10px" id="images"> </div></div><div class="" style="float: left;width: 100%"> <a id="qk-post-btn" class="btn btn-warning pull-right" >Post</a> <div id="pos-gif" class="pull-right hide" style="line-height: 32px; margin-right: 10px;"> <img src="gif/loading1.gif" width="20px;"> </div></div>');
     setTimeout(function(){
         PostAdInit();
         $(document).find("#qk-post-btn").on('touchstart', function(e) {
@@ -2015,9 +2007,9 @@ function LandingInit(lat,lng) {
     });
 
 
-    // google.maps.event.addListener(LandingMap, 'click', function(event) {
-    //    placeMarker(event.latLng);
-    // });
+    google.maps.event.addListener(LandingMap, 'click', function(event) {
+       placeMarker(event.latLng);
+    });
 
     function placeMarker(location) {
         LandingClearMarker();
@@ -2041,25 +2033,25 @@ function LandingInit(lat,lng) {
             radius: GVar.drad*1000
         });
         GVar.lcircle.push(cityCircle);
-        var zoomnum = 9;
-        if (GVar.drad==25) {
-            zoomnum=9;
-        } else if(GVar.drad<20 && GVar.drad >= 10){
-            zoomnum=10;
-        } else if(GVar.drad<10 && GVar.drad >= 5){
-            zoomnum=12;
-        } else if(GVar.drad<5 && GVar.drad > 0){
-            zoomnum=14;
-        } else if(GVar.drad>25 && GVar.drad <= 50){
-            zoomnum=8;
-        } else if(GVar.drad>50 && GVar.drad <= 200){
-            zoomnum=7;
-        } else if(GVar.drad>200 && GVar.drad <= 1000){
-            zoomnum=4;
-        }
+        // var zoomnum = 9;
+        // if (GVar.drad==25) {
+        //     zoomnum=9;
+        // } else if(GVar.drad<20 && GVar.drad >= 10){
+        //     zoomnum=10;
+        // } else if(GVar.drad<10 && GVar.drad >= 5){
+        //     zoomnum=12;
+        // } else if(GVar.drad<5 && GVar.drad > 0){
+        //     zoomnum=14;
+        // } else if(GVar.drad>25 && GVar.drad <= 50){
+        //     zoomnum=8;
+        // } else if(GVar.drad>50 && GVar.drad <= 200){
+        //     zoomnum=7;
+        // } else if(GVar.drad>200 && GVar.drad <= 1000){
+        //     zoomnum=4;
+        // }
 
-        LandingMap.setCenter(location);
-        LandingMap.setZoom(zoomnum);
+        // LandingMap.setCenter(location);
+        // LandingMap.setZoom(zoomnum);
     }
 
     
@@ -2339,4 +2331,25 @@ function GetGPSLocationNoZoom(){
         $('#lw3').addClass('hide');
         calldialog();
       });
+}
+function autogpson(){
+    cordova.plugins.locationAccuracy.canRequest(function(canRequest){
+        if(canRequest){
+            cordova.plugins.locationAccuracy.request(function(){
+                GVar.l = 0;
+            }, function (error){
+                if(error){
+                    // // Android only
+                    // console.error("error code="+error.code+"; error message="+error.message);
+                    // if(error.code !== cordova.plugins.locationAccuracy.ERROR_USER_DISAGREED){
+
+                    // }
+                    if(error.code == cordova.plugins.locationAccuracy.ERROR_USER_DISAGREED){
+                        GVar.l = 0;
+                    }
+                }
+            }, cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY // iOS will ignore this
+            );
+        }
+    });    
 }
