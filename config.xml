@@ -19,7 +19,7 @@
       permission on your app, which PhoneGap requires.
   -->
   <!-- Customize your app and platform with the preference element. -->
-  <preference name="phonegap-version"           value="cli-6.3.0" />
+  <preference name="phonegap-version"           value="cli-6.5.0" />
   <preference name="orientation"                value="default" />        <!-- all: default means both landscape and portrait are enabled -->
   <preference name="fullscreen"                 value="false" />          <!-- all: hides the status bar at the top of the screen -->
   <preference name="target-device"              value="universal" />      <!-- ios: possible values handset, tablet, or universal -->
