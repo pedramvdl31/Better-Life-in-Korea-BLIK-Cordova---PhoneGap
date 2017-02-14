@@ -387,7 +387,7 @@ function PhotoUpload() {
                 GVar.icont = GVar.icont + results.length;
                 for (var i = 0; i < results.length; i++) {
                     var auth_token = localStorage.getItem("auth_token");
-                    if (!$.isBlank(auth_token)&&GVar.dash==0) {
+                    if (!$.isBlank(auth_token)) {
                         var fxxx = results[i];
                         var imageURI = results[i];
                         var options = new FileUploadOptions();
