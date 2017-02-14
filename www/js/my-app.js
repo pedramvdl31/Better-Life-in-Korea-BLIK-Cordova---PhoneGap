@@ -2,10 +2,6 @@
 var myApp = new Framework7({
     statusbarOverlay: false
 });
-<<<<<<< HEAD
-
-=======
->>>>>>> d0cc7ce8a9e4176c0ca47a56108c3f6a36058543
 // Export selectors engine
 var $$ = Dom7;
 
