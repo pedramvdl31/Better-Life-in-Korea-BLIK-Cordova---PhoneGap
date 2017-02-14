@@ -198,7 +198,8 @@
                     </li>
                 </ul>
             </div>
-            <p><a id="addrad" style="opacity: 1" href="#" class="button button-round active">Set</a></p>
+            <p><a id="addrad" style="opacity: 1" href="#" class="button button-round active">Set</a>
+            </p>
         </div>
     </div>
 
@@ -281,7 +282,7 @@
       <input type="hidden" id="_auth">
       <input type="hidden" id="user-status">
       <!-- Status bar overlay for fullscreen mode-->
-      <div class="statusbar-overlay"></div>
+      <!-- <div class="statusbar-overlay"></div> -->
       <!-- Panels overlay-->
       <div class="panel-overlay"></div>
       <!-- Views, and they are tabs-->
@@ -413,10 +414,6 @@
                             <div id="file-div"></div>
                         </form>
                         <div class="" style="float: left;width: 100%">
-                            <a href="#" id="addPicture" class="btn btn-primary btn-file" style="width:100% !important">
-                                   Browse Images
-                                   </a>
-                            <!-- <span style="margin:2px 0 2px 0;" class="preloader preloader-blue hide" id="qppl"></span> -->
                             <div id="_upp" class="hide">
                               <p>
                                 Uploading... (
@@ -424,16 +421,18 @@
                                   %)
                               </p>
                             </div>
-                            
                             <div style="float: left;width: 100%;padding: 10px" id="images">
                             </div>
                         </div>
-                        <div class="" style="float: left;width: 100%">
-                            <a id="qk-post-btn" class="btn btn-warning pull-right" >Post</a>
-                            <div id="pos-gif" class="pull-right hide" style="line-height: 32px;
-                                      margin-right: 10px;">
-                                <img src="gif/loading1.gif" width="20px;">
-                            </div>
+                        <div class="" style="float: right;">
+                          <div class="btn-group">
+                            <a href="#" id="addPicture" class="btn btn-primary">Browse Images</a>
+                            <a href="#"  id="qk-post-btn" class="btn btn-success">Post</a>
+                          </div>
+                          <div id="pos-gif" class="pull-right hide" style="line-height: 32px;
+                                    margin-right: 10px;">
+                              <img src="gif/loading1.gif" width="20px;">
+                          </div>
                         </div>
                     </div>
                 </div>
@@ -480,12 +479,28 @@
                     </div>
                     <!-- Reviews -->
                     <div id="rv"></div>
+                    <div class="npad mtop">
+                      <div class="row nmnp">
+                      <div class="npad" style="width: 95% !important;">
+
+                        <div id="comw" class="blog-comment">
+                        <!-- Comments goes here -->
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
                     <!-- Reviews -->
-                    <!-- <div class="fbc" style="width: 100%; height: 200px;"></div> -->
-                    <hr>
-                    <a class="btn" id="gshare" style="margin-bottom: 70px">
-                      <img width="57px" src="img/gshare.png" />
-                    </a>
+                    <div id="vmfooter">
+
+                      <div id="dbtn1" style="float: left; margin-top: -6px;">
+                        <a class="btn" id="gshare" style="margin-bottom: 42px">
+                          <img width="57px" src="img/gshare.png" />
+                        </a> 
+                      </div>                     
+                      <div id="dbtn2" style="float: right;"></div>                     
+                    </div>
+
                   </div>
                </div>
             </div>
@@ -502,12 +517,17 @@
          <!-- Bottom Tabbar-->
          <div class="toolbar tabbar tabbar-labels">
             <div class="toolbar-inner">
-               <a pageid='1' id="vw1" href="#view-1" class="tab-link active"><i class="fa fa-map-o picon"></i><span class="tabbar-label">Map</span></a>
-               <a pageid='3' id="vw3" href="#view-4" class="tab-link"> 
-               <i class="fa fa-pencil picon" aria-hidden="true"></i>
-               <span class="tabbar-label">Dashboard</span>
-               </a>
-               <a pageid='4' id="vw4" href="#login" class="tab-link"> <i id="lginicon" class="picon"></i><span class="tabbar-label" id="lginlbl"></span></a>
+            <a pageid='1' id="vw1" href="#view-1" class="tab-link active">
+              <i class="fa fa-map-o picon"></i><span class="tabbar-label">Map</span>
+            </a>
+            <a pageid='3' id="vw3" href="#view-4" class="tab-link"> 
+              <i class="fa fa-pencil picon" aria-hidden="true"></i>
+              <span class="tabbar-label">Dashboard</span>
+            </a>
+            <a pageid='4' id="vw4" href="#login" class="tab-link">
+              <i id="lginicon" class="picon"></i>
+              <span class="tabbar-label" id="lginlbl"></span>
+            </a>
             </div>
          </div>
          <div id="partial-pages">
@@ -536,7 +556,7 @@
                         <div class="modal-footer clearfix">
                            <a id="reg-btn" href="#register" class="btn btn-info pull-left btn-sm">Register</a>
                            <a class="fbloginbtn btn btn-social btn-facebook btn-sm" href="#">
-                           <span class="fa fa-facebook"></span>  Sign in with Facebook
+                           <span class="fa fa-facebook"></span>  Sign-in
                            </a>
                            <button type="submit" id="login-btn-1" class="btn btn-warning pull-right btn-sm">Login</button>
                         </div>
@@ -620,7 +640,7 @@
                         <div class="modal-footer clearfix">
                            <img class="hide" id="validating" src="gif/loading1.gif" width="20px;">
                            <a class="fbloginbtn btn btn-social btn-facebook" href="/auth/facebook">
-                           <span class="fa fa-facebook"></span>  Sign in with Facebook
+                           <span class="fa fa-facebook"></span>  Sign-in
                            </a>
                            <a class="btn modal-btn btn-warning " id="submit-btn">Register</a>
                         </div>

@@ -12,6 +12,12 @@
         },
         "cordova-plugin-request-location-accuracy": {
             "PACKAGE_NAME": "com.phonegap.blikrel"
+        },
+        "cordova-plugin-queries-schemes": {
+            "PACKAGE_NAME": "com.phonegap.blikrel"
+        },
+        "uk.co.workingedge.phonegap.plugin.launchnavigator": {
+            "PACKAGE_NAME": "com.phonegap.blikrel"
         }
     },
     "dependent_plugins": {}

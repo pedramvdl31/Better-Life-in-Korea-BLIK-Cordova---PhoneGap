@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.phonegap.blikrel" version="1.1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
-    <name>blik</name>
+<widget id="com.phonegap.blikrel" version="1.1.7" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
+    <name>BLIK</name>
     <description>Better Life in Korea</description>
     <author email="pedramkhoshnevis@gmail.com" href="http://www.webprinciples.com">BLIK</author>
     <content src="index.html" />
@@ -10,7 +10,6 @@
     <gap:config-file overwrite="true" parent="UIStatusBarHidden" platform="ios">
         <true />
     </gap:config-file>
-    <gap:plugin gap:platform="ios" name="cordova-plugin-splashscreen" source="npm" spec="3.2.2" />
     <gap:plugin name="cordova-plugin-facebook4" source="npm" spec="1.7.3">
         <param name="APP_ID" value="344746595879012" />
         <param name="APP_NAME" value="blik" />
@@ -19,22 +18,24 @@
     <gap:plugin name="cordova-plugin-urlhandler" source="npm" spec="~0.7.2">
         <param name="URL_SCHEME" value="blikapp" />
     </gap:plugin>
+    <gap:config-file overwrite="true" parent="NSCameraUsageDescription" platform="ios">
+        <string>App would like to access the camera.</string>
+    </gap:config-file>
+    <gap:config-file overwrite="true" parent="NSPhotoLibraryUsageDescription" platform="ios">
+        <string>App would like to access the library.</string>
+    </gap:config-file>
+    <config-file parent="LSApplicationQueriesSchemes" target="*-Info.plist">
+        <array>
+            <string>waze</string>
+        </array>
+    </config-file>
     <icon src="icon.png" />
     <splash src="screen.png" />
     <allow-navigation href="*" />
-    <access origin="*" />
-    <allow-intent href="http://*/*" />
-    <allow-intent href="waze://*" />
-    <allow-intent href="waze://" />
-    <allow-intent href="waze:" />
-    <allow-intent href="https://*/*" />
     <allow-intent href="*" />
-    <allow-intent href="tel:*" />
-    <allow-intent href="sms:*" />
-    <allow-intent href="mailto:*" />
-    <allow-intent href="geo:*" />
+    <access origin="*" />
     <preference name="android-build-tool" value="gradle" />
-    <preference name="phonegap-version" value="cli-6.3.0" />
+    <preference name="phonegap-version" value="cli-6.5.0" />
     <preference name="orientation" value="default" />
     <preference name="fullscreen" value="false" />
     <preference name="target-device" value="universal" />
@@ -46,8 +47,4 @@
     <preference name="android-minSdkVersion" value="15" />
     <preference name="android-targetSdkVersion" value="15" />
     <preference name="android-installLocation" value="auto" />
-    <preference name="AutoHideSplashScreen" value="true" />
-    <preference name="FadeSplashScreen" value="false" />
-    <preference name="SplashScreen" value="screen" />
-    <preference name="SplashScreenDelay" value="4000" />
 </widget>

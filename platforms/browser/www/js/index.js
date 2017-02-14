@@ -57,7 +57,9 @@ GVar = {
     'vaf':0,
     'curcat':0,
     'lmarkerinfo':[],
-    'adsbuffer':null
+    'adsbuffer':null,
+    'emailorfbid':0,
+    'currentpost':0
 }
 
 
@@ -172,7 +174,7 @@ function InitiateApp(){
     PageVisualSetup();
     SetAjaxHeader();
     ClearUrl();
-    WindowScrollListener();
+    // WindowScrollListener();
     PhotoUpload();
     // InitFunctions.InitiateAutoComplete();
 }
@@ -197,15 +199,11 @@ function SetStatusBtn(){
     if (GVar.auth==0) {
         $('#lginicon').addClass('fa fa-user-circle');
         $('#lginlbl').text('Login');
-        //set other elements
         $('#_auth').attr('data','0');
         $('#user-status').attr('value','0');
-        
     } else {
         $('#lginicon').addClass('fa fa-user-circle');
         $('#lginlbl').text('Logout');
-
-        //set other elements
         $('#_auth').attr('data','1');
         $('#user-status').attr('value','1');
     }
@@ -225,6 +223,7 @@ function CheckToken(a_t){
             $('#_auth').attr('data','1');
             SetStatusBtn();
             $('#lw').addClass('hide');
+            InjectDashboard();
         },
         error: function (xhr, ajaxOptions, thrownError) {
             $('#lw').addClass('hide');
@@ -362,7 +361,6 @@ function PageVisualSetup() {
             render(results);
         }
     });
-
     window.flag = 0;
     $('#nav').affix({
         offset: {
@@ -372,16 +370,10 @@ function PageVisualSetup() {
     $("#nav").on('affix.bs.affix', function(){
         $('#app-view').css('margin-top','50px');
     });
-
     $("#nav").on('affix-top.bs.affix', function(){
         $('#app-view').css('margin-top','0');
     });
-
     $('[data-toggle="tooltip"]').tooltip();
-
-    // $('.body-wrapp').slimScroll({
-    //     height: '100%'
-    // });
 }
 
 function PhotoUpload() {
@@ -617,6 +609,45 @@ function Events() {
         }
      });
     });
+    $(document).on('touchstart','.rvcom',function(){
+        var _auth = parseInt($('#_auth').attr('data'));
+        var this_star = parseInt($(this).attr('revstar'));
+        if (this_star!=999) {
+            if (_auth == 1) {
+                var com = $('.sendcomment textarea').val();
+                var auth_token = localStorage.getItem("auth_token");
+                if (!$.isBlank(com) && !$.isBlank(auth_token)) {
+                    post_comment(auth_token,GVar.currentpost,com,this_star);
+                    //ajax the message
+                    $('.sendcomment textarea').val('');
+                    $('.sendcomment textarea').attr('placeholder','Thank you');
+                    $('.sbtnrev').rating('update', 0);
+                    $(this).attr('revstar','999')
+                    setTimeout(function(){
+                        $('.sendcomment textarea').attr('placeholder','Write a Review');
+                    }, 2000);
+                }
+            } else {
+                $('#login-modal').modal('show');
+            }            
+        } else {
+            alert('Tap on the stars to rate!')
+        }
+
+    });
+    $(document).on('touchstart','.delcom',function(){
+        var _auth = parseInt($('#_auth').attr('data'));
+        if (_auth == 1) {
+            var tci = $(this).parents('li').first().attr('tc');
+            var auth_token = localStorage.getItem("auth_token");
+            if (!$.isBlank(tci) && !$.isBlank(auth_token)) {
+                del_comment(auth_token,tci);
+            }
+        } else {
+            $('#login-modal').modal('show');
+        }
+    });
+
     $("#gobtn").on('touchstart', function(e) {
         myApp.closePanel();
         var dv = parseInt($('#disin').val());
@@ -667,21 +698,14 @@ function Events() {
     $("#vw2").click(function(){
         GVar.curpg=2;
     });
-    $("#vw3").click(function(){
+    $("#vw3").click(function(){//dash
         GVar.curpg=3;
         $('.tab-link').removeClass('active');
         $('#vw3').addClass('active');
-        if (typeof(Storage) !== "undefined") {
-            var auth_token = localStorage.getItem("auth_token");
-            if (!$.isBlank(auth_token)&&GVar.dash==0) {
-                var thtml = '<iframe id="dif" src="'+GVar.ajax_url+'/api/dashboard/'+auth_token+' "></iframe>';
-                $('#p4c').html(thtml);
-                GVar.dash=1;
-            } else if(GVar.dash==0) {
-                $('#login-modal').modal('show');
-            }
+        var _auth = parseInt($('#_auth').attr('data'));
+        if (_auth == 1) {
         } else {
-            alert('WEB STORAGE NOT SUPPORTED!');
+            $('#login-modal').modal('show');
         }
     });
     $('#vw4').click(function(){
@@ -698,7 +722,8 @@ function Events() {
             $('#user-status').attr('value','0');
             localStorage.removeItem('auth_token'); 
             GVar.utoken='';
-            GVar.uemail='';           
+            GVar.uemail='';
+            ClearDashboard();           
         } else {
             $('#login-modal').modal('show');
         }
@@ -738,9 +763,6 @@ function Events() {
         OpenWazeAppOrMarket();
     });
 
-    $(document).on('click','#testform',function(){
-
-    });
     $(document).on('click','#sharetest',function(){
      // redirect to delicious sharing page
         window.location.href='https://www.delicious.com/save?v=5&noui&jump=close&url='
@@ -774,9 +796,8 @@ function Events() {
             $('#login-modal').modal('show');
         }
     });
-    //star-rating
 
-    //star-rating
+
     $(document).on('click','.remove-ad-wl',function(){
         $t_id = $(this).attr('data');
         $('.modal-remove-btn').attr('data',$t_id);
@@ -880,7 +901,6 @@ function Events() {
             var _form = $('#pkpost-form').serialize();
             process_qkpost(_form,document.getElementById("cats").value);    
         }
-
     });
 
     $('#back-to-wl').click(function(){
@@ -906,6 +926,57 @@ function Events() {
         $('#wishlist-modal').modal('show');
     });  
 }
+function del_comment(auth_token,com_id) {
+    var data ={"token":auth_token, "com_id":com_id}
+    $.ajax({
+        url: GVar.ajax_url+'/api/del-comment',
+        type: 'post',
+        dataType: 'json',
+        'data': data,
+        success: function(data) {
+            var status = data.status;
+            if (status==200) {
+                $(document).find('.coli[tc='+com_id+']').remove();
+            } else{
+
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            alert(JSON.stringify(xhr.responseText));
+        }
+    });
+}
+function post_comment(auth_token,post_id,comment,this_star) {
+    var data ={"token":auth_token, "post_id":post_id, "comment":comment,"rate":this_star}
+    $.ajax({
+        url: GVar.ajax_url+'/api/post-comment',
+        type: 'post',
+        dataType: 'json',
+        'data': data,
+        success: function(data) {
+            var status = data.status;
+            var rhtml = data.rhtml;
+            if (status==200) {
+                if (!isBlank(rhtml)) {
+                    var sndli = $(document).find('#snd-li');
+                    $(rhtml).insertBefore(sndli);
+                    $(".nrate").rating({
+                        size:'xs',
+                        showCaption:0,
+                        showClear:0
+                    });
+                } 
+            } else if(status==401){
+               alert('You have previously reviewed this post! If you wish to add a new review please delete your previous review and try again.');
+            } else{
+
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            alert(JSON.stringify(xhr.responseText));
+        }
+    });
+}
 function fb_login(tkn,email) {
     var data ={"token":tkn, "email":email}
     $.ajax({
@@ -922,6 +993,7 @@ function fb_login(tkn,email) {
                 $('#user-status').attr('value','1'); 
                 $('#lginlbl').text('Logout');
                 $('#login-modal').modal('hide');
+                InjectDashboard();
             } else{
                 alert('Unable To Login');
             }
@@ -939,14 +1011,15 @@ function app_login(data) {
         'data': data,
         success: function(data) {
             var status = data.status;
+            $('#lnot').addClass('hide');
             if (status==200) {
                 localStorage.setItem("auth_token", data.tkn);
                 GVar.auth=1;
-                $('#lnot').addClass('hide');
                 $('#_auth').attr('data','1');
                 $('#user-status').attr('value','1'); 
                 $('#lginlbl').text('Logout');
                 $('#login-modal').modal('hide');
+                InjectDashboard();
             } else {
                 $('#lnot').removeClass('hide');
             }
@@ -1253,10 +1326,15 @@ function VAOM(lat,lng,cat_id,rd) {
                             });  
                         }
                     } else {
+                        if(typeof(timeout) != "undefined" && timeout !== null) {
+                            clearTimeout(timeout);
+                        }
+                        myApp.closeNotification(".notification-item");
                         myApp.addNotification({
                             title: 'BLINK',
                             message: "Sorry we couldn't find any results :/ Try broaden search radius or try different category",
                         });
+                        window.timeout = setTimeout(function () { myApp.closeNotification(".notification-item"); }, 2000); 
                     }
 
                 break;
@@ -1298,71 +1376,54 @@ function ResetLandingAndReasin(){
     });
 
 
-    // google.maps.event.addListener(LandingMap, 'click', function(event) {
-    //    placeMarker(event.latLng);
-    // });
+    google.maps.event.addListener(LandingMap, 'click', function(event) {
+       placeMarker(event.latLng);
+    });
 
-    // function placeMarker(location) {
-    //     LandingClearMarker();
-    //     var marker = new google.maps.Marker({
-    //         position: location, 
-    //         map: LandingMap
-    //     });
-    //     GVar.lndinglat = marker.getPosition().lat();
-    //     GVar.lndinglng = marker.getPosition().lng();
-    //     GVar.lmarkers.push(marker);
+    function placeMarker(location) {
+        LandingClearMarker();
+        var marker = new google.maps.Marker({
+            position: location, 
+            map: LandingMap
+        });
+        GVar.lndinglat = marker.getPosition().lat();
+        GVar.lndinglng = marker.getPosition().lng();
+        GVar.lmarkers.push(marker);
 
-    //     // Add the circle for this city to the map.
-    //     var cityCircle = new google.maps.Circle({
-    //         strokeColor: '#badbff',
-    //         strokeOpacity: 0.8,
-    //         strokeWeight: 2,
-    //         fillColor: '#a0ccfb',
-    //         fillOpacity: 0.35,
-    //         map: LandingMap,
-    //         center: location,
-    //         radius: GVar.drad*1000
-    //     });
-    //     GVar.lcircle.push(cityCircle);
-    //     var zoomnum = 9;
-    //     if (GVar.drad==25) {
-    //         zoomnum=9;
-    //     } else if(GVar.drad<20 && GVar.drad >= 10){
-    //         zoomnum=10;
-    //     } else if(GVar.drad<10 && GVar.drad >= 5){
-    //         zoomnum=12;
-    //     } else if(GVar.drad<5 && GVar.drad > 0){
-    //         zoomnum=14;
-    //     } else if(GVar.drad>25 && GVar.drad <= 50){
-    //         zoomnum=8;
-    //     } else if(GVar.drad>50 && GVar.drad <= 200){
-    //         zoomnum=7;
-    //     } else if(GVar.drad>200 && GVar.drad <= 1000){
-    //         zoomnum=4;
-    //     }
+        // Add the circle for this city to the map.
+        var cityCircle = new google.maps.Circle({
+            strokeColor: '#badbff',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#a0ccfb',
+            fillOpacity: 0.35,
+            map: LandingMap,
+            center: location,
+            radius: GVar.drad*1000
+        });
+        GVar.lcircle.push(cityCircle);
+        // var zoomnum = 9;
+        // if (GVar.drad==25) {
+        //     zoomnum=9;
+        // } else if(GVar.drad<20 && GVar.drad >= 10){
+        //     zoomnum=10;
+        // } else if(GVar.drad<10 && GVar.drad >= 5){
+        //     zoomnum=12;
+        // } else if(GVar.drad<5 && GVar.drad > 0){
+        //     zoomnum=14;
+        // } else if(GVar.drad>25 && GVar.drad <= 50){
+        //     zoomnum=8;
+        // } else if(GVar.drad>50 && GVar.drad <= 200){
+        //     zoomnum=7;
+        // } else if(GVar.drad>200 && GVar.drad <= 1000){
+        //     zoomnum=4;
+        // }
 
-    //     LandingMap.setCenter(location);
-    //     LandingMap.setZoom(zoomnum);
-    // }
+        // LandingMap.setCenter(location);
+        // LandingMap.setZoom(zoomnum);
+    }
 
-    //
-    // var image = {
-    //   url: GVar.bball,
-    //   size: new google.maps.Size(40, 40),
-    //   origin: new google.maps.Point(0, 0),
-    //   anchor: new google.maps.Point(17, 34),
-    //   scaledSize: new google.maps.Size(40, 40)
-    // };
-    // for (var i = 0; i < GVar.lmarkers.length; i++) {
-    //     var marker = new google.maps.Marker({
-    //       map: LandingMap,
-    //       icon: image,
-    //       position: GVar.lmarkers[i].get('position'),
-    //       draggable: GVar.lmarkers[i].get('draggable'),
-    //       title: GVar.lmarkers[i].get('title')
-    //     });
-    //     GVar.lmarkers.push(marker);
-    // }
+
     adClearMarker();
     var ads = GVar.adsbuffer;
     if (!isBlank(ads)) {
@@ -1435,7 +1496,17 @@ function vwad(data_id) {
     document.getElementById('rv').innerHTML = '';
     $('.rev').rating('destroy');
     //clear reviews
-    var data ={"data_id":data_id}
+
+    var user_token = 0;
+    var _auth = parseInt($('#_auth').attr('data'));
+    if (_auth == 1) {
+        var auth_token = localStorage.getItem("auth_token");
+        if (!$.isBlank(auth_token)) {
+            user_token = auth_token;
+        }
+    }
+
+    var data ={"data_id":data_id,"user_token":user_token};
 
     $.ajax({
         url: GVar.ajax_url+'/api/prepare-ad',
@@ -1460,7 +1531,8 @@ function vwad(data_id) {
                 //SHARING BUTTONS
                 var slink = GVar.baseurl+'/api/appurlhandler/'+data_id;
 
-                $('#gshare').click(function(event){
+
+                $("#gshare").on('touchstart', function(event) {
                     var options = {
                       message: ad_array['title_txt'], // not supported on some apps (Facebook, Instagram)
                       subject: 'Blik Posts', // fi. for email
@@ -1485,7 +1557,9 @@ function vwad(data_id) {
                 document.getElementById('postview-data').innerHTML = new_html;
                 document.getElementById('pt').innerHTML = ad_array['title'];
                 document.getElementById('pd').innerHTML = ad_array['des'];
-                document.getElementById('dtw').innerHTML = ad_array['drivebtn'];
+                // document.getElementById('dtw').innerHTML = ad_array['drivebtn'];
+                document.getElementById('dbtn2').innerHTML = ad_array['drivebtn'];
+
 
                 var linksContainer = $('#pi');
                 var baseUrl;
@@ -1501,14 +1575,12 @@ function vwad(data_id) {
                     .attr('data-gallery', '')
                     .appendTo(linksContainer)
                 });
-
                 // FIT IMAGES c
                 $(document).find('.my-container').sortablePhotos({
                   selector: '> .my-item',
                   sortable: 0,
                   padding: 3
                 });
-
                 //FULLSCREEN VIEWER
                 $('#pi').click(function(event){
                     event = event || window.event;
@@ -1537,7 +1609,6 @@ function vwad(data_id) {
 
                 //VIEW IT
                 $('.vwad-loading').addClass('hide');
-
                 //REFRESH MAP
                 ViewPostMapRefresh();
 
@@ -1550,7 +1621,8 @@ function vwad(data_id) {
                     step:0.5, 
                     size:'xs',
                     showCaption:0,
-                    showClear:0
+                    showClear:0,
+                    disabled:true
                 });
                 $('.rev').rating('update', ad_array['rvs-rate']);
                 $('.rev').on('rating.change', function(event, value, caption) {
@@ -1562,6 +1634,30 @@ function vwad(data_id) {
                         $('#login-modal').modal('show');
                     }
                 });
+                //comments
+                if (!$.isBlank(ad_array['coms'])) {
+                    document.getElementById('comw').innerHTML = ad_array['coms'];
+                    $(".sbtnrev").rating({
+                        min:1, 
+                        max:10, 
+                        step:0.5, 
+                        size:'xs',
+                        showCaption:0,
+                        showClear:0
+                    });
+                    $('.sbtnrev').on('rating.change', function(event, value, caption) {
+                        $('.rvcom').attr('revstar',value);
+                    });
+                    $(".comrate").rating({
+                        size:'xs',
+                        showCaption:0,
+                        showClear:0
+                    });
+
+
+                }
+
+                GVar.currentpost = data_id;
                 //RENDER REVIEWS
                 setTimeout(function(){ 
                     $('#pi').css('opacity','1');
@@ -1643,7 +1739,7 @@ function ResetView2(){
     GVar.imgcounter = 0;
     GVar.icont = 0;
     GVar.totalimgcounter = 0;
-    $('#v2pc').html(' <form id="pkpost-form" style="float: left;width: 100%"> <div class="list-block"> <ul> <li> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Category" class="item-link smart-select"> <select name="cat" class="form-control qp-selects" id="cats"> <option value="1" selected="">Bar & Pub</option> <option value="2">Car Dealership</option> <option value="3">Coffee Shop</option> <option value="4">Entertainment</option> <option value="5">Food</option> <option value="6">Gas Station</option> <option value="7">Hotel</option> <option value="8">Medical Center</option> <option value="9">Movie Theater</option> <option value="10">Nightlife Spot</option> <option value="11">Outdoors & Recreation</option> <option value="12">Parking</option> <option value="13">Pharmacy</option> <option value="14">Real Estate</option> <option value="15">Supermarket</option> <option value="16">Taxi</option> <option value="17">Transport</option> <option value="18">Travel Agency</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">Category</div><div class="item-after">Select</div></div></div></a> </li><li> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Cities" class="item-link smart-select"> <select name="city" class="form-control" id="city-select-bar" status=false> <option value="1" selected="">Gangwon-Do</option> <option value="2">Gyeonggi-Do</option> <option value="3">Seoul</option> <option value="4">Incheon</option> <option value="5">Daejeon</option> <option value="6">Chungcheong-Bukdo</option> <option value="7">Ullung-Do</option> <option value="8">Gyeongsang-Bukdo</option> <option value="9">Ulsan</option> <option value="10">Gyeongsang-Namdo</option> <option value="11">Busan</option> <option value="12">Daegu</option> <option value="13">Gwangju</option> <option value="14">Jeolla-Bukdo</option> <option value="15">Chungcheong-Namdo</option> <option value="16">Jeollanam-Do</option> <option value="17">Jeju-Do</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">City</div><div class="item-after">Select</div></div></div></a> </li></ul> </div><div class="form-group" style="float:left;width: 100%;"> <input type="hidden" id="qkp-lat" name="lat"/> <input type="hidden" id="qkp-lng" name="long"/> <div id="qkpost-map-container" style="width:80%;margin:0 auto"><input id="pac-input" class="controls" type="text" placeholder="Search Box"><div style="height:300px" id="postmap"></div></div></div><div class="form-group" id="title-wrap" style=""> <label>Title: <span class="_required">*required</span> </label> <input type="text" class="form-control pk-form" name="title" id="email" placeholder="Title" aria-describedby="sizing-addon2"> </div><div class="form-group" id="des-wrap" style=""> <label>Description: <span class="_required">*required</span> </label> <textarea style="resize:vertical;" class="form-control pk-form" name="description"></textarea> </div><div id="file-div"></div></form> <div class="" style="float: left;width: 100%"> <a href="#" id="addPicture" class="btn btn-primary btn-file" style="width:100% !important"> Browse Images </a> <div id="_upp" class="hide"> <p> Uploading... ( <span id="pco"></span> %) </p></div><div style="float: left;width: 100%;padding: 10px" id="images"> </div></div><div class="" style="float: left;width: 100%"> <a id="qk-post-btn" class="btn btn-warning pull-right" >Post</a> <div id="pos-gif" class="pull-right hide" style="line-height: 32px; margin-right: 10px;"> <img src="gif/loading1.gif" width="20px;"> </div></div>');
+    $('#v2pc').html('<form id="pkpost-form" style="float: left;width: 100%"> <div class="list-block"> <ul> <li> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Category" class="item-link smart-select" data-back-on-select="true"> <select name="cat" class="form-control qp-selects" id="cats"> <option value="1">Bar & Pub</option> <option value="2">Car Dealership</option> <option value="3">Coffee Shop</option> <option value="4">Entertainment</option> <option value="5">Food</option> <option value="6">Gas Station</option> <option value="7">Hotel</option> <option value="8">Medical Center</option> <option value="9">Movie Theater</option> <option value="10">Nightlife Spot</option> <option value="11">Outdoors & Recreation</option> <option value="12">Parking</option> <option value="13">Pharmacy</option> <option value="14">Real Estate</option> <option value="15">Supermarket</option> <option value="16">Taxi</option> <option value="17">Transport</option> <option value="18">Travel Agency</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">Category</div><div class="item-after">Select</div></div></div></a> </li><li style="display: none"> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Cities" class="item-link smart-select" data-back-on-select="true"> <select name="city" class="form-control" id="city-select-bar" status=false> <option value="1" selected="">Gangwon-Do</option> <option value="2">Gyeonggi-Do</option> <option value="3">Seoul</option> <option value="4">Incheon</option> <option value="5">Daejeon</option> <option value="6">Chungcheong-Bukdo</option> <option value="7">Ullung-Do</option> <option value="8">Gyeongsang-Bukdo</option> <option value="9">Ulsan</option> <option value="10">Gyeongsang-Namdo</option> <option value="11">Busan</option> <option value="12">Daegu</option> <option value="13">Gwangju</option> <option value="14">Jeolla-Bukdo</option> <option value="15">Chungcheong-Namdo</option> <option value="16">Jeollanam-Do</option> <option value="17">Jeju-Do</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">City</div><div class="item-after">Select</div></div></div></a> </li></ul> </div><div class="form-group" style="float:left;width: 100%;"> <input type="hidden" id="qkp-lat" name="lat"/> <input type="hidden" id="qkp-lng" name="long"/> <div id="qkpost-map-container" style="width:80%;margin:0 auto"> <input id="pac-input" class="controls" type="text" placeholder="Search Address" style="width: 80% !important;margin: 3px 0 0 3px !important;height: 36px !important;"><div style="height:300px" id="postmap"></div></div></div><div class="form-group" id="title-wrap" style=""> <label>Title: <span class="_required">*required</span> </label> <input type="text" class="form-control pk-form" name="title" id="email" placeholder="Title" aria-describedby="sizing-addon2"> </div><div class="form-group" id="des-wrap" style=""> <label>Description: <span class="_required">*required</span> </label> <textarea style="resize:vertical;" class="form-control pk-form" name="description"></textarea> </div><div id="file-div"></div></form> <div class="" style="float: left;width: 100%"> <div id="_upp" class="hide"> <p> Uploading... ( <span id="pco"></span> %) </p></div><div style="float: left;width: 100%;padding: 10px" id="images"> </div></div><div class="" style="float: right;"> <div class="btn-group"> <a href="#" id="addPicture" class="btn btn-primary">Browse Images</a> <a href="#" id="qk-post-btn" class="btn btn-success">Post</a> </div><div id="pos-gif" class="pull-right hide" style="line-height: 32px; margin-right: 10px;"> <img src="gif/loading1.gif" width="20px;"> </div></div>');
     setTimeout(function(){
         PostAdInit();
         $(document).find("#qk-post-btn").on('touchstart', function(e) {
@@ -2024,9 +2120,9 @@ function LandingInit(lat,lng) {
     });
 
 
-    // google.maps.event.addListener(LandingMap, 'click', function(event) {
-    //    placeMarker(event.latLng);
-    // });
+    google.maps.event.addListener(LandingMap, 'click', function(event) {
+       placeMarker(event.latLng);
+    });
 
     function placeMarker(location) {
         LandingClearMarker();
@@ -2050,25 +2146,25 @@ function LandingInit(lat,lng) {
             radius: GVar.drad*1000
         });
         GVar.lcircle.push(cityCircle);
-        var zoomnum = 9;
-        if (GVar.drad==25) {
-            zoomnum=9;
-        } else if(GVar.drad<20 && GVar.drad >= 10){
-            zoomnum=10;
-        } else if(GVar.drad<10 && GVar.drad >= 5){
-            zoomnum=12;
-        } else if(GVar.drad<5 && GVar.drad > 0){
-            zoomnum=14;
-        } else if(GVar.drad>25 && GVar.drad <= 50){
-            zoomnum=8;
-        } else if(GVar.drad>50 && GVar.drad <= 200){
-            zoomnum=7;
-        } else if(GVar.drad>200 && GVar.drad <= 1000){
-            zoomnum=4;
-        }
+        // var zoomnum = 9;
+        // if (GVar.drad==25) {
+        //     zoomnum=9;
+        // } else if(GVar.drad<20 && GVar.drad >= 10){
+        //     zoomnum=10;
+        // } else if(GVar.drad<10 && GVar.drad >= 5){
+        //     zoomnum=12;
+        // } else if(GVar.drad<5 && GVar.drad > 0){
+        //     zoomnum=14;
+        // } else if(GVar.drad>25 && GVar.drad <= 50){
+        //     zoomnum=8;
+        // } else if(GVar.drad>50 && GVar.drad <= 200){
+        //     zoomnum=7;
+        // } else if(GVar.drad>200 && GVar.drad <= 1000){
+        //     zoomnum=4;
+        // }
 
-        LandingMap.setCenter(location);
-        LandingMap.setZoom(zoomnum);
+        // LandingMap.setCenter(location);
+        // LandingMap.setZoom(zoomnum);
     }
 
     
@@ -2099,6 +2195,22 @@ function LandingUpdate(lat,lng) {
     });
     GVar.lmarkers.push(marker);
     setTimeout(function(){ marker.setAnimation(null); }, 3000);
+}
+function InjectDashboard(){
+    var _auth = parseInt($('#_auth').attr('data'));
+    if (_auth == 1) {
+        var auth_token = localStorage.getItem("auth_token");
+        if (!$.isBlank(auth_token)) {
+            var thtml = '<iframe id="dif" src="'+GVar.ajax_url+'/api/dashboard/'+auth_token+' "></iframe>';
+            $('#p4c').html(thtml);
+            GVar.dash=1;
+        }
+    } else {
+        $('#login-modal').modal('show');
+    }
+}
+function ClearDashboard(){
+    $('#p4c').html('');
 }
 function LandingUpdateNoZoom(lat,lng) {
     LandingClearMarker();
@@ -2293,26 +2405,30 @@ function getloc(controlDiv, map) {
 }
 
 function OpenWazeAppOrMarket(){
+    var lat = parseFloat($(document).find('#waze-drive-to').attr('lat'));
+    var lng = parseFloat($(document).find('#waze-drive-to').attr('lng'));
     if(device.platform === 'iOS') {
         var scheme = 'waze';
+        launchnavigator.navigate([lat, lng]);
     }
     else if(device.platform === 'Android') {
         var scheme = 'com.waze';
+        launchnavigator.navigate([lat, lng]);
     }  
-    appAvailability.check(
-        scheme,       // URI Scheme or Package Name 
-        function() {  // Success callback 
-            window.location.href = "waze://?ll="+$(document).find('#waze-drive-to').attr('lat')+","+$(document).find('#waze-drive-to').attr('lng')+"&navigate=yes";
-        },
-        function() {
-            if(device.platform === 'iOS') {
-                cordova.plugins.market.open('waze');
-            }
-            else if(device.platform === 'Android') {
-                cordova.plugins.market.open('com.waze');
-            }  
-        }
-    );
+    // appAvailability.check(
+    //     scheme,       // URI Scheme or Package Name 
+    //     function() {  // Success callback 
+    //         window.location.href = "waze://?ll="+$(document).find('#waze-drive-to').attr('lat')+","+$(document).find('#waze-drive-to').attr('lng')+"&navigate=yes";
+    //     },
+    //     function() {
+    //         if(device.platform === 'iOS') {
+    //             cordova.plugins.market.open('waze');
+    //         }
+    //         else if(device.platform === 'Android') {
+    //             cordova.plugins.market.open('com.waze');
+    //         }  
+    //     }
+    // );
 
 }
 function GetGPSLocation(){

@@ -3,9 +3,9 @@
   xmlns="http://www.w3.org/ns/widgets" 
   xmlns:gap="http://phonegap.com/ns/1.0" 
   id="com.phonegap.blikrel" 
-  version="1.1.3">
+  version="1.1.7">
 
-  <name>blik</name>
+  <name>BLIK</name>
   <description>Better Life in Korea</description>
   <author href="http://www.webprinciples.com" email="pedramkhoshnevis@gmail.com">BLIK</author>
   <content src="index.html"/>
@@ -19,7 +19,7 @@
       permission on your app, which PhoneGap requires.
   -->
   <!-- Customize your app and platform with the preference element. -->
-  <preference name="phonegap-version"           value="cli-6.3.0" />
+  <preference name="phonegap-version"           value="cli-6.5.0" />
   <preference name="orientation"                value="default" />        <!-- all: default means both landscape and portrait are enabled -->
   <preference name="fullscreen"                 value="false" />          <!-- all: hides the status bar at the top of the screen -->
   <preference name="target-device"              value="universal" />      <!-- ios: possible values handset, tablet, or universal -->
@@ -43,17 +43,18 @@
       <true/>
   </gap:config-file>
 
-  <gap:plugin name="cordova-plugin-splashscreen" gap:platform="ios" source="npm" spec="3.2.2" />
+<!--   <gap:plugin name="cordova-plugin-splashscreen" gap:platform="ios" source="npm" spec="3.2.2" /> -->
+  <plugin name="cordova-plugin-splashscreen"                source="npm">
+        <preference name="SplashScreen"               value="splash" />
+        <preference name="AutoHideSplashScreen"       value="true" />
+        <preference name="SplashScreenDelay"          value="4000" />
+        <preference name="SplashMaintainAspectRatio"  value="true" />
+        <preference name="FadeSplashScreen"           value="false"/>
+        <preference name="ShowSplashScreenSpinner"    value="true" />
+  </plugin>
 
-  <preference name="AutoHideSplashScreen" value="true" />
-  <preference name="FadeSplashScreen" value="false"/>
-  <preference name="SplashScreen" value="screen"/>
-  <preference name="SplashScreenDelay" value="4000"/>
-
-  
+  <!-- PLUGINS -->
   <plugin name="cordova-plugin-camera" source="npm" spec="~2.1.1"/>
-
-  <!-- PHOTOLIBRARY_USAGE_DESCRIPTION -->
   <plugin name="cordova-plugin-console" source="npm" spec="~1.0.2"/>
   <plugin name="cordova-plugin-device" source="npm" spec="~1.1.1"/>
   <plugin name="cordova-plugin-device-orientation" source="npm" spec="~1.0.2"/>
@@ -65,43 +66,49 @@
   <plugin name="cordova-plugin-splashscreen" source="npm" spec="~3.2.1"/>
   <plugin spec="https://github.com/rodrigo-martinezd/cordova-dialog-gps.git" source="git" />
   <plugin name="cordova-plugin-fastrde-checkgps" source="npm"/>
-
   <gap:plugin name="cordova-plugin-facebook4" source="npm" spec="1.7.3">
     <param name="APP_ID" value="344746595879012" />
     <param name="APP_NAME" value="blik" />
   </gap:plugin>
-
   <plugin name="cordova-plugin-image-picker" source="npm" spec="1.1.3"/>
-
   <gap:plugin name="cordova-plugin-x-socialsharing" source="npm" />
   <plugin name="cordova-plugin-whitelist" source="npm" spec="~1.2.1"/>
   <plugin name="cordova-plugin-appavailability"/>
   <plugin spec="https://github.com/xmartlabs/cordova-plugin-market" source="git" />
-  
   <gap:plugin name="cordova-plugin-urlhandler" source="npm" spec="~0.7.2">
     <param name="URL_SCHEME" value="blikapp" />
   </gap:plugin>
-
   <plugin name="cordova-plugin-request-location-accuracy" source="npm" spec="~2.2.0"/>
+  <plugin name="cordova-plugin-queries-schemes" source="npm" spec="~0.1.5"/>
+  <plugin name="uk.co.workingedge.phonegap.plugin.launchnavigator" source="npm" spec="~3.2.1"/>
 
+
+
+  <!-- CONFIGS -->
   <gap:config-file platform="ios" parent="NSCameraUsageDescription" overwrite="true">
    <string>App would like to access the camera.</string>
   </gap:config-file>
   <gap:config-file platform="ios" parent="NSPhotoLibraryUsageDescription" overwrite="true">
    <string>App would like to access the library.</string>
   </gap:config-file>
+  <config-file target="*-Info.plist" parent="LSApplicationQueriesSchemes">
+      <array>
+          <string>waze</string>
+      </array>
+  </config-file>
 
+
+  <!-- IMAGES -->
   <icon src="icon.png" />
   <splash src="screen.png"/>
-  
   <platform name="android">
-    <icon src="www/res/android/res/icon/ldpi/ic_launcher.png" density="ldpi"/>
-    <icon src="www/res/android/res/icon/ldpi/ic_launcher.png" density="ldpi"/>
-    <icon src="www/res/android/res/icon/mdpi/ic_launcher.png" density="mdpi"/>
-    <icon src="www/res/android/res/icon/hdpi/ic_launcher.png" density="hdpi"/>
-    <icon src="www/res/android/res/icon/xhdpi/ic_launcher.png" density="xhdpi"/>
-    <icon src="www/res/android/res/icon/xxhdpi/ic_launcher.png" density="xxhdpi"/>
-    <icon src="www/res/android/res/icon/xxxhdpi/ic_launcher.png" density="xxxhdpi"/>
+    <icon src="www/res/android/res/icon/drawable-ldpi/icon.png" density="ldpi"/>
+    <icon src="www/res/android/res/icon/drawable-ldpi/icon.png" density="ldpi"/>
+    <icon src="www/res/android/res/icon/drawable-mdpi/icon.png" density="mdpi"/>
+    <icon src="www/res/android/res/icon/drawable-hdpi/icon.png" density="hdpi"/>
+    <icon src="www/res/android/res/icon/drawable-xhdpi/icon.png" density="xhdpi"/>
+    <icon src="www/res/android/res/icon/drawable-xxhdpi/icon.png" density="xxhdpi"/>
+    <icon src="www/res/android/res/icon/drawable-xxxhdpi/icon.png" density="xxxhdpi"/>
     <splash src="www/res/android/res/drawable-land-ldpi/screen.png" density="land-ldpi"/>
     <splash src="www/res/android/res/drawable-land-mdpi/screen.png" density="land-mdpi"/>
     <splash src="www/res/android/res/drawable-land-hdpi/screen.png" density="land-hdpi"/>
@@ -118,48 +125,45 @@
     <icon src="icon.png"/>
   </platform>
   <platform name="ios">
-      <icon height="57" platform="ios" src="www/res/ios/icons/icon.png" width="57" />
-      <icon height="114" platform="ios" src="www/res/ios/icons/bl-114.png" width="114" />
-      <icon height="40" platform="ios" src="www/res/ios/icons/bl-40.png" width="40" />
-      <icon height="80" platform="ios" src="www/res/ios/icons/bl-80.png" width="80" />
-      <icon height="50" platform="ios" src="www/res/ios/icons/bl-50.png" width="50" />
-      <icon height="100" platform="ios" src="www/res/ios/icons/bl-100.png" width="100" />
-      <icon height="60" platform="ios" src="www/res/ios/icons/bl-60.png" width="60" />
-      <icon height="120" platform="ios" src="www/res/ios/icons/bl-120.png" width="120" />
-      <icon height="180" platform="ios" src="www/res/ios/icons/bl-180.png" width="180" />
-      <icon height="72" platform="ios" src="www/res/ios/icons/bl-72.png" width="72" />
-      <icon height="144" platform="ios" src="www/res/ios/icons/bl-114.png" width="144" />
-      <icon height="76" platform="ios" src="www/res/ios/icons/bl-76.png" width="76" />
-      <icon height="152" platform="ios" src="www/res/ios/icons/bl-152.png" width="152" />
-      <icon height="29" platform="ios" src="www/res/ios/icons/bl-29.png" width="29" />
-      <icon height="58" platform="ios" src="www/res/ios/icons/bl-58.png" width="58" />
-      <icon height="87" platform="ios" src="www/res/ios/icons/bl-87.png" width="87" />
+      <icon height="57" platform="ios" src="www/res/ios/icons/Icon.png" width="57" />
+      <icon height="114" platform="ios" src="www/res/ios/icons/Icon@2x.png" width="114" />
+      <icon height="40" platform="ios" src="www/res/ios/icons/Icon-40.png" width="40" />
+      <icon height="80" platform="ios" src="www/res/ios/icons/Icon-40@2x.png" width="80" />
+      <icon height="50" platform="ios" src="www/res/ios/icons/Icon-50.png" width="50" />
+      <icon height="100" platform="ios" src="www/res/ios/icons/Icon-50@2x.png" width="100" />
+      <icon height="60" platform="ios" src="www/res/ios/icons/Icon-60.png" width="60" />
+      <icon height="120" platform="ios" src="www/res/ios/icons/Icon-60@2x.png" width="120" />
+      <icon height="180" platform="ios" src="www/res/ios/icons/Icon-60@3x.png" width="180" />
+      <icon height="72" platform="ios" src="www/res/ios/icons/Icon-72.png" width="72" />
+      <icon height="144" platform="ios" src="www/res/ios/icons/Icon-72@2x.png" width="144" />
+      <icon height="76" platform="ios" src="www/res/ios/icons/Icon-76.png" width="76" />
+      <icon height="152" platform="ios" src="www/res/ios/icons/Icon-76@2x.png" width="152" />
+      <icon height="29" platform="ios" src="www/res/ios/icons/Icon-small.png" width="29" />
+      <icon height="58" platform="ios" src="www/res/ios/icons/Icon-small@2x.png" width="58" />
+      <icon height="87" platform="ios" src="www/res/ios/icons/Icon-small@3x.png" width="87" />
       
       <splash height="1136" platform="ios" src="www/res/ios/splash/Default-568h@2x~iphone_640x1136.png" width="640" />
-      <splash height="1334" platform="ios" src="screen.png" width="750" />
-      <splash height="2208" platform="ios" src="screen.png" width="1242" />
-      <splash height="1242" platform="ios" src="screen.png" width="2208" />
-      <splash height="1536" platform="ios" src="screen.png" width="2048" />
-      <splash height="768" platform="ios" src="screen.png" width="1024" />
-      <splash height="2048" platform="ios" src="screen.png" width="1536" />
-      <splash height="1024" platform="ios" src="screen.png" width="768" />
-      <splash height="960" platform="ios" src="screen.png" width="640" />
-      <splash height="480" platform="ios" src="screen.png" width="320" />
+      <splash height="1334" platform="ios" src="www/res/ios/splash/Default-750@2x~iphone6-portrait_750x1334.png" width="750" />
+      <splash height="2208" platform="ios" src="www/res/ios/splash/Default-1242@3x~iphone6s-portrait_1242x2208.png" width="1242" />
+      <splash height="1242" platform="ios" src="www/res/ios/splash/Default-1242@3x~iphone6s-portrait_1242x2208.png" width="2208" />
+      <splash height="1536" platform="ios" src="www/res/ios/splash/Default-Portrait@2x~ipad_1536x2008.png" width="2048" />
+      <splash height="768" platform="ios" src="www/res/ios/splash/Default-Portrait~ipad_768x1024.png" width="1024" />
+      <splash height="2048" platform="ios" src="www/res/ios/splash/Default-Landscape@2x~ipad_2048x1536.png" width="1536" />
+      <splash height="1024" platform="ios" src="www/res/ios/splash/Default-Landscape~ipad_1024x768.png" width="768" />
+      <splash height="960" platform="ios" src="www/res/ios/splash/Default~iphone.png" width="640" />
+      <splash height="480" platform="ios" src="www/res/ios/splash/Default~iphone.png" width="320" />
   </platform>
 
 
+  <!-- A wildcard can be used to whitelist the entire network,
+       over HTTP and HTTPS.
+       *NOT RECOMMENDED* -->
   <allow-navigation href="*" />
-  <access origin="*"/>
-  <allow-intent href="http://*/*"/>
-  <allow-intent href="waze://*"/>
-  <allow-intent href="waze://"/>
-  <allow-intent href="waze:"/>
-  <allow-intent href="https://*/*"/>
   <allow-intent href="*" />
-  <allow-intent href="tel:*"/>
-  <allow-intent href="sms:*"/>
-  <allow-intent href="mailto:*"/>
-  <allow-intent href="geo:*"/>
+  <access origin="*" />
+
+
+
   <platform name="android">
     <allow-intent href="market:*"/>
   </platform>
@@ -167,4 +171,5 @@
     <allow-intent href="itms:*"/>
     <allow-intent href="itms-apps:*"/>
   </platform>
+
 </widget>
