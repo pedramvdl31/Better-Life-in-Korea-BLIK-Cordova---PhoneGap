@@ -59,7 +59,10 @@ GVar = {
     'lmarkerinfo':[],
     'adsbuffer':null,
     'emailorfbid':0,
-    'currentpost':0
+    'currentpost':0,
+    'curadlat':0,
+    'curadlng':0
+
 }
 
 
@@ -92,7 +95,7 @@ var app = {
 
         if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
 
-          //PHONE
+            //PHONE
             document.addEventListener("online", onOnline, false);
             document.addEventListener("offline", onOffline, false);
             var connection = checkConnection();
@@ -103,7 +106,14 @@ var app = {
                 $('#ovwrapper').removeClass('hide');
             }
 
-
+            if (navigator.userAgent.match(/(Android)/)) {
+                $('#titleqp').bind('focus',function() {
+                    $("#v2pc").animate({ scrollTop: $("#v2pc").height() });
+                });
+                $('#desqp').bind('focus',function() {
+                    $("#v2pc").animate({ scrollTop: $("#v2pc").height() });
+                });
+            }
 
             setTimeout(function(){ 
                 setInterval(function(){ 
@@ -143,10 +153,10 @@ var app = {
                 }, 2000);
             }, 1000);
 
-
         } else {
           //BROWSER
         }
+
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -573,6 +583,9 @@ function Events() {
         } 
     }, false);
 
+
+
+
     $('#qkpost-modal').on('hidden.bs.modal', function () {
         clear_qp_modal();
     })
@@ -646,6 +659,23 @@ function Events() {
         } else {
             $('#login-modal').modal('show');
         }
+    });
+
+    $(document).on('touchstart','#dknavi',function(){
+        var kind = 'KAKAOMAP';
+        OpenGeoAppOrMarket(kind);
+    });
+    $(document).on('touchstart','#dgnavi',function(){
+        var kind = 'GOOGLE_MAPS';
+        OpenGeoAppOrMarket(kind);
+    });
+    $(document).on('touchstart','#dwnavi',function(){
+        var kind = 'WAZE';
+        OpenGeoAppOrMarket(kind);
+    });
+    $(document).on('touchstart','#dinavi',function(){
+        var kind = 'APPLE_MAPS';
+        OpenGeoAppOrMarket(kind);
     });
 
     $("#gobtn").on('touchstart', function(e) {
@@ -758,10 +788,7 @@ function Events() {
         var reg_form = $('#lform').serialize();
         app_login(reg_form);
     });
-    
-    $(document).on('click','#waze-drive-to',function(){
-        OpenWazeAppOrMarket();
-    });
+
 
     $(document).on('click','#sharetest',function(){
      // redirect to delicious sharing page
@@ -1433,13 +1460,13 @@ function ResetLandingAndReasin(){
                         if (!isBlank(va['lat']) && !isBlank(va['lng']) && !isBlank(va['title']) ) {
                             var myLatLng = {lat: parseFloat(va['lat']),lng: parseFloat(va['lng'])};
                             var cstr = '<div id="content">'+
-                            '<div id="siteNotice">'+
-                            '</div>'+
-                            '<div id="bodyContent">'+
-                            '<p><b>'+va['title']+'</b>, '+va['des']+'</p>'+
-                            '<a href="#" class="btn btn-sm btn-success m-vad" data="'+va['id']+'">View</a>'+
-                            '</div>'+
-                            '</div>';
+                                            '<div id="siteNotice">'+
+                                            '</div>'+
+                                            '<div id="bodyContent">'+
+                                            '<p><b>'+va['title']+'</b>, '+va['des']+'</p>'+
+                                            '<a href="#" class="m-vad btn btn-primary btn-block" data="'+va['id']+'">See This Post</a>'+
+                                            '</div>'+
+                                            '</div>';
 
                             var infowindow = new google.maps.InfoWindow({
                               content: cstr
@@ -1521,17 +1548,39 @@ function vwad(data_id) {
             if (status==200) {
                 myApp.showTab('#view-5');
                 //init
-                document.getElementById('postview-data').innerHTML = '';
+                GVar.curadlat = ad_array['lat'];
+                GVar.curadlng = ad_array['lng'];
+                var btnhtml = '';
+                if(device.platform === 'iOS') {
+                    btnhtml = '<div class="btn-group-vertical" style="width: 100%;">'+
+                          '<a id="dknavi" href="#" class="btn btn-default btn-md"><strong>KakaoNavi</strong></a>'+
+                          '<a id="dwnavi" href="#" class="btn btn-default btn-md"><strong>WazeMaps</strong></a>'+
+                          '<a id="dgnavi" href="#" class="btn btn-default btn-md"><strong>GoogleMaps</strong></a>'+
+                          '<a id="dinavi" href="#" class="btn btn-default btn-md"><strong>AppleMaps</strong></a>'+
+                          '<a id="gshare" href="#" class="btn btn-primary btn-md">Share</a>'+
+                          '</div>';
+                } else if(device.platform === 'Android') {
+                    btnhtml = '<div class="btn-group-vertical" style="width: 100%;">'+
+                          '<a id="dknavi" href="#" class="btn btn-default btn-md"><strong>KakaoNavi</strong></a>'+
+                          '<a id="dwnavi" href="#" class="btn btn-default btn-md"><strong>WazeMaps</strong></a>'+
+                          '<a id="dgnavi" href="#" class="btn btn-default btn-md"><strong>GoogleMaps</strong></a>'+
+                          '<a id="gshare" href="#" class="btn btn-primary btn-md">Share</a>'+
+                          '</div>';
+                } else {
+                    btnhtml = '<div class="btn-group-vertical" style="width: 100%;">'+
+                          '<a id="dknavi" href="#" class="btn btn-default btn-md"><strong>KakaoNavi</strong></a>'+
+                          '<a id="dwnavi" href="#" class="btn btn-default btn-md"><strong>WazeMaps</strong></a>'+
+                          '<a id="dgnavi" href="#" class="btn btn-default btn-md"><strong>GoogleMaps</strong></a>'+
+                          '<a id="gshare" href="#" class="btn btn-primary btn-md">Share</a>'+
+                          '</div>';
+                }
+                document.getElementById('dbtn2').innerHTML = btnhtml;
+               
 
-                // var fbcomhtml ='<iframe src="https://www.betterlifeinkorea.com/api/fbcomment/'+data_id+'/'+GVar.utoken+'" style="position:relative; top:0px;'+
-                //                 'left:0px; bottom:0px; right:0px; width:100%; height:100%; border:none; margin:0; padding:0;'+
-                //                 'overflow:hidden; z-index:999999;"></iframe>';
-                // $('.fbc').html(fbcomhtml);
-                
+
+                document.getElementById('postview-data').innerHTML = '';
                 //SHARING BUTTONS
                 var slink = GVar.baseurl+'/api/appurlhandler/'+data_id;
-
-
                 $("#gshare").on('touchstart', function(event) {
                     var options = {
                       message: ad_array['title_txt'], // not supported on some apps (Facebook, Instagram)
@@ -1557,8 +1606,9 @@ function vwad(data_id) {
                 document.getElementById('postview-data').innerHTML = new_html;
                 document.getElementById('pt').innerHTML = ad_array['title'];
                 document.getElementById('pd').innerHTML = ad_array['des'];
-                // document.getElementById('dtw').innerHTML = ad_array['drivebtn'];
-                document.getElementById('dbtn2').innerHTML = ad_array['drivebtn'];
+
+
+                // document.getElementById('dbtn2').innerHTML = ad_array['drivebtn'];
 
 
                 var linksContainer = $('#pi');
@@ -1600,18 +1650,10 @@ function vwad(data_id) {
                         links = this.getElementsByTagName('a');
                     blueimp.Gallery(links, options);
                 });     
-
-                
-                if (ad_array['lat']!='' && ad_array['lng']!='') {
-                    ViewAdUpdate(parseFloat(ad_array['lat']),parseFloat(ad_array['lng']));
-                    $(document).find('#waze-info').tooltip();
-                }
-
                 //VIEW IT
                 $('.vwad-loading').addClass('hide');
                 //REFRESH MAP
                 ViewPostMapRefresh();
-
                 //RENDER REVIEWS
                 var rv_html = '<input name="input-name" type="number" class="rating rev"><span id="rev-c">'+ad_array['rvs-count']+' reviews</span>';
                 document.getElementById('rv').innerHTML = rv_html;
@@ -1656,7 +1698,6 @@ function vwad(data_id) {
 
 
                 }
-
                 GVar.currentpost = data_id;
                 //RENDER REVIEWS
                 setTimeout(function(){ 
@@ -2404,32 +2445,64 @@ function getloc(controlDiv, map) {
     controlUI.appendChild(controlText);
 }
 
-function OpenWazeAppOrMarket(){
-    var lat = parseFloat($(document).find('#waze-drive-to').attr('lat'));
-    var lng = parseFloat($(document).find('#waze-drive-to').attr('lng'));
-    if(device.platform === 'iOS') {
-        var scheme = 'waze';
-        launchnavigator.navigate([lat, lng]);
-    }
-    else if(device.platform === 'Android') {
-        var scheme = 'com.waze';
-        launchnavigator.navigate([lat, lng]);
-    }  
-    // appAvailability.check(
-    //     scheme,       // URI Scheme or Package Name 
-    //     function() {  // Success callback 
-    //         window.location.href = "waze://?ll="+$(document).find('#waze-drive-to').attr('lat')+","+$(document).find('#waze-drive-to').attr('lng')+"&navigate=yes";
-    //     },
-    //     function() {
-    //         if(device.platform === 'iOS') {
-    //             cordova.plugins.market.open('waze');
-    //         }
-    //         else if(device.platform === 'Android') {
-    //             cordova.plugins.market.open('com.waze');
-    //         }  
-    //     }
-    // );
+function OpenGeoAppOrMarket(kind){
+    var lat = parseFloat(GVar.curadlat);
+    var lng = parseFloat(GVar.curadlng);
 
+    switch(kind) {
+        case 'KAKAOMAP': 
+            launchnavigator.isAppAvailable(launchnavigator.APP.KAKAOMAP, function(isAvailable){
+                var app;
+                if(isAvailable){
+                    app = launchnavigator.APP.KAKAOMAP;
+                    launchnavigator.navigate([lat, lng], {
+                        app: app
+                    });
+                }else{
+                    alert("Kakao Maps not available - Download from market and try again.");
+                }
+            });
+        break;
+        case 'GOOGLE_MAPS': 
+            launchnavigator.isAppAvailable(launchnavigator.APP.GOOGLE_MAPS, function(isAvailable){
+                var app;
+                if(isAvailable){
+                    app = launchnavigator.APP.GOOGLE_MAPS;
+                    launchnavigator.navigate([lat, lng], {
+                        app: app
+                    });
+                }else{
+                    alert("Google Maps not available - Download from market and try again.");
+                }
+            });            
+        break;
+        case 'WAZE': 
+            launchnavigator.isAppAvailable(launchnavigator.APP.WAZE, function(isAvailable){
+                var app;
+                if(isAvailable){
+                    app = launchnavigator.APP.WAZE;
+                    launchnavigator.navigate([lat, lng], {
+                        app: app
+                    });
+                }else{
+                    alert("Waze Maps not available - Download from market and try again.");
+                }
+            });            
+        break;
+        case 'APPLE_MAPS': 
+            launchnavigator.isAppAvailable(launchnavigator.APP.APPLE_MAPS, function(isAvailable){
+                var app;
+                if(isAvailable){
+                    app = launchnavigator.APP.APPLE_MAPS;
+                    launchnavigator.navigate([lat, lng], {
+                        app: app
+                    });
+                }else{
+                    alert("Apple Maps not available - Download from market and try again.");
+                }
+            });            
+        break;
+    }
 }
 function GetGPSLocation(){
     $('#lw3').removeClass('hide');
