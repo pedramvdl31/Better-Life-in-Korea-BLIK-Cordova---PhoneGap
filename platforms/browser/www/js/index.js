@@ -48,6 +48,7 @@ GVar = {
     'admkrs':[],
     'qpmarkers':[],
     'pmmarkers':[],
+    'viewaddmarker':[],
     'lcircle':[],
     'iswaze':0,
     'imgcounter':0,
@@ -679,23 +680,25 @@ function Events() {
     });
 
     $("#gobtn").on('touchstart', function(e) {
-        myApp.closePanel();
-        var dv = parseInt($('#disin').val());
-        if (!$.isBlank(dv) && dv!=0) {
-            GVar.drad=dv;
-        } else {
-            GVar.drad=25;
-        }
-        var tiv = GVar.curcat;
-        setTimeout(function(){
-            myApp.closePanel('left');
-        }, 100);
-        setTimeout(function(){
-            if (GVar.vaf==0) {
-                VAOM(GVar.lndinglat,GVar.lndinglng,tiv,GVar.drad);
+        // myApp.closePanel();
+        var tiv = $('#hashtagsearch').val();
+        if (!$.isBlank(tiv)) {
+            var dv = parseInt($('#disin').val());
+            if (!$.isBlank(dv) && dv!=0) {
+                GVar.drad=dv;
+            } else {
+                GVar.drad=25;
             }
-            GVar.vaf = 1;
-        }, 500);
+            setTimeout(function(){
+                myApp.closePanel('left');
+            }, 100);
+            setTimeout(function(){
+                if (GVar.vaf==0) {
+                    VAOM(GVar.lndinglat,GVar.lndinglng,tiv,GVar.drad);
+                }
+                GVar.vaf = 1;
+            }, 500);            
+        }
 
     });
 
@@ -835,10 +838,6 @@ function Events() {
         $t_id = $(this).attr('data');
         removeWishList($t_id);
     });
-    $(document).on('click','.view-ad-wl',function(){
-        var this_id = $(this).attr('data');
-        findAndViewAd2(this_id);
-    });
     $(document).on('touchstart','#curlocqp',function(){
         $('#lw3').removeClass('hide');
         CheckGPS.check(function win(){
@@ -920,7 +919,7 @@ function Events() {
             refresh_ads_city(t_v);
         }
     });
-    $(document).find("#qk-post-btn").on('touchstart', function(e) {
+    $(document).on('touchstart','#qk-post-btn',function(e){
         e.preventDefault();
         if ($(document).find('.uimg').length < 1) {
             alert('you must upload at least one image');
@@ -929,7 +928,6 @@ function Events() {
             process_qkpost(_form,document.getElementById("cats").value);    
         }
     });
-
     $('#back-to-wl').click(function(){
         $(this).parents('.modal-footer').addClass('hide');
         $('#wishlist-ad-content').addClass('hide');
@@ -1230,33 +1228,6 @@ function add_to_wishlist(data_id) {
         }
         );
 }
-function vwad2(data_id) {
-    $('.postview_modal_body').addClass('hide');
-    $('.vwad-loading').removeClass('hide');
-    var token = $('meta[name=csrf-token]').attr('content');
-    $.post(
-        '/prepare-ad',
-        {
-            "_token": token,
-            "data_id":data_id
-        },
-        function(result){
-            var status = result.status;
-            var ad = result.ad;
-            switch(status){                 
-                case 200:
-                    $('#wishlist-ad-content').removeClass('hide');
-                    $('#wishlist-ad-content').html(ad);
-                    $('.vwad-loading').addClass('hide');
-                break;
-
-                case 400:
-                break;
-
-            }
-        }
-        );
-}
 function save_rate(rate,data_id) {
     var data ={"rate":rate, "data_id":data_id}
     $.ajax({
@@ -1406,17 +1377,16 @@ function ResetLandingAndReasin(){
     google.maps.event.addListener(LandingMap, 'click', function(event) {
        placeMarker(event.latLng);
     });
-
     function placeMarker(location) {
         LandingClearMarker();
         var marker = new google.maps.Marker({
             position: location, 
-            map: LandingMap
+            map: LandingMap,
+            draggable: true,
         });
         GVar.lndinglat = marker.getPosition().lat();
         GVar.lndinglng = marker.getPosition().lng();
         GVar.lmarkers.push(marker);
-
         // Add the circle for this city to the map.
         var cityCircle = new google.maps.Circle({
             strokeColor: '#badbff',
@@ -1429,28 +1399,25 @@ function ResetLandingAndReasin(){
             radius: GVar.drad*1000
         });
         GVar.lcircle.push(cityCircle);
-        // var zoomnum = 9;
-        // if (GVar.drad==25) {
-        //     zoomnum=9;
-        // } else if(GVar.drad<20 && GVar.drad >= 10){
-        //     zoomnum=10;
-        // } else if(GVar.drad<10 && GVar.drad >= 5){
-        //     zoomnum=12;
-        // } else if(GVar.drad<5 && GVar.drad > 0){
-        //     zoomnum=14;
-        // } else if(GVar.drad>25 && GVar.drad <= 50){
-        //     zoomnum=8;
-        // } else if(GVar.drad>50 && GVar.drad <= 200){
-        //     zoomnum=7;
-        // } else if(GVar.drad>200 && GVar.drad <= 1000){
-        //     zoomnum=4;
-        // }
 
-        // LandingMap.setCenter(location);
-        // LandingMap.setZoom(zoomnum);
+        google.maps.event.addListener(marker, 'dragend', function (event) {
+            ClearCircles();
+            GVar.lndinglat = this.getPosition().lat();
+            GVar.lndinglng = this.getPosition().lng();
+            var latlng = {lat: this.getPosition().lat(), lng: this.getPosition().lng()};
+            var cityCircle = new google.maps.Circle({
+                strokeColor: '#badbff',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#a0ccfb',
+                fillOpacity: 0,
+                map: LandingMap,
+                center: latlng,
+                radius: GVar.drad*1000
+            });
+            GVar.lcircle.push(cityCircle);
+        });
     }
-
-
     adClearMarker();
     var ads = GVar.adsbuffer;
     if (!isBlank(ads)) {
@@ -1550,11 +1517,12 @@ function vwad(data_id) {
                 //init
                 GVar.curadlat = ad_array['lat'];
                 GVar.curadlng = ad_array['lng'];
+                GVar.currentpost = data_id;
                 var btnhtml = '';
                 if(device.platform === 'iOS') {
                     btnhtml = '<div class="btn-group-vertical" style="width: 100%;">'+
                           '<a id="dknavi" href="#" class="btn btn-default btn-md"><strong>KakaoNavi</strong></a>'+
-                          '<a id="dwnavi" href="#" class="btn btn-default btn-md"><strong>WazeMaps</strong></a>'+
+                          '<a id="dwnavi" href="#" class="btn btn-default btn-md"><strong>Waze</strong></a>'+
                           '<a id="dgnavi" href="#" class="btn btn-default btn-md"><strong>GoogleMaps</strong></a>'+
                           '<a id="dinavi" href="#" class="btn btn-default btn-md"><strong>AppleMaps</strong></a>'+
                           '<a id="gshare" href="#" class="btn btn-primary btn-md">Share</a>'+
@@ -1562,22 +1530,19 @@ function vwad(data_id) {
                 } else if(device.platform === 'Android') {
                     btnhtml = '<div class="btn-group-vertical" style="width: 100%;">'+
                           '<a id="dknavi" href="#" class="btn btn-default btn-md"><strong>KakaoNavi</strong></a>'+
-                          '<a id="dwnavi" href="#" class="btn btn-default btn-md"><strong>WazeMaps</strong></a>'+
+                          '<a id="dwnavi" href="#" class="btn btn-default btn-md"><strong>Waze</strong></a>'+
                           '<a id="dgnavi" href="#" class="btn btn-default btn-md"><strong>GoogleMaps</strong></a>'+
                           '<a id="gshare" href="#" class="btn btn-primary btn-md">Share</a>'+
                           '</div>';
                 } else {
                     btnhtml = '<div class="btn-group-vertical" style="width: 100%;">'+
                           '<a id="dknavi" href="#" class="btn btn-default btn-md"><strong>KakaoNavi</strong></a>'+
-                          '<a id="dwnavi" href="#" class="btn btn-default btn-md"><strong>WazeMaps</strong></a>'+
+                          '<a id="dwnavi" href="#" class="btn btn-default btn-md"><strong>Waze</strong></a>'+
                           '<a id="dgnavi" href="#" class="btn btn-default btn-md"><strong>GoogleMaps</strong></a>'+
                           '<a id="gshare" href="#" class="btn btn-primary btn-md">Share</a>'+
                           '</div>';
                 }
                 document.getElementById('dbtn2').innerHTML = btnhtml;
-               
-
-
                 document.getElementById('postview-data').innerHTML = '';
                 //SHARING BUTTONS
                 var slink = GVar.baseurl+'/api/appurlhandler/'+data_id;
@@ -1599,18 +1564,12 @@ function vwad(data_id) {
                     window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
                 });
                 //SHARING BUTTONS END 
-
                 var new_html = "<div class='form-group break_all' id='pt'></div>"+
                 "<div class='form-group break_all' id='pd'></div>"+
                 "<div class='my-container' id='pi' style='opacity:0'></div>";
                 document.getElementById('postview-data').innerHTML = new_html;
                 document.getElementById('pt').innerHTML = ad_array['title'];
                 document.getElementById('pd').innerHTML = ad_array['des'];
-
-
-                // document.getElementById('dbtn2').innerHTML = ad_array['drivebtn'];
-
-
                 var linksContainer = $('#pi');
                 var baseUrl;
                 var title = ad_array['title_txt'];
@@ -1653,7 +1612,7 @@ function vwad(data_id) {
                 //VIEW IT
                 $('.vwad-loading').addClass('hide');
                 //REFRESH MAP
-                ViewPostMapRefresh();
+                ViewPostMapRefreshAndSet(ad_array['lat'],ad_array['lng']);
                 //RENDER REVIEWS
                 var rv_html = '<input name="input-name" type="number" class="rating rev"><span id="rev-c">'+ad_array['rvs-count']+' reviews</span>';
                 document.getElementById('rv').innerHTML = rv_html;
@@ -1695,16 +1654,12 @@ function vwad(data_id) {
                         showCaption:0,
                         showClear:0
                     });
-
-
                 }
-                GVar.currentpost = data_id;
                 //RENDER REVIEWS
                 setTimeout(function(){ 
                     $('#pi').css('opacity','1');
                     $('#pv').css('opacity','1');
                 }, 500);
-
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
@@ -1731,7 +1686,7 @@ function process_qkpost(_form,cat_id) {
                 case 200:
                     //relaod-ads-to show new post
                     // refresh_ads(cat_id);
-                    ResetLandingAndReasin();
+                    // ResetLandingAndReasin();
                     ResetView2();
                     myApp.addNotification({
                         title: 'BLINK',
@@ -1780,15 +1735,10 @@ function ResetView2(){
     GVar.imgcounter = 0;
     GVar.icont = 0;
     GVar.totalimgcounter = 0;
-    $('#v2pc').html('<form id="pkpost-form" style="float: left;width: 100%"> <div class="list-block"> <ul> <li> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Category" class="item-link smart-select" data-back-on-select="true"> <select name="cat" class="form-control qp-selects" id="cats"> <option value="1">Bar & Pub</option> <option value="2">Car Dealership</option> <option value="3">Coffee Shop</option> <option value="4">Entertainment</option> <option value="5">Food</option> <option value="6">Gas Station</option> <option value="7">Hotel</option> <option value="8">Medical Center</option> <option value="9">Movie Theater</option> <option value="10">Nightlife Spot</option> <option value="11">Outdoors & Recreation</option> <option value="12">Parking</option> <option value="13">Pharmacy</option> <option value="14">Real Estate</option> <option value="15">Supermarket</option> <option value="16">Taxi</option> <option value="17">Transport</option> <option value="18">Travel Agency</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">Category</div><div class="item-after">Select</div></div></div></a> </li><li style="display: none"> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Cities" class="item-link smart-select" data-back-on-select="true"> <select name="city" class="form-control" id="city-select-bar" status=false> <option value="1" selected="">Gangwon-Do</option> <option value="2">Gyeonggi-Do</option> <option value="3">Seoul</option> <option value="4">Incheon</option> <option value="5">Daejeon</option> <option value="6">Chungcheong-Bukdo</option> <option value="7">Ullung-Do</option> <option value="8">Gyeongsang-Bukdo</option> <option value="9">Ulsan</option> <option value="10">Gyeongsang-Namdo</option> <option value="11">Busan</option> <option value="12">Daegu</option> <option value="13">Gwangju</option> <option value="14">Jeolla-Bukdo</option> <option value="15">Chungcheong-Namdo</option> <option value="16">Jeollanam-Do</option> <option value="17">Jeju-Do</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">City</div><div class="item-after">Select</div></div></div></a> </li></ul> </div><div class="form-group" style="float:left;width: 100%;"> <input type="hidden" id="qkp-lat" name="lat"/> <input type="hidden" id="qkp-lng" name="long"/> <div id="qkpost-map-container" style="width:80%;margin:0 auto"> <input id="pac-input" class="controls" type="text" placeholder="Search Address" style="width: 80% !important;margin: 3px 0 0 3px !important;height: 36px !important;"><div style="height:300px" id="postmap"></div></div></div><div class="form-group" id="title-wrap" style=""> <label>Title: <span class="_required">*required</span> </label> <input type="text" class="form-control pk-form" name="title" id="email" placeholder="Title" aria-describedby="sizing-addon2"> </div><div class="form-group" id="des-wrap" style=""> <label>Description: <span class="_required">*required</span> </label> <textarea style="resize:vertical;" class="form-control pk-form" name="description"></textarea> </div><div id="file-div"></div></form> <div class="" style="float: left;width: 100%"> <div id="_upp" class="hide"> <p> Uploading... ( <span id="pco"></span> %) </p></div><div style="float: left;width: 100%;padding: 10px" id="images"> </div></div><div class="" style="float: right;"> <div class="btn-group"> <a href="#" id="addPicture" class="btn btn-primary">Browse Images</a> <a href="#" id="qk-post-btn" class="btn btn-success">Post</a> </div><div id="pos-gif" class="pull-right hide" style="line-height: 32px; margin-right: 10px;"> <img src="gif/loading1.gif" width="20px;"> </div></div>');
+    $(document).find('.uimg').remove();
+    $('#v2pc').html('<form class="" id="pkpost-form" style="float: left;width: 100%;"> <div class="list-block"> <ul> <li> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Category" class="item-link smart-select" data-back-on-select="true"> <select name="cat" class="form-control qp-selects" id="cats"> <option value="1">Bar & Pub</option> <option value="2">Car Dealership</option> <option value="3">Coffee Shop</option> <option value="4">Entertainment</option> <option value="5">Food</option> <option value="6">Gas Station</option> <option value="7">Hotel</option> <option value="8">Medical Center</option> <option value="9">Movie Theater</option> <option value="10">Nightlife Spot</option> <option value="11">Outdoors & Recreation</option> <option value="12">Parking</option> <option value="13">Pharmacy</option> <option value="14">Real Estate</option> <option value="15">Supermarket</option> <option value="16">Taxi</option> <option value="17">Transport</option> <option value="18">Travel Agency</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">Category</div><div class="item-after">Select</div></div></div></a> </li><li style="display: none"> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Cities" class="item-link smart-select" data-back-on-select="true"> <select name="city" class="form-control" id="city-select-bar" status=false> <option value="1" selected="">Gangwon-Do</option> <option value="2">Gyeonggi-Do</option> <option value="3">Seoul</option> <option value="4">Incheon</option> <option value="5">Daejeon</option> <option value="6">Chungcheong-Bukdo</option> <option value="7">Ullung-Do</option> <option value="8">Gyeongsang-Bukdo</option> <option value="9">Ulsan</option> <option value="10">Gyeongsang-Namdo</option> <option value="11">Busan</option> <option value="12">Daegu</option> <option value="13">Gwangju</option> <option value="14">Jeolla-Bukdo</option> <option value="15">Chungcheong-Namdo</option> <option value="16">Jeollanam-Do</option> <option value="17">Jeju-Do</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">City</div><div class="item-after">Select</div></div></div></a> </li></ul> </div><div class="form-group" style="float:left;width: 100%;"> <input type="hidden" id="qkp-lat" name="lat"/> <input type="hidden" id="qkp-lng" name="long"/> <div id="qkpost-map-container" style="width:80%;margin:0 auto"> <input id="pac-input" class="controls" type="text" placeholder="Search Address" style="width: 80% !important;margin: 3px 0 0 3px !important;height: 36px !important;"><div style="height:300px" id="postmap"></div></div></div><div class="form-group" id="title-wrap" style=""> <label>Title: <span class="_required">*required</span> </label> <input type="text" class="form-control pk-form" name="title" id="titleqp" placeholder="Title" aria-describedby="sizing-addon2"> </div><div class="form-group" id="des-wrap" style=""> <label>Description: <span class="_required">*required</span> </label> <textarea id="desqp" style="resize:vertical;" class="form-control pk-form" name="description"></textarea> </div><div id="file-div"></div></form> <div class="" style="float: left;width: 100%"> <div id="_upp" class="hide"> <p> Uploading... ( <span id="pco"></span> %) </p></div><div style="float: left;width: 100%;padding: 10px" id="images"> </div></div><div class="" style="float: right;width: 100%"> <div class="btn-group btn-block" style="width: 100%"> <a style="width: 50%" href="#" id="addPicture" class="btn btn-primary">Browse Images</a> <a style="width: 50%" href="#" id="qk-post-btn" class="btn btn-success">Post</a> </div><div id="pos-gif" class="pull-right hide" style="line-height: 32px; margin-right: 10px;"> <img src="gif/loading1.gif" width="20px;"> </div></div>');
     setTimeout(function(){
         PostAdInit();
-        $(document).find("#qk-post-btn").on('touchstart', function(e) {
-            e.preventDefault();
-            var _form = $('#pkpost-form').serialize();
-            process_qkpost(_form,document.getElementById("cats").value);
-        });
-        // PhotoUpload();
     }, 300);
 }
 function reg_submit(reg_form) {
@@ -1872,12 +1822,6 @@ function reset_errors() {
 }
 function findAndViewAd(this_id) {
     vwad(this_id);
-}
-function findAndViewAd2(this_id) {
-    $('.wl_modal_body').addClass('hide');
-    $('.vwad-loading').removeClass('hide');
-    $('.wl-footer').removeClass('hide');
-    vwad2(this_id);
 }
 function view_errors(data) {
     var error_status = false;
@@ -1970,22 +1914,6 @@ function create_loading_input() {
     return loading_html;
 }
 function PostAdInit() {
-    // $(document).find("#qkpcl").on('touchstart', function(e) {
-    //     e.preventDefault();
-    //     CheckGPS.check(function win(){
-    //         var onSuccess = function(position) {
-    //             qkpmUpdate(position.coords.latitude,position.coords.longitude);
-    //         };
-    //         function onError(error) {
-    //             calldialog();
-    //         }
-    //         navigator.geolocation.getCurrentPosition(onSuccess, onError);
-    //       },
-    //       function fail(){
-    //         calldialog();
-    //       });
-    // });
-
     var myLatLng = {lat: 36.5802466, lng: 127.95776367};
     document.getElementById('qkp-lat').value = myLatLng.lat;
     document.getElementById('qkp-lng').value = myLatLng.lng;
@@ -1999,7 +1927,8 @@ function PostAdInit() {
     });
 
     google.maps.event.addListener(postmap, 'click', function(event) {
-       placeMarkerpm(event.latLng);
+        qkpmClearMarker();
+        placeMarkerpm(event.latLng);
     });
     //MARKER
     window.PostAdMarker = new google.maps.Marker({
@@ -2009,7 +1938,6 @@ function PostAdInit() {
       anchorPoint: new google.maps.Point(0, -29)
     });
     GVar.pmmarkers.push(PostAdMarker);
-
     function placeMarkerpm(location) {
         PostMapClearMarker();
         var marker = new google.maps.Marker({
@@ -2018,13 +1946,11 @@ function PostAdInit() {
             draggable: true,
             anchorPoint: new google.maps.Point(0, -29)
         });
-
         document.getElementById('qkp-lat').value = marker.getPosition().lat();
         document.getElementById('qkp-lng').value = marker.getPosition().lng();
         GVar.pmmarkers.push(marker);
-
-        postmap.setCenter(location);
-        postmap.setZoom(15);
+        // postmap.setCenter(location);
+        // postmap.setZoom(15);
     }
 
     // GOOGLE MAP RESPONSIVENESS
@@ -2054,7 +1980,6 @@ function PostAdInit() {
           }
         });
     });
-
     var getlocDiv = document.createElement('div');
     var getlocvar = new getloc(getlocDiv, postmap);  
     getlocDiv.index = 1;
@@ -2096,6 +2021,33 @@ function PostAdInit() {
           console.log("Returned place contains no geometry");
           return;
         }
+        PostMapClearMarker();
+        //MARKER
+        window.PostAdMarker2 = new google.maps.Marker({
+          map: postmap,
+          icon:GVar.flag_image,
+          position: place.geometry.location,
+          draggable: true
+        });
+        GVar.pmmarkers.push(PostAdMarker2);
+
+        google.maps.event.addListener(PostAdMarker2, 'dragend', function (event) {
+            var latlng = {lat: this.getPosition().lat(), lng: this.getPosition().lng()};
+            geocoder.geocode({'location': latlng}, function(results, status) {
+              if (status === 'OK') {
+                if (results[1]) {
+                    // saving to dom
+                    document.getElementById('qkp-lat').value = latlng.lat;
+                    document.getElementById('qkp-lng').value = latlng.lng;
+                } else {
+                  window.alert('No results found');
+                }
+              } else {
+                window.alert('Geocoder failed due to: ' + status);
+              }
+            });
+        });
+
         if (place.geometry.viewport) {
           // Only geocodes have viewport.
           bounds.union(place.geometry.viewport);
@@ -2113,6 +2065,7 @@ function qkpmUpdate(lat,lng) {
     document.getElementById('qkp-lat').value = lat;
     document.getElementById('qkp-lng').value = lng;
     qkpmClearMarker();
+    PostMapClearMarker();
     var myLatLng = {lat: lat, lng: lng};
     postmap.setCenter(myLatLng);
     postmap.setZoom(15);
@@ -2123,13 +2076,14 @@ function qkpmUpdate(lat,lng) {
       draggable: true,
       anchorPoint: new google.maps.Point(0, -29)
     });
+    //AFTER DRAG AND DROP SHOWS THE LAT AND LONG
+    google.maps.event.addListener(marker, 'dragend', function (event) {
+        document.getElementById('qkp-lat').value = this.getPosition().lat();
+        document.getElementById('qkp-lng').value = this.getPosition().lng();
+    });
     GVar.qpmarkers.push(marker);
 }
-function qkpmClearMarker() {
-    for (var i = 0; i < GVar.qpmarkers.length; i++) {
-      GVar.qpmarkers[i].setMap(null);
-    }
-}
+
 function adClearMarker() {
     for (var i = 0; i < GVar.admkrs.length; i++) {
       GVar.admkrs[i].setMap(null);
@@ -2169,46 +2123,43 @@ function LandingInit(lat,lng) {
         LandingClearMarker();
         var marker = new google.maps.Marker({
             position: location, 
-            map: LandingMap
+            map: LandingMap,
+            draggable: true,
         });
         GVar.lndinglat = marker.getPosition().lat();
         GVar.lndinglng = marker.getPosition().lng();
         GVar.lmarkers.push(marker);
-
         // Add the circle for this city to the map.
         var cityCircle = new google.maps.Circle({
             strokeColor: '#badbff',
             strokeOpacity: 0.8,
             strokeWeight: 2,
             fillColor: '#a0ccfb',
-            fillOpacity: 0.35,
+            fillOpacity: 0,
             map: LandingMap,
             center: location,
             radius: GVar.drad*1000
         });
         GVar.lcircle.push(cityCircle);
-        // var zoomnum = 9;
-        // if (GVar.drad==25) {
-        //     zoomnum=9;
-        // } else if(GVar.drad<20 && GVar.drad >= 10){
-        //     zoomnum=10;
-        // } else if(GVar.drad<10 && GVar.drad >= 5){
-        //     zoomnum=12;
-        // } else if(GVar.drad<5 && GVar.drad > 0){
-        //     zoomnum=14;
-        // } else if(GVar.drad>25 && GVar.drad <= 50){
-        //     zoomnum=8;
-        // } else if(GVar.drad>50 && GVar.drad <= 200){
-        //     zoomnum=7;
-        // } else if(GVar.drad>200 && GVar.drad <= 1000){
-        //     zoomnum=4;
-        // }
 
-        // LandingMap.setCenter(location);
-        // LandingMap.setZoom(zoomnum);
+        google.maps.event.addListener(marker, 'dragend', function (event) {
+            ClearCircles();
+            GVar.lndinglat = this.getPosition().lat();
+            GVar.lndinglng = this.getPosition().lng();
+            var latlng = {lat: this.getPosition().lat(), lng: this.getPosition().lng()};
+            var cityCircle = new google.maps.Circle({
+                strokeColor: '#badbff',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#a0ccfb',
+                fillOpacity: 0.35,
+                map: LandingMap,
+                center: latlng,
+                radius: GVar.drad*1000
+            });
+            GVar.lcircle.push(cityCircle);
+        });
     }
-
-    
     //MARKER
     var infowindow = new google.maps.InfoWindow();
 }
@@ -2284,19 +2235,6 @@ function QpUpdate(lat,lng) {
     document.getElementById('qkp-lat').value = lat;
     document.getElementById('qkp-lng').value = lng;
 }
-function LandingClearMarker() {
-    for (var i = 0; i < GVar.lmarkers.length; i++) {
-      GVar.lmarkers[i].setMap(null);
-    }  
-    for (var j = 0; j < GVar.lcircle.length; j++) {
-      GVar.lcircle[j].setMap(null);
-    }          
-}
-function PostMapClearMarker() {
-    for (var i = 0; i < GVar.pmmarkers.length; i++) {
-      GVar.pmmarkers[i].setMap(null);
-    }  
-}
 function ViewAdInit(lat,lng) {
     var myLatLng = {lat: lat, lng: lng};
     window.PostViewMap = new google.maps.Map(document.getElementById('map-post-view'), {
@@ -2324,9 +2262,19 @@ function ViewAdInit(lat,lng) {
       draggable: false,
       anchorPoint: new google.maps.Point(0, -29)
     });
+    GVar.viewaddmarker.push(marker);
+}
+function ViewPostMapRefreshAndSet(lat,lng) {
+    ViewMapClearMarker();
+    setTimeout(function(){ 
+        google.maps.event.trigger(PostViewMap, "resize");
+        ViewAdUpdate(lat,lng);
+     }, 200);
 }
 function ViewAdUpdate(lat,lng) {
-    var myLatLng = {lat: lat, lng: lng};
+    var latpf = parseFloat(lat);
+    var lngpf = parseFloat(lng);
+    var myLatLng = {lat: latpf, lng: lngpf};
     PostViewMap.setCenter(myLatLng);
     var marker = new google.maps.Marker({
       map: PostViewMap,
@@ -2335,15 +2283,31 @@ function ViewAdUpdate(lat,lng) {
       draggable: false,
       anchorPoint: new google.maps.Point(0, -29)
     });
+    GVar.viewaddmarker.push(marker);
 }
-function ViewPostMapRefresh() {
-    setTimeout(function(){ 
-        var center = PostViewMap.getCenter();
-        google.maps.event.trigger(PostViewMap, "resize");
-        PostViewMap.setCenter(center); 
-     }, 500);
+function LandingClearMarker() {
+    for (var i = 0; i < GVar.lmarkers.length; i++) {
+      GVar.lmarkers[i].setMap(null);
+    }  
+    for (var j = 0; j < GVar.lcircle.length; j++) {
+      GVar.lcircle[j].setMap(null);
+    }          
 }
-
+function PostMapClearMarker() {
+    for (var i = 0; i < GVar.pmmarkers.length; i++) {
+      GVar.pmmarkers[i].setMap(null);
+    }  
+}
+function qkpmClearMarker() {
+    for (var i = 0; i < GVar.qpmarkers.length; i++) {
+      GVar.qpmarkers[i].setMap(null);
+    }
+}
+function ViewMapClearMarker() {
+    for (var i = 0; i < GVar.viewaddmarker.length; i++) {
+      GVar.viewaddmarker[i].setMap(null);
+    }  
+}
 function uploadPics() {
     console.log("Ok, going to upload "+images.length+" images.");
     var defs = [];
@@ -2520,6 +2484,11 @@ function GetGPSLocation(){
         $('#lw3').addClass('hide');
         calldialog();
       });
+}
+function ClearCircles(){
+    for (var j = 0; j < GVar.lcircle.length; j++) {
+      GVar.lcircle[j].setMap(null);
+    } 
 }
 function GetGPSLocationNoZoom(){
     $('#lw3').removeClass('hide');
