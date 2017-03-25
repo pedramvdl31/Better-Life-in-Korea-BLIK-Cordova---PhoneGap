@@ -891,7 +891,7 @@ ServerRequests = {
 			}
 			);
 	},
-	process_qkpost: function(_form,cat_id) {
+	process_qkpost: function(_form,cat_id) {XXX
 		$('._required').css('color','inherit');
 		$('#validating').removeClass('hide');
 		$('#pos-gif').removeClass('hide');

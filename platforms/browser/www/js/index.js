@@ -53,7 +53,7 @@ GVar = {
     'iswaze':0,
     'imgcounter':0,
     'totalimgcounter':0,
-    'drad':25,
+    'drad':15,
     'icont':0,
     'vaf':0,
     'curcat':0,
@@ -62,7 +62,8 @@ GVar = {
     'emailorfbid':0,
     'currentpost':0,
     'curadlat':0,
-    'curadlng':0
+    'curadlng':0,
+    'lndmapprevzoom':15
 
 }
 
@@ -724,7 +725,7 @@ function Events() {
             if (!$.isBlank(dv) && dv!=0) {
                 GVar.drad=dv;
             } else {
-                GVar.drad=25;
+                GVar.drad=15;
             }
             setTimeout(function(){
                 myApp.closePanel('left');
@@ -959,7 +960,7 @@ function Events() {
     $(document).on('touchstart','#qk-post-btn',function(e){
         e.preventDefault();
         if ($(document).find('.uimg').length < 1) {
-            alert('you must upload at least one image');
+            alert('You must upload at least one image');
         } else {
             var _form = $('#pkpost-form').serialize();
             process_qkpost(_form,document.getElementById("cats").value);    
@@ -1297,23 +1298,9 @@ function VAOM(lat,lng,cat_id,rd) {
                 case 200:
                     adClearMarker();
                     var ads = data.ads;
-                    var zoomnum = 9;
                     var drd = GVar.drad;
-                    if (drd==25) {
-                        zoomnum=9;
-                    } else if(drd<20 && drd >= 10){
-                        zoomnum=10;
-                    } else if(drd<10 && drd >= 5){
-                        zoomnum=12;
-                    } else if(drd<5 && drd > 0){
-                        zoomnum=14;
-                    } else if(drd>25 && drd <= 50){
-                        zoomnum=8;
-                    } else if(drd>50 && drd <= 200){
-                        zoomnum=7;
-                    } else if(drd>200 && drd <= 1000){
-                        zoomnum=4;
-                    }
+                    var zoomnum = RadiusToZoom(drd);
+
                     LandingMap.setCenter(olatlng);
                     LandingMap.setZoom(zoomnum);
                     if (!isBlank(ads)) {
@@ -1389,6 +1376,9 @@ function ResetLandingAndReasin(){
     var lat = GVar.lndinglat;
     var lng = GVar.lndinglng;
 
+    var drd = GVar.drad;
+    var zoomnum = RadiusToZoom(drd);
+
     $('#fpmap').html('');
     $('#fpmap').css('height',($(window).height()-20));
     $(window).resize(function() {
@@ -1398,7 +1388,7 @@ function ResetLandingAndReasin(){
     var myLatLng = {lat: lat, lng: lng};
     window.LandingMap = new google.maps.Map(document.getElementById('fpmap'), {
         center: myLatLng,
-        zoom: 6,    
+        zoom: zoomnum,    
         mapTypeControl: false,
         streetViewControl: false,
         disableDefaultUI: true
@@ -1499,26 +1489,8 @@ function ResetLandingAndReasin(){
             });  
         }
     }
-    var drd = GVar.drad;
-    if (drd==25) {
-        zoomnum=9;
-    } else if(drd<20 && drd >= 10){
-        zoomnum=10;
-    } else if(drd<10 && drd >= 5){
-        zoomnum=12;
-    } else if(drd<5 && drd > 0){
-        zoomnum=14;
-    } else if(drd>25 && drd <= 50){
-        zoomnum=8;
-    } else if(drd>50 && drd <= 200){
-        zoomnum=7;
-    } else if(drd>200 && drd <= 1000){
-        zoomnum=4;
-    }
-
-    var olatlng = {lat: parseFloat(GVar.lndinglat),lng: parseFloat(GVar.lndinglng)};
-    LandingMap.setCenter(olatlng);
-    LandingMap.setZoom(zoomnum);
+    // var olatlng = {lat: parseFloat(GVar.lndinglat),lng: parseFloat(GVar.lndinglng)};
+    // LandingMap.setCenter(olatlng);
     GetGPSLocationNoZoom();
 }
 function vwad(data_id) {
@@ -1985,8 +1957,6 @@ function PostAdInit() {
         document.getElementById('qkp-lat').value = marker.getPosition().lat();
         document.getElementById('qkp-lng').value = marker.getPosition().lng();
         GVar.pmmarkers.push(marker);
-        // postmap.setCenter(location);
-        // postmap.setZoom(15);
     }
 
     // GOOGLE MAP RESPONSIVENESS
@@ -2205,7 +2175,9 @@ function LandingUpdate(lat,lng) {
     GVar.lndinglat = lat;
     GVar.lndinglng = lng;
     LandingMap.setCenter(myLatLng);
-    LandingMap.setZoom(15);
+    var drd = GVar.drad;
+    var zoomnum = RadiusToZoom(drd);
+    LandingMap.setZoom(zoomnum);
     var image = {
       url: GVar.rball,
       size: new google.maps.Size(200, 200),
@@ -2563,4 +2535,9 @@ function autogpson(){
             );
         }
     });    
+}
+function RadiusToZoom(rad){
+    var radius = rad*0.62137;
+    var zm = Math.round(14-Math.log(radius)/Math.LN2);
+    return zm;
 }
