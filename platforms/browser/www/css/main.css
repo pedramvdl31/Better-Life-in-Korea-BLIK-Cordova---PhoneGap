@@ -541,50 +541,20 @@ forms.less:118
     opacity: 1;
     z-index: 99999999991;
   }
-  #lw{
+
+  #lwposting,#lw4,#lw3,#lwgen,#lw2,#lw{
     position: absolute;
     width: 100%;
     left: 0;
     top: 0;
     right: 0;
     bottom: 0;
-    text-align: center;
+    text-align: center;    
   }
-  #lw2{
-    position: absolute;
-    width: 100%;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    text-align: center;
-  }
-  #lwgen{
-    position: absolute;
-    width: 100%;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    text-align: center;
-  }
-  #lw3{
-    position: absolute;
-    width: 100%;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    text-align: center;
-  }
-  #lw4{
-    position: absolute;
-    width: 100%;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    text-align: center;
+  #pac-input{
+    width: 80% !important;
+    margin: 3px 0 0 3px !important;
+    height: 36px !important;
   }
   #ltext{
     /*padding-top: 20px;*/
