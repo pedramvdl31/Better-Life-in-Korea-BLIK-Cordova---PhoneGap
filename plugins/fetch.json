@@ -206,5 +206,21 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "cordova-plugin-fastrde-checkgps": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-fastrde-checkgps"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-appavailability": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-appavailability"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

@@ -15,6 +15,22 @@ module.exports = [
         "clobbers": [
             "launchnavigator"
         ]
+    },
+    {
+        "file": "plugins/cordova-plugin-fastrde-checkgps/www/CheckGPS.js",
+        "id": "cordova-plugin-fastrde-checkgps.CheckGPS",
+        "pluginId": "cordova-plugin-fastrde-checkgps",
+        "clobbers": [
+            "CheckGPS"
+        ]
+    },
+    {
+        "file": "plugins/cordova-plugin-appavailability/www/AppAvailability.js",
+        "id": "cordova-plugin-appavailability.AppAvailability",
+        "pluginId": "cordova-plugin-appavailability",
+        "clobbers": [
+            "appAvailability"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -23,7 +39,10 @@ module.exports.metadata =
     "cordova-plugin-image-picker": "1.1.1",
     "cordova-plugin-request-location-accuracy": "2.2.0",
     "cordova-plugin-queries-schemes": "0.1.1",
-    "uk.co.workingedge.phonegap.plugin.launchnavigator": "3.2.1"
+    "uk.co.workingedge.phonegap.plugin.launchnavigator": "3.2.1",
+    "cordova-plugin-geolocation": "2.1.0",
+    "cordova-plugin-fastrde-checkgps": "1.0.0",
+    "cordova-plugin-appavailability": "0.4.2"
 }
 // BOTTOM OF METADATA
 });

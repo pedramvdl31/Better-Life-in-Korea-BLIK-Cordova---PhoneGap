@@ -1,0 +1,15 @@
+[0322/034708.169:ERROR:process_info.cc(343)] VirtualQueryEx: Access is denied. (0x5)
+[0322/034708.173:ERROR:process_info.cc(564)] ReadMemoryInfo failed
+[0322/034708.173:ERROR:process_reader_win.cc(142)] SuspendThread: Access is denied. (0x5)
+[0322/034708.173:ERROR:exception_snapshot_win.cc(87)] thread ID 6308 not found in process
+[0322/034708.173:WARNING:crash_report_exception_handler.cc(60)] ProcessSnapshotWin::Initialize failed
+[0322/034708.173:ERROR:scoped_process_suspend.cc(38)] NtResumeProcess: An attempt was made to access an exiting process.  (0xc000010a)
+[0322/203441.948:ERROR:process_info.cc(343)] VirtualQueryEx: Access is denied. (0x5)
+[0322/203441.948:ERROR:process_info.cc(564)] ReadMemoryInfo failed
+[0322/203441.949:ERROR:process_reader_win.cc(142)] SuspendThread: Access is denied. (0x5)
+[0322/203441.949:ERROR:exception_snapshot_win.cc(87)] thread ID 3764 not found in process
+[0322/203441.949:WARNING:crash_report_exception_handler.cc(60)] ProcessSnapshotWin::Initialize failed
+[0322/203441.949:ERROR:scoped_process_suspend.cc(38)] NtResumeProcess: An attempt was made to access an exiting process.  (0xc000010a)
+[0322/212214.007:ERROR:process_info.cc(625)] range at 0xa8db233000000000, size 0x224 fully unreadable
+[0322/212215.786:ERROR:process_info.cc(625)] range at 0xa8db235000000000, size 0x224 fully unreadable
+[0322/212215.786:ERROR:process_info.cc(625)] range at 0x0, size 0x224 fully unreadable
