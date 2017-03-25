@@ -18,7 +18,17 @@
         },
         "uk.co.workingedge.phonegap.plugin.launchnavigator": {
             "PACKAGE_NAME": "com.phonegap.blikrel"
+        },
+        "cordova-plugin-fastrde-checkgps": {
+            "PACKAGE_NAME": "com.phonegap.blikrel"
+        },
+        "cordova-plugin-appavailability": {
+            "PACKAGE_NAME": "com.phonegap.blikrel"
         }
     },
-    "dependent_plugins": {}
+    "dependent_plugins": {
+        "cordova-plugin-geolocation": {
+            "PACKAGE_NAME": "com.phonegap.blikrel"
+        }
+    }
 }
