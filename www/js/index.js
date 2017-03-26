@@ -89,29 +89,15 @@ var app = {
     onDeviceReady: function() {
         InitiateApp();
         EventHandler();
-        ViewAdInit(37.554084,126.949903);
         LandingInit(36.5802466,127.95776367);
+        setTimeout(function(){
+            ViewAdInit(37.554084,126.949903);
+        }, 500);
+        setTimeout(function(){
+            PostAdInit();
+        }, 500);
         ManageAuth();
-        $('#desqp').bind('focus',function() {
-            // $("#v2pc").animate({ scrollTop: $("#v2pc").height() });
-            myApp.pickerModal('._pd');
-        });
-
-
-        $$('._pd').on('picker:opened', function () {
-            $('#_dp').focus();
-        });
-        $$('._pd').on('picker:close', function () {
-          var _ot = $('#_dp').val();
-            // if (!$.isBlank(_ot)) {
-                $('#desqp').val(_ot);
-            // } else {
-
-            // }
-        });
-
         if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
-
             //PHONE
             document.addEventListener("online", onOnline, false);
             document.addEventListener("offline", onOffline, false);
@@ -131,11 +117,7 @@ var app = {
                     // $("#v2pc").animate({ scrollTop: $("#v2pc").height() });
                      myApp.popup('.popup-about');
                 });
-    //                 $$('.open-about').on('click', function () {
-    //   myApp.popup('.popup-about');
-    // });
             }
-
             setTimeout(function(){ 
                 setInterval(function(){ 
                     var num = GVar.l;
@@ -181,22 +163,13 @@ var app = {
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
-        // var parentElement = document.getElementById(id);
-        // var listeningElement = parentElement.querySelector('.listening');
-        // var receivedElement = parentElement.querySelector('.received');
 
-        // listeningElement.setAttribute('style', 'display:none;');
-        // receivedElement.setAttribute('style', 'display:block;');
-
-        // console.log('Received Event: ' + id);
     }
 };
 
 app.initialize();
 
-
 function PreLoadDom(){
-
 }
 function InitiateApp(){
     SetStates();
@@ -212,7 +185,6 @@ function InitiateApp(){
 function EventHandler(){
     Events();
 }
-
 function ManageAuth(){
     if (typeof(Storage) !== "undefined") {
         var auth_token = localStorage.getItem("auth_token");
@@ -293,6 +265,17 @@ function onOnline() {
     $('#ovwrapper').addClass('hide');
 }
 function PageVisualSetup() {
+    $('#desqp').bind('focus',function() {
+        // $("#v2pc").animate({ scrollTop: $("#v2pc").height() });
+        myApp.pickerModal('._pd');
+    });
+    $$('._pd').on('picker:opened', function () {
+        $('#_dp').focus();
+    });
+    $$('._pd').on('picker:close', function () {
+      var _ot = $('#_dp').val();
+            $('#desqp').val(_ot);
+    });
     var fruits = ('Bar & Pub,Car Dealership,Coffee Shop,Entertainment,Food,Gas Station,Hotel,Medical Center,Movie Theater,Nightlife Spot,Outdoors & Recreation,Parking,Pharmacy,Real Estate,Supermarket,Taxi,Transport,Travel Agency,Cosmetic,Pet-Shop,Event,Mall,Institution,Sightseeing,Subway-Station,Government,Museum,Temple,Church,Kids,Beach').split(',');
     var autocompleteDropdownExpand = myApp.autocomplete({
         input: '#acde',
@@ -795,7 +778,6 @@ function Events() {
         GVar.curpg=1;
         $('.tab-link').removeClass('active');
         $(this).addClass('active');
-        
     });
     $("#vw2").click(function(){
         GVar.curpg=2;
@@ -890,7 +872,9 @@ function Events() {
         if (_auth == 1) {
             myApp.showTab('#view-2');
             GVar.qkpost_map = 1;
-            PostAdInit();
+            var center = postmap.getCenter();
+            google.maps.event.trigger(postmap, "resize");
+            postmap.setCenter(center);                
         } else {
             $('#login-modal').modal('show');
         }
@@ -1406,8 +1390,6 @@ function ResetLandingAndReasin(){
     var lng = GVar.lndinglng;
 
     var drd = GVar.drad;
-    var zoomnum = RadiusToZoom(drd);
-
     $('#fpmap').html('');
     $('#fpmap').css('height',($(window).height()-20));
     $(window).resize(function() {
@@ -1417,7 +1399,7 @@ function ResetLandingAndReasin(){
     var myLatLng = {lat: lat, lng: lng};
     window.LandingMap = new google.maps.Map(document.getElementById('fpmap'), {
         center: myLatLng,
-        zoom: zoomnum,    
+        zoom: 6,    
         mapTypeControl: false,
         streetViewControl: false,
         disableDefaultUI: true
@@ -1518,8 +1500,6 @@ function ResetLandingAndReasin(){
             });  
         }
     }
-    // var olatlng = {lat: parseFloat(GVar.lndinglat),lng: parseFloat(GVar.lndinglng)};
-    // LandingMap.setCenter(olatlng);
     GetGPSLocationNoZoom();
 }
 function vwad(data_id) {
@@ -1548,6 +1528,8 @@ function vwad(data_id) {
             var ad_array = result.ad_array;
             var photos = ad_array.images_array;
             if (status==200) {
+                
+                
                 myApp.showTab('#view-5');
                 //init
                 GVar.curadlat = ad_array['lat'];
@@ -1719,9 +1701,6 @@ function process_qkpost(_form,cat_id) {
             var status = data.status;
             switch(status){                 
                 case 200:
-                    //relaod-ads-to show new post
-                    // refresh_ads(cat_id);
-                    // ResetLandingAndReasin();
                     ResetView2();
                     myApp.addNotification({
                         title: 'BLINK',
@@ -1734,7 +1713,6 @@ function process_qkpost(_form,cat_id) {
                     setTimeout(function(){
                         ResetLandingAndReasin();
                     }, 300);
-
                 break;
 
                 case 400:
@@ -1950,7 +1928,7 @@ function create_loading_input() {
     return loading_html;
 }
 function PostAdInit() {
-    var myLatLng = {lat: 36.5802466, lng: 127.95776367};
+    var myLatLng = {lat: GVar.lndinglat, lng: GVar.lndinglng};
     document.getElementById('qkp-lat').value = myLatLng.lat;
     document.getElementById('qkp-lng').value = myLatLng.lng;
     window.postmap = new google.maps.Map(document.getElementById('postmap'), {
