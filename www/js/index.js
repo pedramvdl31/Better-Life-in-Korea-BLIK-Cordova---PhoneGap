@@ -503,6 +503,8 @@ function PhotoUpload() {
                             }
 
                         }, function(error){
+                            alert('E122. Error.');
+                            $(document).find('#_upp').addClass('hide');
                             GVar.icont = GVar.icont - 1;
                             if (GVar.icont==0) {
                                 $(document).find('#_upp').addClass('hide');
@@ -522,6 +524,7 @@ function PhotoUpload() {
 
             }, function (error) {
                 $(document).find('#qk-post-btn').removeAttr('disabled');
+                alert('E121. Error.');
                 console.log('Error: ' + error);
             }, {
                 maximumImagesCount: mxupld
@@ -882,7 +885,7 @@ function Events() {
         $('.fbc').html('');
         findAndViewAd(this_id);
     });
-    $(".qkpost").on('touchstart', function(e) {
+    $("#qbtn-wrap").on('touchstart', function(e) {
         var _auth = parseInt($('#_auth').attr('data'));
         if (_auth == 1) {
             myApp.showTab('#view-2');
@@ -892,8 +895,6 @@ function Events() {
             $('#login-modal').modal('show');
         }
     });
-
-
     $(document).on('click','.remove-ad-wl',function(){
         $t_id = $(this).attr('data');
         $('.modal-remove-btn').attr('data',$t_id);
@@ -972,12 +973,12 @@ function Events() {
         $('.tab-home').css('border-bottom','none');
         $('.tab-cat').css('border-bottom','1px solid white');
     });
-    $('.links').click(function(){
-        GVar.curpg=3;
-        myApp.showTab('#view-3');
-        $('#lgif').removeClass('hide');
-        refresh_ads($(this).attr('cat-id'));
-    });
+    // $('.links').click(function(){
+    //     GVar.curpg=3;
+    //     myApp.showTab('#view-3');
+    //     $('#lgif').removeClass('hide');
+    //     refresh_ads($(this).attr('cat-id'));
+    // });
     $("#city-select-home").change(function(){
         var t_v = $("#city-select-home option:selected").val();
         if (t_v != '') {
@@ -1704,8 +1705,7 @@ function vwad(data_id) {
 function process_qkpost(_form,cat_id) {
     $('#lwgen').removeClass('hide');
     $('._required').css('color','inherit');
-    // $('#validating').removeClass('hide');
-    $('#pos-gif').removeClass('hide');
+    $('#lwposting').removeClass('hide');
 
     var data ={"_form":_form,"tkn":localStorage.getItem("auth_token")}
 
@@ -1715,7 +1715,7 @@ function process_qkpost(_form,cat_id) {
         dataType: 'json',
         'data': data,
         success: function(data) {
-            $('#pos-gif').addClass('hide');
+            $('#lwposting').addClass('hide');
             var status = data.status;
             switch(status){                 
                 case 200:
@@ -1772,7 +1772,7 @@ function ResetView2(){
     GVar.icont = 0;
     GVar.totalimgcounter = 0;
     $(document).find('.uimg').remove();
-    $('#v2pc').html('<form class="" id="pkpost-form" style="float: left;width: 100%;"> <div class="list-block"> <ul> <li> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Category" class="item-link smart-select" data-back-on-select="true"> <select name="cat" class="form-control qp-selects" id="cats"> <option value="1">Bar & Pub</option> <option value="2">Car Dealership</option> <option value="3">Coffee Shop</option> <option value="4">Entertainment</option> <option value="5">Food</option> <option value="6">Gas Station</option> <option value="29">Church</option> <option value="7">Hotel</option> <option value="8">Medical Center</option> <option value="9">Movie Theater</option> <option value="10">Nightlife Spot</option> <option value="23">Institution</option> <option value="11">Outdoors & Recreation</option> <option value="12">Parking</option> <option value="13">Pharmacy</option> <option value="14">Real Estate</option> <option value="28">Temple</option> <option value="15">Supermarket</option> <option value="16">Taxi</option> <option value="17">Transport</option> <option value="18">Travel Agency</option> <option value="19">Cosmetic</option> <option value="20">Pet-Shop</option> <option value="27">Museum</option> <option value="21">Event</option> <option value="22">Mall</option> <option value="24">Sightseeing</option> <option value="25">Subway-Station</option> <option value="26">Government</option> <option value="30">Kids</option> <option value="31">Beach</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">Category</div><div class="item-after">Select</div></div></div></a> </li><li style="display: none"> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Cities" class="item-link smart-select" data-back-on-select="true"> <select name="city" class="form-control" id="city-select-bar" status=false> <option value="1" selected="">Gangwon-Do</option> <option value="2">Gyeonggi-Do</option> <option value="3">Seoul</option> <option value="4">Incheon</option> <option value="5">Daejeon</option> <option value="6">Chungcheong-Bukdo</option> <option value="7">Ullung-Do</option> <option value="8">Gyeongsang-Bukdo</option> <option value="9">Ulsan</option> <option value="10">Gyeongsang-Namdo</option> <option value="11">Busan</option> <option value="12">Daegu</option> <option value="13">Gwangju</option> <option value="14">Jeolla-Bukdo</option> <option value="15">Chungcheong-Namdo</option> <option value="16">Jeollanam-Do</option> <option value="17">Jeju-Do</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">City</div><div class="item-after">Select</div></div></div></a> </li></ul> </div><div class="form-group" style="float:left;width: 100%;"> <input type="hidden" id="qkp-lat" name="lat"/> <input type="hidden" id="qkp-lng" name="long"/> <div id="qkpost-map-container" style="width:80%;margin:0 auto"> <input id="pac-input" class="controls" type="text" placeholder="Search Address" style="width: 80% !important;margin: 3px 0 0 3px !important;height: 36px !important;"><div style="height:300px" id="postmap"></div></div></div><div class="form-group" id="title-wrap" style=""> <label>Title: <span class="_required">*required</span> </label> <input type="text" class="form-control pk-form" name="title" id="titleqp" placeholder="Title" aria-describedby="sizing-addon2"> </div><div class="form-group" id="des-wrap" style=""> <label>Description: <span class="_required">*required</span> </label> <textarea id="desqp" style="resize:vertical;" class="form-control pk-form" name="description"></textarea> </div><div id="file-div"></div></form> <div class="" style="float: left;width: 100%"> <div id="_upp" class="hide"> <p> Uploading... ( <span id="pco"></span> %) </p></div><div style="float: left;width: 100%;padding: 10px" id="images"> </div></div><div class="" style="float: right;width: 100%"> <div class="btn-group btn-block" style="width: 100%"> <a style="width: 50%" href="#" id="addPicture" class="btn btn-primary">Browse Images</a> <a style="width: 50%" href="#" id="qk-post-btn" class="btn btn-success">Post</a> </div><div id="pos-gif" class="pull-right hide" style="line-height: 32px; margin-right: 10px;"> <img src="gif/loading1.gif" width="20px;"> </div></div>');
+    $('#v2pc').html('<form class="" id="pkpost-form" style="float: left;width: 100%;"> <div class="list-block"> <ul> <li> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Category" class="item-link smart-select" data-back-on-select="true"> <select name="cat" class="form-control qp-selects" id="cats"> <option value="1">Bar & Pub</option> <option value="2">Car Dealership</option> <option value="3">Coffee Shop</option> <option value="4">Entertainment</option> <option value="5">Food</option> <option value="6">Gas Station</option> <option value="29">Church</option> <option value="7">Hotel</option> <option value="8">Medical Center</option> <option value="9">Movie Theater</option> <option value="10">Nightlife Spot</option> <option value="23">Institution</option> <option value="11">Outdoors & Recreation</option> <option value="12">Parking</option> <option value="13">Pharmacy</option> <option value="14">Real Estate</option> <option value="28">Temple</option> <option value="15">Supermarket</option> <option value="16">Taxi</option> <option value="17">Transport</option> <option value="18">Travel Agency</option> <option value="19">Cosmetic</option> <option value="20">Pet-Shop</option> <option value="27">Museum</option> <option value="21">Event</option> <option value="22">Mall</option> <option value="24">Sightseeing</option> <option value="25">Subway-Station</option> <option value="26">Government</option> <option value="30">Kids</option> <option value="31">Beach</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">Category</div><div class="item-after">Select</div></div></div></a> </li><li style="display: none"> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Cities" class="item-link smart-select" data-back-on-select="true"> <select name="city" class="form-control" id="city-select-bar" status=false> <option value="1" selected="">Gangwon-Do</option> <option value="2">Gyeonggi-Do</option> <option value="3">Seoul</option> <option value="4">Incheon</option> <option value="5">Daejeon</option> <option value="6">Chungcheong-Bukdo</option> <option value="7">Ullung-Do</option> <option value="8">Gyeongsang-Bukdo</option> <option value="9">Ulsan</option> <option value="10">Gyeongsang-Namdo</option> <option value="11">Busan</option> <option value="12">Daegu</option> <option value="13">Gwangju</option> <option value="14">Jeolla-Bukdo</option> <option value="15">Chungcheong-Namdo</option> <option value="16">Jeollanam-Do</option> <option value="17">Jeju-Do</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">City</div><div class="item-after">Select</div></div></div></a> </li></ul> </div><div class="form-group" style="float:left;width: 100%;"> <input type="hidden" id="qkp-lat" name="lat"/> <input type="hidden" id="qkp-lng" name="long"/> <div id="qkpost-map-container" style="width:80%;margin:0 auto"> <div style="height:300px" id="postmap"></div></div></div><div class="form-group" id="title-wrap" style=""> <label>Title: <span class="_required">*required</span> </label> <input type="text" class="form-control pk-form" name="title" id="titleqp" placeholder="Title" aria-describedby="sizing-addon2"> </div><div class="form-group" id="des-wrap" style=""> <label>Description: <span class="_required">*required</span> </label> <textarea id="desqp" style="resize:vertical;" class="form-control pk-form" name="description"></textarea> </div><div id="file-div"></div></form> <div class="" style="float: left;width: 100%"> <div id="_upp" class="hide"> <p> Uploading... ( <span id="pco"></span> %) </p></div><div style="float: left;width: 100%;padding: 10px" id="images"> </div></div><div class="" style="float: right;width: 100%"> <div class="btn-group btn-block" style="width: 100%"> <a style="width: 50%" href="#" id="addPicture" class="btn btn-primary">Browse Images</a> <a style="width: 50%" href="#" id="qk-post-btn" class="btn btn-success">Post</a> </div></div>');
     setTimeout(function(){
         PostAdInit();
     }, 300);
@@ -2020,10 +2020,13 @@ function PostAdInit() {
     postmap.controls[google.maps.ControlPosition.TOP_RIGHT].push(getlocDiv);
 
     // Create the search box and link it to the UI element.
-     var options = {
-      types: ['(cities)'],
-      componentRestrictions: {country: "kr"}
-     };
+    var options = {
+        types: ['(cities)'],
+        componentRestrictions: {country: "kr"}
+    };
+    var htmlinput = '<input id="pac-input" class="controls" type="text" placeholder="Search Address">';
+    $('#qkpost-map-container').append(htmlinput);
+
     var input = document.getElementById('pac-input');
     var searchBox = new google.maps.places.SearchBox(input, options);
     postmap.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
