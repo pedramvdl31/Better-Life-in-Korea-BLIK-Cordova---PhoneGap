@@ -388,9 +388,6 @@
                   <!-- Scrollable page content-->
                   <div class="page-content">
 
-                        <!-- <a href="#" id="testpr" style="margin: 20px">click me</a> -->
-
-
                      <div id="qbtn-wrap" class="qkpost">
                         <img class="button-r" src="img/add.png" style="width: 50px;">
                      </div>
@@ -766,7 +763,32 @@
             <!-- /.modal -->
          </div>
       </div>
-
+      <style type="text/css"> 
+        #_dcb{
+          margin: 0;
+          padding: 0;
+        }
+        #_dcb textarea{
+          border: 0;
+          margin: 0;
+          border-radius: 0;
+          resize: none;
+          height: 216px;
+        }
+      </style>
+      <div class="picker-modal _pd">
+        <div class="toolbar">
+          <div class="toolbar-inner">
+            <div class="left"></div>
+            <div class="right"><a href="#" class="close-picker">Done</a></div>
+          </div>
+        </div>
+        <div class="picker-modal-inner">
+          <div class="content-block" id="_dcb">
+            <textarea id="_dp" placeholder="Type your description here..." class="form-control pk-form" name="description"></textarea>
+          </div>
+        </div>
+      </div>
 
       <script src="plugins/jQueryUI/jquery-ui.js"></script>
       <script src="package/bootstrap/js/bootstrap.min.js"></script>

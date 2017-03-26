@@ -67,6 +67,7 @@ GVar = {
 
 }
 
+
 var images = [];
 var $imagesDiv;
 var app = {
@@ -91,7 +92,23 @@ var app = {
         ViewAdInit(37.554084,126.949903);
         LandingInit(36.5802466,127.95776367);
         ManageAuth();
+        $('#desqp').bind('focus',function() {
+            // $("#v2pc").animate({ scrollTop: $("#v2pc").height() });
+            myApp.pickerModal('._pd');
+        });
 
+
+        $$('._pd').on('picker:opened', function () {
+            $('#_dp').focus();
+        });
+        $$('._pd').on('picker:close', function () {
+          var _ot = $('#_dp').val();
+            // if (!$.isBlank(_ot)) {
+                $('#desqp').val(_ot);
+            // } else {
+
+            // }
+        });
 
         if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
 
@@ -111,8 +128,12 @@ var app = {
                     $("#v2pc").animate({ scrollTop: $("#v2pc").height() });
                 });
                 $('#desqp').bind('focus',function() {
-                    $("#v2pc").animate({ scrollTop: $("#v2pc").height() });
+                    // $("#v2pc").animate({ scrollTop: $("#v2pc").height() });
+                     myApp.popup('.popup-about');
                 });
+    //                 $$('.open-about').on('click', function () {
+    //   myApp.popup('.popup-about');
+    // });
             }
 
             setTimeout(function(){ 
@@ -423,6 +444,7 @@ function PageVisualSetup() {
         $('#app-view').css('margin-top','0');
     });
     $('[data-toggle="tooltip"]').tooltip();
+
 }
 
 function PhotoUpload() {
@@ -432,7 +454,10 @@ function PhotoUpload() {
         window.mxupld = 10 - imcount;
         window.imagePicker.getPictures(
             function(results) {
-                $(document).find('#_upp').removeClass('hide');
+                if (results.length!=0) {
+                    $(document).find('#qk-post-btn').attr('disabled','1');
+                    $(document).find('#_upp').removeClass('hide');
+                }
                 GVar.icont = GVar.icont + results.length;
                 for (var i = 0; i < results.length; i++) {
                     var auth_token = localStorage.getItem("auth_token");
@@ -474,6 +499,7 @@ function PhotoUpload() {
                             GVar.icont = GVar.icont - 1;
                             if (GVar.icont==0) {
                                 $(document).find('#_upp').addClass('hide');
+                                $(document).find('#qk-post-btn').removeAttr('disabled');
                             }
 
                         }, function(error){
@@ -481,12 +507,13 @@ function PhotoUpload() {
                             if (GVar.icont==0) {
                                 $(document).find('#_upp').addClass('hide');
                             }
-
+                            $(document).find('#qk-post-btn').removeAttr('disabled');
                             $(document).find('#qppl').addClass('hide');
                             console.log(JSON.stringify(error));
                         }, options);
 
                     } else {
+                        $(document).find('#qk-post-btn').removeAttr('disabled');
                         alert('Please Try to Login Again.')
                     }
 
@@ -494,6 +521,7 @@ function PhotoUpload() {
                 }
 
             }, function (error) {
+                $(document).find('#qk-post-btn').removeAttr('disabled');
                 console.log('Error: ' + error);
             }, {
                 maximumImagesCount: mxupld
@@ -1356,7 +1384,7 @@ function VAOM(lat,lng,cat_id,rd) {
                             title: 'BLINK',
                             message: "Sorry we couldn't find any results :/ Try broaden search radius or try different category",
                         });
-                        window.timeout = setTimeout(function () { myApp.closeNotification(".notification-item"); }, 2000); 
+                        window.timeout = setTimeout(function () { myApp.closeNotification(".notification-item"); }, 10000); 
                     }
 
                 break;
