@@ -12,3 +12,8 @@ var view2 = myApp.addView('#view-2');
 var view4 = myApp.addView('#view-4');
 
 
+var mySearchbar = myApp.searchbar('.searchbar', {
+    searchList: '.list-block-search',
+    searchIn: '.item-title'
+});   
+

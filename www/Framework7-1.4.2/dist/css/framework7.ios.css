@@ -2400,12 +2400,15 @@ html.pixel-ratio-3 .content-block-inner:after {
   right: auto;
   height: 1px;
   width: 100%;
-  background-color: #c8c7cc;
+  /*updated*/
+  background-color: none;
+  /*updated*/
   display: block;
   z-index: 15;
   -webkit-transform-origin: 50% 0%;
   transform-origin: 50% 0%;
 }
+
 html.pixel-ratio-2 .list-block ul:before {
   -webkit-transform: scaleY(0.5);
   transform: scaleY(0.5);

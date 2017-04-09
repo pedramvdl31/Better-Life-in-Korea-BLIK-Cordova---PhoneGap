@@ -1,4 +1,7 @@
-﻿  /*NAVABR CUSTOM COOP*/
+﻿  .searchbar {
+    background: white !important;
+  }
+  /*NAVABR CUSTOM COOP*/
   .nav-vertical-seperator{
     line-height: 49px;
     color: whitesmoke;
@@ -526,9 +529,33 @@ forms.less:118
     right: 0;
     bottom: 0;
     background-color: white;
-    opacity: 0;
     z-index: 9999999999;
+    opacity: 0.5;
+    filter: blur(10px);
+    -webkit-filter: blur(10px);
+    -moz-filter: blur(10px);
+    -o-filter: blur(10px);
+    -ms-filter: blur(10px);
+    filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='svgMask'><feGaussianBlur stdDeviation='10' /></filter></svg>#svgMask");
   }
+  #ovtpr{
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: white;
+    z-index: 9999;
+    opacity: 0.5;
+    filter: blur(10px);
+    -webkit-filter: blur(10px);
+    -moz-filter: blur(10px);
+    -o-filter: blur(10px);
+    -ms-filter: blur(10px);
+    filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='svgMask'><feGaussianBlur stdDeviation='10' /></filter></svg>#svgMask");
+  }
+
+    
   #oltext{
     width: 100%;
     left: 0;
@@ -556,26 +583,37 @@ forms.less:118
     margin: 3px 0 0 3px !important;
     height: 36px !important;
   }
-  #ltext{
-    /*padding-top: 20px;*/
-    width: 50%;
+  @keyframes blink {50% { color: transparent }}
+  .loader__dot { animation: 1s blink infinite }
+  .loader__dot:nth-child(2) { animation-delay: 250ms }
+  .loader__dot:nth-child(3) { animation-delay: 500ms }
+
+  .loader__dot{
+    font-size: 35px;
+  }
+  .ltext{
+    width: 88%;
     position: relative;
     top: 200px;
-    color: black;
+    color:#292b2c;
     margin: 0 auto;
     background: white;
     opacity: 1;
     z-index: 99999999991;
     border-radius: 1px;
-    box-shadow:0px 2px 2px #949494;
+    box-shadow: 0px 0px 1px #949494;
   }
-  #ltext #inner{
+  #wgl,#ctu{
+    transition: all 0.3s ease;
+  }
+  .ltext #inner{
     padding: 10px;
   }
-  #ltext #inner #txt{
+  .ltext #inner #txt{
     font-size: 16px;
+    font-weight: 900;
   }
-  #ltext #inner #gf{
+  .ltext #inner #gf{
 
   }
 

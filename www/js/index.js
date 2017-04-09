@@ -63,7 +63,7 @@ GVar = {
     'currentpost':0,
     'curadlat':0,
     'curadlng':0,
-    'lndmapprevzoom':15
+    'lzs':6
 
 }
 
@@ -96,75 +96,27 @@ var app = {
         setTimeout(function(){
             PostAdInit();
         }, 500);
-        ManageAuth();
+        
+        
         if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
             //PHONE
             document.addEventListener("online", onOnline, false);
             document.addEventListener("offline", onOffline, false);
             var connection = checkConnection();
             if (connection==1) {
-
             } else {
                 alert('Please connect to the Internet to continue ');
                 $('#ovwrapper').removeClass('hide');
             }
-
-            if (navigator.userAgent.match(/(Android)/)) {
-                $('#titleqp').bind('focus',function() {
-                    $("#v2pc").animate({ scrollTop: $("#v2pc").height() });
-                });
-                $('#desqp').bind('focus',function() {
-                    // $("#v2pc").animate({ scrollTop: $("#v2pc").height() });
-                     myApp.popup('.popup-about');
-                });
-            }
-            setTimeout(function(){ 
-                setInterval(function(){ 
-                    var num = GVar.l;
-                    var numll = GVar.ll;
-                    if (num == 0) {
-                        if (numll==0) {
-                            $('#lw4').removeClass('hide');
-                        }
-                        CheckGPS.check(function win(){
-                            var onSuccess = function(position) {
-                                $('#lw4').addClass('hide');
-                                var nll = GVar.ll;
-                                if (nll == 0) {
-                                    GVar.ll=1;
-                                    LandingUpdate(position.coords.latitude,position.coords.longitude);
-                                }
-                                GVar.l = 0;
-                            };
-                            function onError(error) {
-                                GVar.ll=0;
-                                GVar.l = 9;
-                                $('#lw4').removeClass('hide');
-                                autogpson();
-                                // calldialog();
-                            }
-                            navigator.geolocation.getCurrentPosition(onSuccess, onError);
-                          },
-                          function fail(){
-                            GVar.ll=0;
-                            GVar.l = 9;
-                            $('#lw4').removeClass('hide');
-                            autogpson();
-                            // calldialog();
-                          });                
-                    }
-                }, 2000);
-            }, 1000);
-
+            ManageLocation();
         } else {
           //BROWSER
+          $('#lw4').addClass('hide');
         }
 
     },
     // Update DOM on a Received Event
-    receivedEvent: function(id) {
-
-    }
+    receivedEvent: function(id) {}
 };
 
 app.initialize();
@@ -185,16 +137,67 @@ function InitiateApp(){
 function EventHandler(){
     Events();
 }
-function ManageAuth(){
+function ManageLocation(){
+    setTimeout(function(){ 
+        setInterval(function(){ 
+            var num = GVar.l;
+            var numll = GVar.ll;
+            if (num == 0) {
+                if (numll==0) {
+                    $('#lw4').removeClass('hide');
+                }
+                CheckGPS.check(function win(){
+                    var onSuccess = function(position) {
+                        $('#wgl').css('color','#5cb85c');
+                        setTimeout(function(){
+                            $('#ctu').removeClass('hide');
+                        }, 200);
+                        var nll = GVar.ll;
+                        if (nll == 0) {
+                            ManageAuth(position);
+                        }
+                        GVar.l = 0;
+                    };
+                    function onError(error) {
+                        GVar.ll=0;
+                        GVar.l = 9;
+                        $('#lw4').removeClass('hide');
+                        autogpson();
+                        // calldialog();
+                    }
+                    navigator.geolocation.getCurrentPosition(onSuccess, onError);
+                  },
+                  function fail(){
+                    GVar.ll=0;
+                    GVar.l = 9;
+                    $('#lw4').removeClass('hide');
+                    autogpson();
+                    // calldialog();
+                  });                
+            }
+        }, 2000);
+    }, 1000);
+}
+function ManageAuth(position){
     if (typeof(Storage) !== "undefined") {
         var auth_token = localStorage.getItem("auth_token");
         if (!$.isBlank(auth_token)) {
-            CheckToken(auth_token);
+            CheckToken(auth_token,position);
         } else {
+            $('#ctu').css('color','#f0ad4e');
+            setTimeout(function(){
+                $('#lw4').addClass('hide');
+                ViewCurrentLoc(position);
+            }, 1000);
             GVar.auth=0;
             SetStatusBtn();
         }
     } else {
+        $('#ctu').css('color','#f0ad4e');
+        setTimeout(function(){
+            $('#lw4').addClass('hide');
+            ViewCurrentLoc(position);
+        }, 1000);
         alert('WEB STORAGE NOT SUPPORTED!');
     }
 }
@@ -211,9 +214,13 @@ function SetStatusBtn(){
         $('#user-status').attr('value','1');
     }
 }
+function ViewCurrentLoc(position){
+    GVar.ll=1;
+    LandingUpdate(position.coords.latitude,position.coords.longitude);
+    qkpmUpdate(position.coords.latitude,position.coords.longitude);
+}
+function CheckToken(a_t,position){
 
-function CheckToken(a_t){
-    $('#lw').removeClass('hide');
     var data ={"token":a_t}
     $.ajax({
         url: GVar.ajax_url+'/api/init',
@@ -225,11 +232,19 @@ function CheckToken(a_t){
             GVar.utoken=a_t;
             $('#_auth').attr('data','1');
             SetStatusBtn();
-            $('#lw').addClass('hide');
+            $('#ctu').css('color','#5cb85c');
+            setTimeout(function(){
+                $('#lw4').addClass('hide');
+                ViewCurrentLoc(position);
+            }, 1000);
             InjectDashboard();
         },
         error: function (xhr, ajaxOptions, thrownError) {
-            $('#lw').addClass('hide');
+            $('#ctu').css('color','#5cb85c');
+            setTimeout(function(){
+                $('#lw4').addClass('hide');
+                ViewCurrentLoc(position);
+            }, 1000);
             GVar.auth=0;
         }
     });
@@ -241,7 +256,6 @@ function CheckToken(a_t){
 })(jQuery);
 function checkConnection() {
     var networkState = navigator.connection.type;
-
     var states = {};
     states[Connection.ETHERNET] = 1;
     states[Connection.WIFI]     = 1;
@@ -265,18 +279,11 @@ function onOnline() {
     $('#ovwrapper').addClass('hide');
 }
 function PageVisualSetup() {
-    $('#desqp').bind('focus',function() {
-        // $("#v2pc").animate({ scrollTop: $("#v2pc").height() });
-        myApp.pickerModal('._pd');
-    });
-    $$('._pd').on('picker:opened', function () {
-        $('#_dp').focus();
-    });
-    $$('._pd').on('picker:close', function () {
-      var _ot = $('#_dp').val();
-            $('#desqp').val(_ot);
-    });
-    var fruits = ('Bar & Pub,Car Dealership,Coffee Shop,Entertainment,Food,Gas Station,Hotel,Medical Center,Movie Theater,Nightlife Spot,Outdoors & Recreation,Parking,Pharmacy,Real Estate,Supermarket,Taxi,Transport,Travel Agency,Cosmetic,Pet-Shop,Event,Mall,Institution,Sightseeing,Subway-Station,Government,Museum,Temple,Church,Kids,Beach').split(',');
+    // tpr('#_qt','#_pt','#_dt');
+    // tpr('#desqp','#_pd','#_dp');
+    tpr('#_rt','#_pr','#_drp');
+
+    var fruits = ('Bar & Pub,Car Dealership,Coffee Shop,Entertainment,Food,Gas Station,Hotel,Medical Center,Movie Theater,Nightlife Spot,Outdoors & Recreation,Parking,Pharmacy,Real Estate,Supermarket,Taxi,Transport,Travel Agency,Cosmetic,Pet-Shop,Event,Mall,Institution,Sightseeing,Subway-Station,Government,Museum,Temple,Church,Kids,Beach,Nail-Shop,Convenient-Store,Health-Center,Acupuncture').split(',');
     var autocompleteDropdownExpand = myApp.autocomplete({
         input: '#acde',
         openIn: 'dropdown',
@@ -390,6 +397,18 @@ function PageVisualSetup() {
                 case 'Beach':
                     GVar.curcat = 31;
                 break;
+                case 'Nail-Shop':
+                    GVar.curcat = 32;
+                break;
+                case 'Convenient-Store':
+                    GVar.curcat = 33;
+                break;
+                case 'Health-Center':
+                    GVar.curcat = 34;
+                break;
+                case 'Acupuncture':
+                    GVar.curcat = 35;
+                break;
                 default:
                     alert('Somthing Went Wrong!');
             }
@@ -412,6 +431,146 @@ function PageVisualSetup() {
             }
             // Render items by passing array with result items
             render(results);
+        }
+    });
+var cats = ('Bar & Pub,Car Dealership,Coffee Shop,Entertainment,Food,Gas Station,Hotel,Medical Center,Movie Theater,Nightlife Spot,Outdoors & Recreation,Parking,Pharmacy,Real Estate,Supermarket,Taxi,Transport,Travel Agency,Cosmetic,Pet-Shop,Event,Mall,Institution,Sightseeing,Subway-Station,Government,Museum,Temple,Church,Kids,Beach,Nail-Shop,Convenient-Store,Health-Center,Acupuncture').split(',');
+var autocompleteDropdownExpand = myApp.autocomplete({
+    input: '#csb',
+    openIn: 'dropdown',
+    valueProperty: 'id',
+    expandInput: true, // expand input
+    source: function (autocomplete, query, render) {
+        var results = [];
+        if (query.length === 0) {
+            render(results);
+            return;
+        }
+        // Find matched items
+        for (var i = 0; i < cats.length; i++) {
+            if (cats[i].toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push(cats[i]);
+        }
+        // Render items by passing array with result items
+        render(results);
+    },
+    onChange: function (autocomplete, value) {
+        switch(value){                 
+            case 'Bar & Pub':
+                GVar.curcat = 1;
+            break;
+            case 'Car Dealership':
+                GVar.curcat = 2;
+            break;
+            case 'Coffee Shop':
+                GVar.curcat = 3;
+            break;
+            case 'Entertainment':
+                GVar.curcat = 4;
+            break;
+            case 'Food':
+                GVar.curcat = 5;
+            break;
+            case 'Gas Station':
+                GVar.curcat = 6;
+            break;
+            case 'Hotel':
+                GVar.curcat = 7;
+            break;
+            case 'Medical Center':
+                GVar.curcat = 8;
+            break;
+            case 'Movie Theater':
+                GVar.curcat = 9;
+            break;
+            case 'Nightlife Spot':
+                GVar.curcat = 10;
+            break;
+            case 'Outdoors & Recreation':
+                GVar.curcat = 11;
+            break;
+            case 'Parking':
+                GVar.curcat = 12;
+            break;
+            case 'Pharmacy':
+                GVar.curcat = 13;
+            break;
+            case 'Real Estate':
+                GVar.curcat = 14;
+            break;
+            case 'Supermarket':
+                GVar.curcat = 15;
+            break;
+            case 'Taxi':
+                GVar.curcat = 16;
+            break;
+            case 'Transport':
+                GVar.curcat = 17;
+            break;
+            case 'Travel Agency':
+                GVar.curcat = 18;
+            break;
+            case 'Cosmetic':
+                GVar.curcat = 19;
+            break;
+            case 'Pet-Shop':
+                GVar.curcat = 20;
+            break;
+            case 'Event':
+                GVar.curcat = 21;
+            break;
+            case 'Mall':
+                GVar.curcat = 22;
+            break;
+            case 'Institution':
+                GVar.curcat = 23;
+            break;
+            case 'Sightseeing':
+                GVar.curcat = 24;
+            break;
+            case 'Subway-Station':
+                GVar.curcat = 25;
+            break;
+            case 'Government':
+                GVar.curcat = 26;
+            break;
+            case 'Museum':
+                GVar.curcat = 27;
+            break;
+            case 'Temple':
+                GVar.curcat = 28;
+            break;
+            case 'Church':
+                GVar.curcat = 39;
+            break;
+            case 'Kids':
+                GVar.curcat = 30;
+            break;
+            case 'Beach':
+                GVar.curcat = 31;
+            break;
+            case 'Nail-Shop':
+                GVar.curcat = 32;
+            break;
+            case 'Convenient-Store':
+                GVar.curcat = 33;
+            break;
+            case 'Health-Center':
+                GVar.curcat = 34;
+            break;
+            case 'Acupuncture':
+                GVar.curcat = 35;
+            break;
+            default:
+                alert('Somthing Went Wrong!');
+            }
+            setTimeout(function(){
+                myApp.closePanel('left');
+            }, 100);
+            setTimeout(function(){
+                if (GVar.vaf==0) {
+                    VAOM(GVar.lndinglat,GVar.lndinglng,GVar.curcat,GVar.drad);
+                }
+                GVar.vaf = 1;
+            }, 500);
         }
     });
     window.flag = 0;
@@ -617,25 +776,7 @@ function NavbarListener() {
 }
 function Events() {
 
-    var exitApp = false, intval = setInterval(function (){exitApp = false;}, 1000);
-    document.addEventListener("backbutton", function (e){
-        e.preventDefault();
-        myApp.closePanel();
-        if (exitApp) {
-            // clearInterval(intval); 
-            (navigator.app && navigator.app.exitApp()) || (device && device.exitApp())
-        }
-        else {
-            exitApp = true;
-            $('.modal').modal('hide');
-            if(GVar.curpg>1 && GVar.curpg<5){
-                var _c = GVar.curpg-1;
-                myApp.showTab('#view-'+_c);
-                GVar.curpg= _c;
-            }
-        } 
-    }, false);
-
+    document.addEventListener("backbutton", onBackKeyDown, false);
 
 
 
@@ -688,7 +829,7 @@ function Events() {
                     $('.sendcomment textarea').val('');
                     $('.sendcomment textarea').attr('placeholder','Thank you');
                     $('.sbtnrev').rating('update', 0);
-                    $(this).attr('revstar','999')
+                    $(this).attr('revstar','999');
                     setTimeout(function(){
                         $('.sendcomment textarea').attr('placeholder','Write a Review');
                     }, 2000);
@@ -775,6 +916,9 @@ function Events() {
         setTimeout(function(){
             ResetLandingAndReasin();
         }, 50);
+        setTimeout(function(){
+            _ctpral();
+        }, 100);
         GVar.curpg=1;
         $('.tab-link').removeClass('active');
         $(this).addClass('active');
@@ -937,8 +1081,26 @@ function Events() {
         $('#lw3').removeClass('hide');
     });
     $(document).on('touchstart','#addrad',function(){
-        myApp.closePanel('right');
-        GVar.drad = parseInt($('#rorp').val());
+        var nrx = parseFloat($('#rorp').val());
+        var nr = $('#rorp').val().replace(/[^0-9.]/g, '');
+        $('#rorp').val(nr);
+        var flag = 0;
+        if (isBlank(nr)) {
+           alert('Radius cannot be zero or null');
+           flag = 1;
+        }
+        else if (nr==0) {
+            alert('Radius cannot be zero or null');
+            flag = 1;
+        }
+        else if (nr>1000) {
+            alert('Radius must be between 1 to 1000');
+            flag = 1;
+        }
+        else if (flag==0) {
+            GVar.drad = nr;
+            myApp.closePanel('right');
+        }
     });
     $('#submit-btn').click(function(){
         var reg_form = $('#reg-form').serialize();
@@ -1002,6 +1164,22 @@ function Events() {
         $('#wishlist-modal').modal('show');
     });  
 }
+function tpr(did,pid,ndid){
+    jQuery(document).on('focus click', did,  function(e){
+        myApp.pickerModal(pid);
+    });
+    $$(pid).on('picker:opened', function () {
+        $(ndid).focus();
+    }).on('picker:close', function () {
+        $(document).find(did).val($(document).find(ndid).val());
+        $('#lw5').addClass('hide');
+    }).on('picker:open', function () {
+        $('#lw5').removeClass('hide');
+    });
+    // jQuery(document).on('blur click', ndid,  function(e){
+    //     myApp.closeModal(pid);
+    // });
+}
 function del_comment(auth_token,com_id) {
     var data ={"token":auth_token, "com_id":com_id}
     $.ajax({
@@ -1030,6 +1208,7 @@ function post_comment(auth_token,post_id,comment,this_star) {
         dataType: 'json',
         'data': data,
         success: function(data) {
+            _ctpr();
             var status = data.status;
             var rhtml = data.rhtml;
             if (status==200) {
@@ -1313,9 +1492,10 @@ function VAOM(lat,lng,cat_id,rd) {
                     var ads = data.ads;
                     var drd = GVar.drad;
                     var zoomnum = RadiusToZoom(drd);
-
+                    var nz = zoomnum;
                     LandingMap.setCenter(olatlng);
-                    LandingMap.setZoom(zoomnum);
+                    LandingMap.setZoom(nz);
+                    GVar.lzs = nz;
                     if (!isBlank(ads)) {
                         GVar.adsbuffer =  ads;
                         if ($.isArray(ads)) {
@@ -1366,7 +1546,7 @@ function VAOM(lat,lng,cat_id,rd) {
                         }
                         myApp.closeNotification(".notification-item");
                         myApp.addNotification({
-                            title: 'BLINK',
+                            title: 'BLIK',
                             message: "Sorry we couldn't find any results :/ Try broaden search radius or try different category",
                         });
                         window.timeout = setTimeout(function () { myApp.closeNotification(".notification-item"); }, 10000); 
@@ -1388,18 +1568,17 @@ function VAOM(lat,lng,cat_id,rd) {
 function ResetLandingAndReasin(){
     var lat = GVar.lndinglat;
     var lng = GVar.lndinglng;
-
+    var nz =  GVar.lzs;
     var drd = GVar.drad;
     $('#fpmap').html('');
     $('#fpmap').css('height',($(window).height()-20));
     $(window).resize(function() {
         $('#fpmap').css('height',($(window).height()-20));
     });
-
     var myLatLng = {lat: lat, lng: lng};
     window.LandingMap = new google.maps.Map(document.getElementById('fpmap'), {
         center: myLatLng,
-        zoom: 6,    
+        zoom: nz,    
         mapTypeControl: false,
         streetViewControl: false,
         disableDefaultUI: true
@@ -1427,11 +1606,11 @@ function ResetLandingAndReasin(){
         GVar.lmarkers.push(marker);
         // Add the circle for this city to the map.
         var cityCircle = new google.maps.Circle({
-            strokeColor: '#badbff',
+            strokeColor: '#007aff',
             strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 3,
             fillColor: '#a0ccfb',
-            fillOpacity: 0.35,
+            fillOpacity: 0.15,
             map: LandingMap,
             center: location,
             radius: GVar.drad*1000
@@ -1444,11 +1623,11 @@ function ResetLandingAndReasin(){
             GVar.lndinglng = this.getPosition().lng();
             var latlng = {lat: this.getPosition().lat(), lng: this.getPosition().lng()};
             var cityCircle = new google.maps.Circle({
-                strokeColor: '#badbff',
+                strokeColor: '#007aff',
                 strokeOpacity: 0.8,
-                strokeWeight: 2,
+                strokeWeight: 3,
                 fillColor: '#a0ccfb',
-                fillOpacity: 0,
+                fillOpacity: 0.15,
                 map: LandingMap,
                 center: latlng,
                 radius: GVar.drad*1000
@@ -1703,7 +1882,7 @@ function process_qkpost(_form,cat_id) {
                 case 200:
                     ResetView2();
                     myApp.addNotification({
-                        title: 'BLINK',
+                        title: 'BLIK',
                         message: 'Successfully Posted! Continue Exploring BLIK',
                         media: '<i style="color:#5cb85c" class="fa fa-check" aria-hidden="true"></i>'
                     });
@@ -1712,6 +1891,7 @@ function process_qkpost(_form,cat_id) {
                     }, 100);
                     setTimeout(function(){
                         ResetLandingAndReasin();
+                        _ctpd();
                     }, 300);
                 break;
 
@@ -1723,6 +1903,7 @@ function process_qkpost(_form,cat_id) {
             $('#lwgen').addClass('hide');
         },
         error: function (xhr, ajaxOptions, thrownError) {
+            $('#lwposting').addClass('hide');
             $('#pos-gif').addClass('hide');
             console.log(xhr.responseText); // <- same here, your own div, p, span, whatever you wish to use
         }
@@ -1750,7 +1931,7 @@ function ResetView2(){
     GVar.icont = 0;
     GVar.totalimgcounter = 0;
     $(document).find('.uimg').remove();
-    $('#v2pc').html('<form class="" id="pkpost-form" style="float: left;width: 100%;"> <div class="list-block"> <ul> <li> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Category" class="item-link smart-select" data-back-on-select="true"> <select name="cat" class="form-control qp-selects" id="cats"> <option value="1">Bar & Pub</option> <option value="2">Car Dealership</option> <option value="3">Coffee Shop</option> <option value="4">Entertainment</option> <option value="5">Food</option> <option value="6">Gas Station</option> <option value="29">Church</option> <option value="7">Hotel</option> <option value="8">Medical Center</option> <option value="9">Movie Theater</option> <option value="10">Nightlife Spot</option> <option value="23">Institution</option> <option value="11">Outdoors & Recreation</option> <option value="12">Parking</option> <option value="13">Pharmacy</option> <option value="14">Real Estate</option> <option value="28">Temple</option> <option value="15">Supermarket</option> <option value="16">Taxi</option> <option value="17">Transport</option> <option value="18">Travel Agency</option> <option value="19">Cosmetic</option> <option value="20">Pet-Shop</option> <option value="27">Museum</option> <option value="21">Event</option> <option value="22">Mall</option> <option value="24">Sightseeing</option> <option value="25">Subway-Station</option> <option value="26">Government</option> <option value="30">Kids</option> <option value="31">Beach</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">Category</div><div class="item-after">Select</div></div></div></a> </li><li style="display: none"> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Cities" class="item-link smart-select" data-back-on-select="true"> <select name="city" class="form-control" id="city-select-bar" status=false> <option value="1" selected="">Gangwon-Do</option> <option value="2">Gyeonggi-Do</option> <option value="3">Seoul</option> <option value="4">Incheon</option> <option value="5">Daejeon</option> <option value="6">Chungcheong-Bukdo</option> <option value="7">Ullung-Do</option> <option value="8">Gyeongsang-Bukdo</option> <option value="9">Ulsan</option> <option value="10">Gyeongsang-Namdo</option> <option value="11">Busan</option> <option value="12">Daegu</option> <option value="13">Gwangju</option> <option value="14">Jeolla-Bukdo</option> <option value="15">Chungcheong-Namdo</option> <option value="16">Jeollanam-Do</option> <option value="17">Jeju-Do</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">City</div><div class="item-after">Select</div></div></div></a> </li></ul> </div><div class="form-group" style="float:left;width: 100%;"> <input type="hidden" id="qkp-lat" name="lat"/> <input type="hidden" id="qkp-lng" name="long"/> <div id="qkpost-map-container" style="width:80%;margin:0 auto"> <div style="height:300px" id="postmap"></div></div></div><div class="form-group" id="title-wrap" style=""> <label>Title: <span class="_required">*required</span> </label> <input type="text" class="form-control pk-form" name="title" id="titleqp" placeholder="Title" aria-describedby="sizing-addon2"> </div><div class="form-group" id="des-wrap" style=""> <label>Description: <span class="_required">*required</span> </label> <textarea id="desqp" style="resize:vertical;" class="form-control pk-form" name="description"></textarea> </div><div id="file-div"></div></form> <div class="" style="float: left;width: 100%"> <div id="_upp" class="hide"> <p> Uploading... ( <span id="pco"></span> %) </p></div><div style="float: left;width: 100%;padding: 10px" id="images"> </div></div><div class="" style="float: right;width: 100%"> <div class="btn-group btn-block" style="width: 100%"> <a style="width: 50%" href="#" id="addPicture" class="btn btn-primary">Browse Images</a> <a style="width: 50%" href="#" id="qk-post-btn" class="btn btn-success">Post</a> </div></div>');
+    $('#v2pc').html('<form class="" id="pkpost-form" style="float: left;width: 100%;"> <div class="list-block" id="lbx" style="margin-top: 0;"> <ul> <li class="align-top"> <div class="item-content" style="padding: 0"> <div class="item-inner"> <div class="item-input"> <input style="padding-left: 15px;" type="text" name="title" id="_qt" placeholder="Title"> </div></div></div></li><li class="align-top"> <div class="item-content" style="padding: 0"> <div class="item-inner"> <div class="item-input"> <textarea style="padding-left: 15px;" name="description" placeholder="Type your description here, you can use hashtags #example #restaurant #foodmarket" id="desqp"></textarea> </div></div></div></li><li> <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Category" class="item-link smart-select" data-back-on-select="true"> <select name="cat" class="form-control qp-selects" id="cats"> <option value="1">Bar & Pub</option> <option value="2">Car Dealership</option> <option value="3">Coffee Shop</option> <option value="4">Entertainment</option> <option value="5">Food</option> <option value="6">Gas Station</option> <option value="29">Church</option> <option value="7">Hotel</option> <option value="8">Medical Center</option> <option value="9">Movie Theater</option> <option value="10">Nightlife Spot</option> <option value="23">Institution</option> <option value="11">Outdoors & Recreation</option> <option value="12">Parking</option> <option value="13">Pharmacy</option> <option value="14">Real Estate</option> <option value="28">Temple</option> <option value="15">Supermarket</option> <option value="16">Taxi</option> <option value="17">Transport</option> <option value="18">Travel Agency</option> <option value="19">Cosmetic</option> <option value="20">Pet-Shop</option> <option value="27">Museum</option> <option value="21">Event</option> <option value="22">Mall</option> <option value="24">Sightseeing</option> <option value="25">Subway-Station</option> <option value="26">Government</option> <option value="30">Kids</option> <option value="31">Beach</option> <option value="32">Nail-Shop</option> <option value="33">Convenient-Store</option> <option value="34">Health-Center</option> <option value="35">Acupuncture</option> </select> <div class="item-content"> <div class="item-inner"> <div class="item-title">Category</div><div class="item-after">Select</div></div></div></a> </li></ul> </div><div class="form-group" style="float:left;width: 100%;"> <input type="hidden" id="qkp-lat" name="lat"/> <input type="hidden" id="qkp-lng" name="long"/> <div id="qkpost-map-container" style="width:80%;margin:0 auto"> <div style="height:300px" id="postmap"></div></div></div><div id="file-div"></div></form> <div class="" style="float: left;width: 100%"> <div id="_upp" class="hide"> <p> Uploading... ( <span id="pco"></span> %) </p></div><div style="float: left;width: 100%;padding: 10px" id="images"> </div></div><div class="" style="float: right;width: 100%"> <div class="btn-group btn-block" style="width: 100%"> <a style="width: 50%" href="#" id="addPicture" class="btn btn-primary">Browse Images</a> <a style="width: 50%" href="#" id="qk-post-btn" class="btn btn-success">Post</a> </div></div>');
     setTimeout(function(){
         PostAdInit();
     }, 300);
@@ -1948,6 +2129,7 @@ function PostAdInit() {
     window.PostAdMarker = new google.maps.Marker({
       map: postmap,
       position:myLatLng,
+      icon:GVar.flag_image,
       draggable: true,
       anchorPoint: new google.maps.Point(0, -29)
     });
@@ -1957,6 +2139,7 @@ function PostAdInit() {
         var marker = new google.maps.Marker({
             position: location, 
             map: postmap,
+            icon:GVar.flag_image,
             draggable: true,
             anchorPoint: new google.maps.Point(0, -29)
         });
@@ -2146,11 +2329,11 @@ function LandingInit(lat,lng) {
         GVar.lmarkers.push(marker);
         // Add the circle for this city to the map.
         var cityCircle = new google.maps.Circle({
-            strokeColor: '#badbff',
+            strokeColor: '#007aff',
             strokeOpacity: 0.8,
-            strokeWeight: 2,
+            strokeWeight: 3,
             fillColor: '#a0ccfb',
-            fillOpacity: 0,
+            fillOpacity: 0.15,
             map: LandingMap,
             center: location,
             radius: GVar.drad*1000
@@ -2163,11 +2346,11 @@ function LandingInit(lat,lng) {
             GVar.lndinglng = this.getPosition().lng();
             var latlng = {lat: this.getPosition().lat(), lng: this.getPosition().lng()};
             var cityCircle = new google.maps.Circle({
-                strokeColor: '#badbff',
+                strokeColor: '#007aff',
                 strokeOpacity: 0.8,
-                strokeWeight: 2,
+                strokeWeight: 3,
                 fillColor: '#a0ccfb',
-                fillOpacity: 0.35,
+                fillOpacity: 0.15,
                 map: LandingMap,
                 center: latlng,
                 radius: GVar.drad*1000
@@ -2179,14 +2362,14 @@ function LandingInit(lat,lng) {
     var infowindow = new google.maps.InfoWindow();
 }
 function LandingUpdate(lat,lng) {
+    var tz = 15;
+    GVar.lzs = tz;
     LandingClearMarker();
     var myLatLng = {lat: lat, lng: lng};
     GVar.lndinglat = lat;
     GVar.lndinglng = lng;
     LandingMap.setCenter(myLatLng);
-    var drd = GVar.drad;
-    var zoomnum = RadiusToZoom(drd);
-    LandingMap.setZoom(zoomnum);
+    LandingMap.setZoom(tz);
     var image = {
       url: GVar.rball,
       size: new google.maps.Size(200, 200),
@@ -2241,16 +2424,6 @@ function LandingUpdateNoZoom(lat,lng) {
       anchorPoint: new google.maps.Point(0, -29)
     });
     GVar.lmarkers.push(marker);
-}
-
-function QpUpdate(lat,lng) {
-    LandingClearMarker();
-    var myLatLng = {lat: lat, lng: lng};
-    postmap.setCenter(myLatLng);
-    postmap.setZoom(15);
-    PostAdMarker.setPosition(myLatLng);
-    document.getElementById('qkp-lat').value = lat;
-    document.getElementById('qkp-lng').value = lng;
 }
 function ViewAdInit(lat,lng) {
     var myLatLng = {lat: lat, lng: lng};
@@ -2507,6 +2680,25 @@ function ClearCircles(){
       GVar.lcircle[j].setMap(null);
     } 
 }
+window.lastTimeBackPress=0;
+window.timePeriodToExit=2000;
+function onBackKeyDown(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if(new Date().getTime() - lastTimeBackPress < timePeriodToExit){
+        navigator.app.exitApp();
+    }else{
+        myApp.addNotification({
+            title: 'EXIT',
+            message: 'Press again to exit',
+            media: '<i class="fa fa-reply"></i>'
+        });
+        window.timeout = setTimeout(function () { myApp.closeNotification(".notification-item"); }, 2000); 
+        lastTimeBackPress=new Date().getTime();
+    }
+}
+
+
 function GetGPSLocationNoZoom(){
     $('#lw3').removeClass('hide');
     CheckGPS.check(function win(){
@@ -2550,3 +2742,14 @@ function RadiusToZoom(rad){
     var zm = Math.round(14-Math.log(radius)/Math.LN2);
     return zm;
 }
+function _ctpral(){
+    $("#_drp").val('');
+    $("#_dp").val('');
+}
+function _ctpr(){
+    $("#_drp").val('');
+}
+function _ctpd(){
+    $("#_dp").val('');
+}
+
