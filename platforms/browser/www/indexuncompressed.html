@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8" />
+      <meta name="format-detection" content="telephone=no" />
+      <meta name="msapplication-tap-highlight" content="no" />
+      <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+      <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
+      <!-- <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" /> -->
+      <!-- Good default declaration:
+         * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+         * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+         * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+         * Enable inline JS: add 'unsafe-inline' to default-src
+         * Enable eval(): add 'unsafe-eval' to default-src
+         * Create your own at http://cspisawesome.com
+         -->
+      <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
+      <meta name="description" content="">
+      <meta name="author" content="pedramkhoshnevis">
+      <title>Home | Kora</title>
+      <script type="text/javascript" src='https://maps.google.com/maps/api/js?key=AIzaSyBXH2wyNIIlcBLpBTj9vu4anjHqrEeSQs4&libraries=places'></script>
+      <!-- Latest compiled and minified CSS -->
+      <link rel="stylesheet" href="package/bootstrap/css/bootstrap.min.css">
+      <!-- Optional theme -->
+      <link rel="stylesheet" href="package/bootstrap/css/bootstrap-theme.min.css">
+      <!-- Custom Fonts -->
+      <link rel="stylesheet" href="package/font-awesome/css/font-awesome.css">
+      <!-- STAR RATING -->
+      <link href="plugins/krajee-star/star-rating.css" rel="stylesheet">
+      <!-- STAR RATING -->
+      <link href="plugins/bootstrap-social/bootstrap-social.css" rel="stylesheet">
+      <link href="plugins/bootstrap-social/assets/css/docs.css" rel="stylesheet">
+      <link href="css/prettyPhoto.css" rel="stylesheet">
+      <link href="css/animate.css" rel="stylesheet">
+      <link href="css/responsive.css" rel="stylesheet">
+      <link href="css/main.css" rel="stylesheet">
+      <link href="css/general.css" rel="stylesheet">
+      <link href="css/homepage.css" rel="stylesheet">
+      <!-- AUTOCOMPLETE -->
+      <!-- <link rel="stylesheet" href="plugins/easy_autocomplete/easy-autocomplete.css" /> -->
+      <!-- BLUEIMP-GALLERY -->
+      <link rel="stylesheet" href="plugins/gallery-master/css/blueimp-gallery.css">
+      <!-- Path to Framework7 Library CSS-->
+      <link rel="stylesheet" href="Framework7-1.4.2/dist/css/framework7.ios.min.css">
+      <link rel="stylesheet" href="Framework7-1.4.2/dist/css/framework7.ios.colors.min.css">
+      <!-- Path to your custom app styles-->
+      <link rel="stylesheet" href="Framework7-1.4.2/test/css/my-app.css">
+      <script type="text/javascript" src="js/jquery.js"></script>
+      <script type="text/javascript" src="cordova.js"></script>
+      <script scr="phonegap.js"></script>
+
+      <!--         <script src="cdv-plugin-fb-connect.js"></script> 
+         <script src="facebook-js-sdk.js"></script>  -->
+   </head>
+   <body>
+
+    <!-- Left Panel with Reveal effect -->
+    <div class="page-content panel panel-left panel-cover" style="border-radius: 0;opacity: 0.9">
+        <div class="content-block">
+            <div class="content-block-title">Hashtag Search</div>
+            <div class="list-block">
+              <ul>
+                <li class="item-content">
+                  <div class="item-input">
+                    <input name="myinput" type="text" placeholder="#example" id="hashtagsearch">
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <p><a id="gobtn" style="opacity: 1" href="#" class="button button-round active">GO!</a></p> 
+            <div class="content-block-title">Categories</div>
+            <!-- Search Bar -->
+            <form class="searchbar">
+                <div class="searchbar-input">
+                    <input id="csb" type="search" placeholder="Search">
+                    <a href="#" class="searchbar-clear"></a>
+                </div>
+                <a href="#" class="searchbar-cancel">Cancel</a>
+            </form>
+            <div class="list-block">
+              <ul>
+                <li class="item-content icx" iv="1">
+                  <div class="item-media"><i class="fa fa-glass" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Bar & Pub</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="2">
+                  <div class="item-media"><i class="fa fa-car" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Car-Dealership</div>
+                  </div>
+                </li>  
+                <li class="item-content icx" iv="3">
+                  <div class="item-media"><i class="fa fa-coffee" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Coffee-Shop</div>
+                  </div>
+                </li> 
+                <li class="item-content icx" iv="4">
+                  <div class="item-media"><i class="fa fa-star" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Entertainment</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="5">
+                  <div class="item-media"><i class="fa fa-cutlery" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Food</div>
+                  </div>
+                </li>  
+                <li class="item-content icx" iv="6">
+                  <div class="item-media"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Gas Station</div>
+                  </div>
+                </li>         
+                <li class="item-content icx" iv="7">
+                  <div class="item-media"><i class="fa fa-bed" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Hotel</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="8">
+                  <div class="item-media"><i class="fa fa-hospital-o" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Medical Center</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="9">
+                  <div class="item-media"><i class="fa fa-film" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Movie Theater</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="10">
+                  <div class="item-media"><i class="fa fa-users" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Nightlife Spot</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="11">
+                  <div class="item-media"><i class="fa fa-tree" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Outdoors & Recreation</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="12">
+                  <div class="item-media"><i class="fa fa-podcast" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Parking</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="27">
+                  <div class="item-media"><i class="fa fa-university" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Museum</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="13">
+                  <div class="item-media"><i class="fa fa-plus-square" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Pharmacy</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="14">
+                  <div class="item-media"><i class="fa fa-building" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Real Estate</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="23">
+                  <div class="item-media"><i class="fa fa-university" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Institution</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="15">
+                  <div class="item-media"><i class="fa fa-shopping-basket" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Supermarket</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="16">
+                  <div class="item-media"><i class="fa fa-taxi" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Taxi</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="17">
+                  <div class="item-media"><i class="fa fa-bus" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Transport</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="18">
+                  <div class="item-media"><i class="fa fa-suitcase" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Travel Agency</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="28">
+                  <div class="item-media"><i class="fa fa-university" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Temple</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="19">
+                  <div class="item-media"><i class="fa fa-female" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Cosmetic</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="20">
+                  <div class="item-media"><i class="fa fa-heart-o" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Pet-Shop</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="21">
+                  <div class="item-media"><i class="fa fa-ticket" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Event</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="22">
+                  <div class="item-media"><i class="fa fa-shopping-bag" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Mall</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="24">
+                  <div class="item-media"><i class="fa fa-picture-o" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Sightseeing</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="25">
+                  <div class="item-media"><i class="fa fa-subway" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Subway-Station</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="29">
+                  <div class="item-media"><i class="fa fa-university" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Church</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="30">
+                  <div class="item-media"><i class="fa fa-futbol-o" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Kids</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="31">
+                  <div class="item-media"><i class="fa fa-sun-o" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Beach</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="26">
+                  <div class="item-media"><i class="fa fa-university" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Government</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="32">
+                  <div class="item-media"><i class="fa fa-building" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Nail-Shop</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="33">
+                  <div class="item-media"><i class="fa fa-building" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Convenient-Store</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="34">
+                  <div class="item-media"><i class="fa fa-building" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Health-Center</div>
+                  </div>
+                </li>
+                <li class="item-content icx" iv="35">
+                  <div class="item-media"><i class="fa fa-building" aria-hidden="true"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title itx">Acupuncture</div>
+                  </div>
+                </li>
+
+              </ul>
+            </div>
+        </div>
+    </div>
+    <!-- Right Panel with Cover effect -->
+    <div class="panel panel-right panel-cover" style="border-radius: 0;opacity: 0.9">
+        <div class="content-block">
+            <div class="content-block-title">How Far? <small>Default 25km</small></div>
+            <div class="list-block">
+                <ul>
+                    <li class="item-content">
+                        <div class="item-inner">
+                            <div class="item-input">
+                                <input type="number" id="rorp" placeholder="Default 25km">
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <p><a id="addrad" style="opacity: 1" href="#" class="button button-round active">Set</a>
+            </p>
+        </div>
+    </div>
+
+      <div id="ovwrapper" class="hide">
+         <div id="overlay-blur"></div>
+         <div id="oltext">
+            <center>
+               <h3>Waiting for connection</h3>
+               </br> 
+               <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+               <span class="sr-only">Loading...</span>
+            </center>
+         </div>
+      </div>
+      <div id="lw" class="hide">
+         <div id="overlay-blur-wt"></div>
+         <div class="ltext">
+            <div id="inner">
+               <center>
+                  <p> <span id="txt">Loading...&nbsp;&nbsp;</span>
+                     <span id="gf">
+                     <i style="font-size: 20px" class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+                     </span>
+                  </p>
+               </center>
+            </div>
+         </div>
+      </div>
+      <div id="lw2" class="hide">
+         <div id="overlay-glass-wt"></div>
+         <div class="ltext">
+            <div id="inner">
+               <center>
+                  <p> <span id="txt">Loading...&nbsp;&nbsp;</span>
+                     <span id="gf">
+                     <i style="font-size: 20px" class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+                     </span>
+                  </p>
+               </center>
+            </div>
+         </div>
+      </div>
+      <div id="lwgen" class="hide">
+         <div id="overlay-glass-wt"></div>
+         <div class="ltext">
+            <div id="inner">
+               <center>
+                  <p> <span id="txt">Loading...&nbsp;&nbsp;</span>
+                     <span id="gf">
+                     <i style="font-size: 20px" class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+                     </span>
+                  </p>
+               </center>
+            </div>
+         </div>
+      </div>
+      <div id="lwposting" class="hide">
+         <div id="overlay-glass-wt"></div>
+         <div class="ltext">
+            <div id="inner">
+               <center>
+                  <p> <span id="txt">Please Wait...&nbsp;&nbsp;</span>
+                     <span id="gf">
+                     <i style="font-size: 20px" class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+                     </span>
+                  </p>
+               </center>
+            </div>
+         </div>
+      </div>
+      <div id="lw3" class="hide">
+         <div id="overlay-glass-wt"></div>
+         <div class="ltext">
+            <div id="inner">
+               <center>
+                  <p> <span id="txt">Getting Location&nbsp;&nbsp;</span>
+                     <span id="gf">
+                     <i style="font-size: 20px" class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+                     </span>
+                  </p>
+               </center>
+            </div>
+         </div>
+      </div>
+      <div id="lw4" class=""><!-- xxx -->
+         <div id="overlay-glass-wt"></div>
+         <div class="ltext">
+            <div id="inner">
+               <center>
+                  <p> 
+                      <span id="txt">Please Wait!</br>
+                        <span id="wgl">We're Getting Your Location.</span>
+                        </br>
+                        <span class="hide" id="ctu">Checking Your Status.</span>
+                        </br>
+                      </span>
+                      <span class="loader__dot">.</span><span class="loader__dot">.</span><span class="loader__dot">.</span>
+                  </p>
+               </center>
+            </div>
+         </div>
+      </div>
+      <div id="lw5" class="hide" style="display: none"><!-- xxx -->
+         <div id="ovtpr"></div>
+      </div>
+      <input type="hidden" id="web_root" value="https://www.betterlifeinkorea.com">
+      <input type="hidden" id="_auth">
+      <input type="hidden" id="user-status">
+      <!-- Status bar overlay for fullscreen mode-->
+      <!-- Panels overlay-->
+      <div class="panel-overlay"></div>
+      <!-- Views, and they are tabs-->
+      <!-- We need to set "toolbar-through" class on it to keep space for our tab bar-->
+      <div class="views tabs toolbar-through">
+         <!-- Your first view, it is also a .tab and should have "active" class to make it visible by default-->
+         <div id="view-1" class="view view-main tab active ps psa" pid="1">
+            <!-- Pages-->
+            <div class="pages">
+               <!-- Page, data-page contains page name-->
+               <div data-page="index-1" class="page">
+                  <!-- Scrollable page content-->
+                  <div class="page-content">
+
+                    <div id="_rc" class="hide">
+                      <button class="btn btn-default btn-sm">Remove Radius Circle</button>
+                    </div>
+                    <div id="qbtn-wrap" class="qkpost">
+                      <img class="button-r" src="img/add.png" style="width: 50px;">
+                    </div>
+                    <div id="sbtn-wrap" data-panel="left" class="open-panel">
+                      <img class="button-r" src="img/simg.png" style="width: 50px;">
+                    </div>
+                    <div id="gbtn-wrap">
+                      <img class="button-r" src="img/compass.png" style="width: 50px;">
+                    </div>
+                    <div id="cbtn-wrap" data-panel="right" class="open-panel">
+                      <img class="button-r" src="img/confi.png" style="width: 50px;">
+                    </div>
+
+                    <div id="fpmap">
+                    </div>
+                  </div>
+                  <!-- page content -->
+               </div>
+            </div>
+         </div>
+         <!-- Second view (for second wrap)-->
+         <div id="view-2" class="view tab ps" pid="2" style=" padding-bottom: 60px" >
+            <!-- Pages-->
+            <div class="pages">
+               <!-- Page, data-page contains page name-->
+               <div data-page="index-2" class="page" style="background: #ffffff !important;">
+                  <!-- Scrollable page content-->
+                    <div class="page-content"  id="v2pc" style="padding: 10px;">
+                        <form class="" id="pkpost-form" style="float: left;width: 100%;">
+                            <div class="list-block" id="lbx" style="margin-top: 0;">
+                                <ul>
+                                    <!-- INPUT -->
+                                    <li class="align-top">
+                                      <div class="item-content" style="padding: 0">
+                                        <div class="item-inner">
+                                          <div class="item-input">
+                                            <input style="padding-left: 15px;" type="text" name="title" id="_qt" placeholder="Title">
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </li>
+                                    <!-- INPUT -->
+                                    <!-- Textarea -->
+                                    <li class="align-top">
+                                      <div class="item-content" style="padding: 0">
+                                        <div class="item-inner">
+                                          <div class="item-input">
+                                            <textarea style="padding-left: 15px;" name="description" placeholder="Type your description here, you can use hashtags #example #restaurant #foodmarket" id="desqp"></textarea>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </li>
+                                    <!-- Textarea -->
+                                    <li>
+                                        <a href="#" data-searchbar="true" data-searchbar-placeholder="Search Category" class="item-link smart-select" data-back-on-select="true">
+                                            <select name="cat" class="form-control qp-selects" id="cats">
+                                                <option value="1">Bar & Pub</option>
+                                                <option value="2">Car Dealership</option>
+                                                <option value="3">Coffee Shop</option>
+                                                <option value="4">Entertainment</option>
+                                                <option value="5">Food</option>
+                                                <option value="6">Gas Station</option>
+                                                <option value="29">Church</option>
+                                                <option value="7">Hotel</option>
+                                                <option value="8">Medical Center</option>
+                                                <option value="9">Movie Theater</option>
+                                                <option value="10">Nightlife Spot</option>
+                                                <option value="23">Institution</option>
+                                                <option value="11">Outdoors & Recreation</option>
+                                                <option value="12">Parking</option>
+                                                <option value="13">Pharmacy</option>
+                                                <option value="14">Real Estate</option>
+                                                <option value="28">Temple</option>
+                                                <option value="15">Supermarket</option>
+                                                <option value="16">Taxi</option>
+                                                <option value="17">Transport</option>
+                                                <option value="18">Travel Agency</option>
+                                                <option value="19">Cosmetic</option>
+                                                <option value="20">Pet-Shop</option>
+                                                <option value="27">Museum</option>
+                                                <option value="21">Event</option>
+                                                <option value="22">Mall</option>
+                                                <option value="24">Sightseeing</option>
+                                                <option value="25">Subway-Station</option>
+                                                <option value="26">Government</option>
+                                                <option value="30">Kids</option>
+                                                <option value="31">Beach</option>
+                                                <option value="32">Nail-Shop</option>
+                                                <option value="33">Convenient-Store</option>
+                                                <option value="34">Health-Center</option>
+                                                <option value="35">Acupuncture</option>
+                                            </select>
+                                            <div class="item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title">Category</div>
+                                                    <div class="item-after">Select</div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="form-group" style="float:left;width: 100%;">
+                                <input type="hidden" id="qkp-lat" name="lat" />
+                                <input type="hidden" id="qkp-lng" name="long" />
+                                <!-- <center><button id="curloc" class="btn btn-de btn-sm">Current Location</button></center> -->
+                                <div id="qkpost-map-container" style="width:80%;margin:0 auto">
+                                    <div style="height:300px" id="postmap"></div>
+                                </div>
+                            </div>
+                            <div id="file-div"></div>
+                        </form>
+                        <div class="" style="float: left;width: 100%">
+                            <div id="_upp" class="hide">
+                              <p>
+                                Uploading... (
+                                  <span id="pco"></span>
+                                  %)
+                              </p>
+                            </div>
+                            <div style="float: left;width: 100%;padding: 10px" id="images">
+                            </div>
+                        </div>
+                        <div class="" style="float: right;width: 100%">
+                          <div class="btn-group btn-block" style="width: 100%">
+                            <a style="width: 50%"  href="#" id="addPicture" class="btn btn-primary">Browse Images</a>
+                            <a  style="width: 50%" href="#"  id="qk-post-btn" class="btn btn-success">Post</a>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+         </div>
+
+         <div id="view-5" class="view tab ps" pid="5">
+            <div class="pages">
+               <div data-page="index-5" class="page">
+                  <div class="page-content" style="padding: 10px;padding-top: 14px;">
+                    <div id="postview-data"></div>
+                    <!-- MAP -->
+                    <div class="form-group">
+                      <div id="qkpost-map-container" style="width:80%;margin:0 auto;margin-top: 15px !important;">
+                         <div style="height:300px" id="map-post-view"></div>
+                      </div>
+                    </div>
+                    <!-- DRIVE-TO BTN WRAPPER -->
+                    <div id="dtw"></div>
+                    <!-- Reviews -->
+                    <div id="rv"></div>
+                    <div class="npad mtop">
+                      <div class="row nmnp">
+                      <div class="npad" style="width: 95% !important;">
+
+                        <div id="comw" class="blog-comment">
+                        <!-- Comments goes here -->
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                    <!-- Reviews -->
+                    <div id="vmfooter">
+                      <div style="width: 100%" id="dbtn2" style="float: left;">
+
+                      </div>
+                      <p>&nbsp;</p>               
+                      <p>&nbsp;</p>               
+                    </div>
+
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- PROFILE VIEW -->
+         <div id="view-4" class="view tab ps" pid="4">
+            <div class="pages navbar-fixed">
+               <div data-page="index-4" class="page">
+                  <div id="p4c" class="page-content" style="padding: 0">
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- Bottom Tabbar-->
+         <div class="toolbar tabbar tabbar-labels">
+            <div class="toolbar-inner">
+            <a pageid='1' id="vw1" href="#view-1" class="tab-link active">
+              <i class="fa fa-map-o picon"></i><span class="tabbar-label">Map</span>
+            </a>
+            <a pageid='3' id="vw3" href="#view-4" class="tab-link"> 
+              <i class="fa fa-pencil picon" aria-hidden="true"></i>
+              <span class="tabbar-label">Dashboard</span>
+            </a>
+            <a pageid='4' id="vw4" href="#login" class="tab-link">
+              <i id="lginicon" class="picon"></i>
+              <span class="tabbar-label" id="lginlbl"></span>
+            </a>
+            </div>
+         </div>
+         <div id="partial-pages">
+            <div class="modal fade" id="login-modal">
+               <div class="modal-dialog">
+                  <div class="modal-content">
+                     <form id="lform">
+                        <div class="modal-header">
+                           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                           <h4 class="modal-title">Login</h4>
+                        </div>
+                        <div class="modal-body">
+                           <div class="form-group">
+                              <input type="email" class="form-control form-control-login" name="email" id="email" placeholder="Email" aria-describedby="sizing-addon2">
+                           </div>
+                           <div class="form-group">
+                              <input type="password" class="form-control form-control-login" name="password" id="password" placeholder="Password" aria-describedby="sizing-addon2">           
+                           </div>
+                           <div id="lnot" class="form-group hide">
+                              <span style="color: red">Wrong Username or Password</span>          
+                           </div>
+                           <div class="checkbox">
+                              <label><input name="remember" type="checkbox" value="">Remember me</label>
+                           </div>
+                        </div>
+                        <div class="modal-footer clearfix">
+                           <a id="reg-btn" href="#register" class="btn btn-info pull-left btn-sm">Register</a>
+                           <a class="fbloginbtn btn btn-social btn-facebook btn-sm" href="#">
+                           <span class="fa fa-facebook"></span>  Sign-in
+                           </a>
+                           <button type="submit" id="login-btn-1" class="btn btn-warning pull-right btn-sm">Login</button>
+                        </div>
+                     </form>
+                  </div>
+                  <!-- /.modal-content -->
+               </div>
+               <!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal -->  
+
+            <!-- /.modal -->
+            <div class="modal fade" id="qkpost-modal">
+                <div class="modal-dialog qkpost_dialog" style="width: 94%;margin-top: 10px;height: 563px">
+                    <div class="modal-content" style="height: 100%">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">It will just take few minuts...</h4>
+                        </div>
+                        <div id="qkpmb" class="modal-body" style="height: 78%;overflow: auto;padding-bottom: 0;margin-bottom: 5px;">
+                            <div class="body-wrapsp">
+                                
+                            </div>
+                        </div>
+                        <div class="modal-footer clearfix">
+
+                        </div>
+                    </div>
+                <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal -->
+            <!-- The Gallery as lightbox dialog, should be a child element of the document body -->
+            <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls">
+               <div class="slides"></div>
+               <h3 class="title"></h3>
+               <a class="prev">‹</a>
+               <a class="next">›</a>
+               <a class="close">×</a>
+               <a class="play-pause"></a>
+               <ol class="indicator"></ol>
+            </div>
+            <div class="modal fade" id="logout-modal">
+               <div class="modal-dialog">
+                  <div class="modal-content">
+                     <div class="modal-body" style="padding:0">
+                        <div class="alert alert-warning clearfix" role="alert" style="margin:0;padding:20px">Are you sure you want to logout?
+                           <a href="#" id="loutbtn" class="btn btn-primary btn-sm pull-right">Logout</a>
+                        </div>
+                     </div>
+                  </div>
+                  <!-- /.modal-content -->
+               </div>
+               <!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal -->
+            <div class="modal fade" id="register-modal">
+               <form id="reg-form" style="height:100%">
+                  <div class="modal-dialog">
+                     <div class="modal-content">
+                        <div class="modal-header">
+                           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                           <h4 class="modal-title">Signup</h4>
+                        </div>
+                        <div class="modal-body">
+                           <div class="form-group">
+                              <input type="text" class="form-control form-control-login" id="email" name="email" placeholder="Email *" aria-describedby="sizing-addon2">
+                              <span class="error-feedback email-error-feedback hide">Not Matched</span>
+                           </div>
+                           <div class="form-group">
+                              <input type="password" class="form-control form-control-login" name="password" id="password" placeholder="Password" aria-describedby="sizing-addon2">
+                              <span class="error-feedback password-error-feedback hide">Not Matched</span>    
+                           </div>
+                           <div class="form-group">
+                              <input type="password" class="form-control form-control-login"  name="password_again" id="password_again" placeholder="Re-Enter Password" aria-describedby="sizing-addon2">
+                              <span class="error-feedback password-again-error-feedback hide">Not Matched</span>
+                           </div>
+                        </div>
+                        <div class="modal-footer clearfix">
+                           <img class="hide" id="validating" src="gif/loading1.gif" width="20px;">
+                           <a class="fbloginbtn btn btn-social btn-facebook" href="/auth/facebook">
+                           <span class="fa fa-facebook"></span>  Sign-in
+                           </a>
+                           <a class="btn modal-btn btn-warning " id="submit-btn">Register</a>
+                        </div>
+                     </div>
+                     <!-- /.modal-content -->
+                  </div>
+                  <!-- /.modal-dialog -->
+               </form>
+            </div>
+            
+            <!-- /.modal -->
+            <div class="modal fade" id="success-modal">
+               <div class="modal-dialog smodal" style="width: 15%;">
+                  <div class="modal-content" style="background: rgb(255, 255, 255);border: 1px solid rgb(92, 184, 92);">
+                     <div class="modal-body text-center">
+                        <span>
+                        <i class="glyphicon glyphicon-ok" style="color: #5cb85c;font-size: 31px;"></i>
+                        <br>
+                        <span style="font-weight: 900;">Successfully Posted!</span>
+                        </span>
+                     </div>
+                  </div>
+                  <!-- /.modal-content -->
+               </div>
+               <!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal -->
+         </div>
+      </div>
+      <style type="text/css"> 
+        #_dcb{
+          margin: 0;
+          padding: 0;
+        }
+        #_dcb textarea{
+          border: 0;
+          margin: 0;
+          border-radius: 0;
+          resize: none;
+          height: 216px;
+        }
+      </style>
+      <div class="picker-modal" id="_pt">
+        <div class="toolbar">
+          <div class="toolbar-inner">
+            <div class="left"></div>
+            <div class="right"><a href="#" class="close-picker">Done</a></div>
+          </div>
+        </div>
+        <div class="picker-modal-inner">
+          <div class="content-block" id="_dcb">
+            <textarea id="_dt" placeholder="Type your title" class="form-control"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="picker-modal" id="_pd">
+        <div class="toolbar">
+          <div class="toolbar-inner">
+            <div class="left"></div>
+            <div class="right"><a href="#" class="close-picker">Done</a></div>
+          </div>
+        </div>
+        <div class="picker-modal-inner">
+          <div class="content-block" id="_dcb">
+            <textarea id="_dp" placeholder="Type your description here, you can use hashtags #example #restaurant #foodmarket" class="form-control"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="picker-modal" id="_pr">
+        <div class="toolbar">
+          <div class="toolbar-inner">
+            <div class="left"></div>
+            <div class="right"><a href="#" class="close-picker">Done</a></div>
+          </div>
+        </div>
+        <div class="picker-modal-inner">
+          <div class="content-block" id="_dcb">
+            <textarea id="_drp" placeholder="Type your review here..." class="form-control pk-form" name="description"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <script src="plugins/jQueryUI/jquery-ui.min.js"></script>
+      <script src="package/bootstrap/js/bootstrap.min.js"></script>
+      <script src="js/jquery.prettyPhoto.js"></script>
+      <script src="plugins/jquery-sortable-photos/jquery-sortable-photos.js"></script>
+      <script src="plugins/easy_autocomplete/jquery.easy-autocomplete.js"></script>
+      <script src="plugins/krajee-star/star-rating.min.js"></script>
+      <script src="plugins/unveil/unveil.js"></script>
+      <script src="plugins/gallery-master/js/blueimp-gallery.js"></script>
+      <script type="text/javascript" src="js/index.js"></script>
+      <script type="text/javascript">
+          function handleOpenURL(url) {
+            setTimeout(function() {
+              window.gurl = url;
+              var res = url.replace("blikapp://?adid=", "");
+              vwad(res);
+            }, 1000);
+          }
+      </script>
+      <!-- Path to Framework7 Library JS-->
+      <script type="text/javascript" src="Framework7-1.4.2/dist/js/framework7.min.js"></script>
+      <!-- Path to your app js-->
+      <script src="package/jqtap/jqtap.js"></script>
+      <script type="text/javascript" src="js/my-app.js"></script>
+   </body>
+</html>
