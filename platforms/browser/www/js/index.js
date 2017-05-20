@@ -81,6 +81,8 @@ var app = {
     // Application Constructor
     initialize: function() {
         this.bindEvents();
+
+
     },
     // Bind Event Listeners
     //
@@ -670,7 +672,6 @@ function PhotoUpload() {
 
             }, function (error) {
                 $(document).find('#qk-post-btn').removeAttr('disabled');
-                alert('E121. Error.');
                 console.log('Error: ' + error);
             }, {
                 maximumImagesCount: mxupld,
@@ -880,7 +881,7 @@ function Events() {
 
     $('#vw1').on('touchstart', function() {
         setTimeout(function(){
-            ResetLandingAndReasin();
+            // ResetLandingAndReasin();
         }, 50);
         setTimeout(function(){
             _ctpral();
@@ -1563,6 +1564,7 @@ function ResetLandingAndReasin(){
     }
     GetGPSLocationNoZoom();
 }
+
 function vwad(data_id) {
     $('#lwgen').removeClass('hide');
     //clear reviews
@@ -1627,68 +1629,42 @@ function vwad(data_id) {
                 var new_html = "<div class='form-group break_all' id='pt'></div>"+
                 "<div class='form-group break_all' id='pd'></div>"+
                 "<center><div class='form-group break_all' id='plo'><img width='200px' src='gif/ajax-loader4.gif'></div>"+
-                "<div class='my-container hide' id='pi' style='opacity:0'></div>";
+                "<div class='my-container hide' id='pi'></div>";
                 document.getElementById('postview-data').innerHTML = new_html;
                 document.getElementById('pt').innerHTML = ad_array['title'];
                 document.getElementById('pd').innerHTML = ad_array['des'];
                 var linksContainer = $('#pi');
-                var baseUrl;
                 var title = ad_array['title_txt'];
                 // Add the demo images as links with thumbnails to the page:
                 var _con = 0;
                 var _f = 1;
+                var allimgs = '';
+                var _images = [];
                 $.each(photos, function (index, photo) {
-                  _con=_con+1;
-                  baseUrl = photo.src;
-                  var _bn = '_i'+_con;
-                  $('<a/>')
-                    .append($('<img class="'+_bn+'">').prop('src', baseUrl))
-                    .prop('href', baseUrl)
-                    .prop('title', title)
-                    .addClass('my-item')
-                    .attr('data-gallery', '')
-                    .appendTo(linksContainer);
-                    $("."+_bn).on('load', function() {_con=_con-1;});
+                    _images.push(photo.src);
                 });
-                var _mitn = setInterval(function(){
-                    if (_con==0) {
+                var _imlen = _images.length;
+
+                $('#pi').imagesGrid({
+                    images: _images,
+                    align: true,
+                    nextOnClick: 0,
+                    cells: 5,
+                    getViewAllText: function(imgsCount) { return 'View all' },
+                    onGridLoaded: function(imgsCount) {
                         $('#plo').addClass('hide');
-                        setTimeout(function(){
-                            $('#pi').removeClass('hide');
-                            // FIT IMAGES c
-                            $(document).find('.my-container').sortablePhotos({
-                              selector: '> .my-item',
-                              sortable: 0,
-                              padding: 3
-                            });
-                            setTimeout(function(){
-                                $('#pi').css('opacity','1');
-                            }, 300);
-                        }, 200);
-                        clearInterval(_mitn);
-                    }
-                 }, 400);
+                        $('#pi').removeClass('hide');
+                        $('#pi').imagesGrid({
+                            images: _images,
+                            align: true,
+                            nextOnClick: 0,
+                            cells: 5
+                        });
 
 
 
-                //FULLSCREEN VIEWER
-                $('#pi').on('click', function(event) {
-                    event = event || window.event;
-                    var target = event.target || event.srcElement,
-                        link = target.src ? target.parentNode : target,
-                        options = {
-                            index: link,
-                            // The number of elements to load around the current index:
-                            preloadRange: 2,
-                            // The transition speed for automatic slide changes, set to an integer
-                            // greater 0 to override the default transition speed:
-                            slideshowTransitionSpeed: 1,
-                            // The event object for which the default action will be canceled
-                            // on Gallery initialization (e.g. the click event to open the Gallery):
-                            event: event
-                        },
-                        links = this.getElementsByTagName('a');
-                    blueimp.Gallery(links, options);
+
+                     }
                 });
 
                 //REFRESH MAP

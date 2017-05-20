@@ -3,7 +3,7 @@
   xmlns="http://www.w3.org/ns/widgets" 
   xmlns:gap="http://phonegap.com/ns/1.0" 
   id="com.phonegap.blikrel" 
-  version="1.3.0">
+  version="1.3.1">
 
   <name>BLIK</name>
   <description>Better Life in Korea</description>
@@ -141,6 +141,8 @@
       <icon height="114" platform="ios" src="res/ios/icon/Icon@2x.png" width="114" />
       <icon height="40" platform="ios" src="res/ios/icon/Icon-40.png" width="40" />
       <icon height="80" platform="ios" src="res/ios/icon/Icon-40@2x.png" width="80" />
+      <icon height="50" platform="ios" src="res/ios/icon/Icon-50.png" width="50" />
+      <icon height="100" platform="ios" src="res/ios/icon/Icon-50@2x.png" width="100" />
       <icon height="60" platform="ios" src="res/ios/icon/Icon-60.png" width="60" />
       <icon height="120" platform="ios" src="res/ios/icon/Icon-60@2x.png" width="120" />
       <icon height="180" platform="ios" src="res/ios/icon/Icon-60@3x.png" width="180" />
