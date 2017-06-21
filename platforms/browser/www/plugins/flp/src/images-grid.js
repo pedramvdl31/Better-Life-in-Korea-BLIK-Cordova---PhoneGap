@@ -492,10 +492,10 @@
             swipe:function(event, direction) {
                 switch(direction){
                     case "left":
-                        $( "._goleft" ).trigger( "click" );
+                        $( "._goright" ).trigger( "click" );
                     break;
                     case "right":
-                        $( "._goright" ).trigger( "click" );
+                        $( "._goleft" ).trigger( "click" );
                     break;
                     case "up":
                         $( "._goclose" ).trigger( "click" );

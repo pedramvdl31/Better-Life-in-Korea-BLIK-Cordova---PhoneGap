@@ -10,6 +10,70 @@
     color: whitesmoke;
 
   }
+  .t-wr{
+    padding: 0 !important;
+  }
+  .t-wr .thumbnail{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  #v6pc{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .infinite-scroll-preloader {
+    margin-top:-20px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .infinite-scroll-preloader .preloader {
+    width:34px;
+    height:34px;
+  }      
+  .mlb{
+    margin: 0px 0 !important;
+  }
+  .mlc{
+    padding-left: 0 !important;
+  }
+  .mli{
+    padding-top: 26px !important;
+    padding-right: 0 !important;
+  }
+  .t-wr{
+    width: 100%;
+  }
+  #pt p, #pd p,#pt h3{
+    margin:0;
+  }
+  #pt{
+    padding: 10px 10px 0 10px;
+    margin-bottom: 0;
+  }
+  #pd{
+    padding: 10px 10px 0 10px;
+    margin-bottom: 0;
+  }
+  #pi{
+    padding: 10px 0 0 0;
+    margin-bottom: 0;    
+  }
+  #_pm{
+    padding: 10px 0 0 0;
+    margin-bottom: 0;      
+  }
+  #rv{
+    padding: 10px 10px 0 10px;
+  }
+  #_pcom{
+    padding: 10px 10px 0 10px; 
+  }
+  #vmfooter{
+    padding: 10px 10px 15px 10px;
+  }
+  ul.comments {
+    margin-bottom: 0 !important;
+  }
   .gm-style .gm-style-iw {
     font-size: 14px !important;
   }

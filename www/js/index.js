@@ -69,9 +69,8 @@ GVar = {
     'curadlng':0,
     'lzs':6,
     'lgns_f':0,//LOGIN-SESSION-FLAG:1 OR 0
-    'lgns_d':''//LOGIN-SESSION-DATA:CLASS OR ID NAME
-
-
+    'lgns_d':'',//LOGIN-SESSION-DATA:CLASS OR ID NAME
+    'got_loc':0
 }
 
 
@@ -106,7 +105,9 @@ var app = {
             PostAdInit();
         }, 500);
 
-
+                            GVar.lndinglat = 36.5802466;
+                            GVar.lndinglng = 127.95776367;
+                            GVar.got_loc = 1;
         if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
             //PHONE
             document.addEventListener("online", onOnline, false);
@@ -164,8 +165,12 @@ function ManageLocation(){
                         var nll = GVar.ll;
                         if (nll == 0) {
                             ManageAuth(position);
+                            GVar.lndinglat = position.coords.latitude;
+                            GVar.lndinglng = position.coords.longitude;
+                            GVar.got_loc = 1;
                         }
                         GVar.l = 0;
+
                     };
                     function onError(error) {
                         GVar.ll=0;
@@ -421,25 +426,6 @@ function PageVisualSetup() {
             }
         }
     });
-    // var diar = ('5 10 15 20 25 30 35 40 45 50 60 70 100').split(' ');
-    // var autocompleteDropdownExpand = myApp.autocomplete({
-    //     input: '#disin',
-    //     openIn: 'dropdown',
-    //     expandInput: true, // expand input
-    //     source: function (autocomplete, query, render) {
-    //         var results = [];
-    //         if (query.length === 0) {
-    //             render(results);
-    //             return;
-    //         }
-    //         // Find matched items
-    //         for (var i = 0; i < diar.length; i++) {
-    //             if (diar[i].toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push(diar[i]);
-    //         }
-    //         // Render items by passing array with result items
-    //         render(results);
-    //     }
-    // });
 var cats = ('Bar & Pub,Car Dealership,Coffee Shop,Entertainment,Food,Gas Station,Hotel,Medical Center,Movie Theater,Nightlife Spot,Outdoors & Recreation,Parking,Pharmacy,Real Estate,Supermarket,Taxi,Transport,Travel Agency,Cosmetic,Pet-Shop,Event,Mall,Institution,Sightseeing,Subway-Station,Government,Museum,Temple,Church,Kids,Beach,Nail-Shop,Convenient-Store,Health-Center,Acupuncture').split(',');
 var autocompleteDropdownExpand = myApp.autocomplete({
     input: '#csb',
@@ -891,17 +877,18 @@ function Events() {
         $(this).addClass('active');
     });
     $("#vw3").on('touchstart', function() {
-        var _auth = parseInt($('#_auth').attr('data'));
-        if (_auth == 1) {
-            GVar.curpg=3;
-            $('.tab-link').removeClass('active');
-            $('#vw3').addClass('active');
-            myApp.showTab('#view-4');
-        } else {
-            GVar.lgns_f = 1;
-            GVar.lgns_d = '#vw3';
-            $('#login-modal').modal('show');
-        }
+        myApp.showTab('#view-7');
+        // var _auth = parseInt($('#_auth').attr('data'));
+        // if (_auth == 1) {
+        //     GVar.curpg=3;
+        //     $('.tab-link').removeClass('active');
+        //     $('#vw3').addClass('active');
+        //     myApp.showTab('#view-7');
+        // } else {
+        //     GVar.lgns_f = 1;
+        //     GVar.lgns_d = '#vw3';
+        //     $('#login-modal').modal('show');
+        // }
     });
     $('#vw4').on('touchstart', function() {
         GVar.curpg=4;
@@ -924,6 +911,11 @@ function Events() {
         }
     });
 
+ 
+
+
+
+
     $('#lform').submit(function(e){
         e.preventDefault();
         var reg_form = $('#lform').serialize();
@@ -932,6 +924,16 @@ function Events() {
     $(document).on('touchstart','.logout-btn',function(){
         $('#logout-modal').modal('show');
     });
+    // $(document).on('touchend','.mlc',function(){
+    //     $('#vw6').removeClass('active');
+    //     findAndViewAd($(this).attr('item-id'));
+    // });
+
+
+
+
+
+
     $(document).on('touchstart','#reg-btn',function(){
         $('#login-modal').modal('hide');
         $('#register-modal').modal('show');
@@ -1591,7 +1593,7 @@ function vwad(data_id) {
             var ad_array = result.ad_array;
             var photos = ad_array.images_array;
             if (status==200) {
-
+                $("#view-5-cont").animate({"scrollTop": "0px"}, 10);
 
                 myApp.showTab('#view-5');
                 //init
@@ -1628,8 +1630,8 @@ function vwad(data_id) {
                 //SHARING BUTTONS END
                 var new_html = "<div class='form-group break_all' id='pt'></div>"+
                 "<div class='form-group break_all' id='pd'></div>"+
-                "<center><div class='form-group break_all' id='plo'><img width='200px' src='gif/ajax-loader4.gif'></div>"+
-                "<div class='my-container hide' id='pi'></div>";
+                "<div class='form-group break_all hide' id='plo'><img width='200px' src='gif/ajax-loader4.gif'></div>"+
+                "<div class='my-container' id='pi'></div>";
                 document.getElementById('postview-data').innerHTML = new_html;
                 document.getElementById('pt').innerHTML = ad_array['title'];
                 document.getElementById('pd').innerHTML = ad_array['des'];
@@ -1650,21 +1652,7 @@ function vwad(data_id) {
                     align: true,
                     nextOnClick: 0,
                     cells: 5,
-                    getViewAllText: function(imgsCount) { return 'View all' },
-                    onGridLoaded: function(imgsCount) {
-                        $('#plo').addClass('hide');
-                        $('#pi').removeClass('hide');
-                        $('#pi').imagesGrid({
-                            images: _images,
-                            align: true,
-                            nextOnClick: 0,
-                            cells: 5
-                        });
-
-
-
-
-                     }
+                    getViewAllText: function(imgsCount) { return 'View all' }
                 });
 
                 //REFRESH MAP
@@ -2288,6 +2276,7 @@ function ViewAdInit(lat,lng) {
         center: myLatLng,
         zoom: 15,
         mapTypeControl: true,
+        gestureHandling: 'cooperative',
         mapTypeControlOptions: {
           style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
           mapTypeIds: ['roadmap']
@@ -2355,50 +2344,50 @@ function ViewMapClearMarker() {
       GVar.viewaddmarker[i].setMap(null);
     }
 }
-function uploadPics() {
-    console.log("Ok, going to upload "+images.length+" images.");
-    var defs = [];
+// function uploadPics() {
+//     console.log("Ok, going to upload "+images.length+" images.");
+//     var defs = [];
 
-    images.forEach(function(i) {
-        console.log('processing '+i);
-        var def = $.Deferred();
+//     images.forEach(function(i) {
+//         console.log('processing '+i);
+//         var def = $.Deferred();
 
-        function win(r) {
-            console.log("thing done");
-            if($.trim(r.response) === "0") {
-                console.log("this one failed");
-                def.resolve(0);
-            } else {
-                console.log("this one passed");
-                def.resolve(1);
-            }
-        }
+//         function win(r) {
+//             console.log("thing done");
+//             if($.trim(r.response) === "0") {
+//                 console.log("this one failed");
+//                 def.resolve(0);
+//             } else {
+//                 console.log("this one passed");
+//                 def.resolve(1);
+//             }
+//         }
 
-        function fail(error) {
-            console.log("upload error source " + error.source);
-            console.log("upload error target " + error.target);
-            def.resolve(0);
-        }
+//         function fail(error) {
+//             console.log("upload error source " + error.source);
+//             console.log("upload error target " + error.target);
+//             def.resolve(0);
+//         }
 
-        var uri = encodeURI("http://localhost/testingzone/test.cfm");
+//         var uri = encodeURI("http://localhost/testingzone/test.cfm");
 
-        var options = new FileUploadOptions();
-        options.fileKey="file";
-        options.fileName=i.substr(i.lastIndexOf('/')+1);
-        options.mimeType="image/jpeg";
+//         var options = new FileUploadOptions();
+//         options.fileKey="file";
+//         options.fileName=i.substr(i.lastIndexOf('/')+1);
+//         options.mimeType="image/jpeg";
 
-        var ft = new FileTransfer();
-        ft.upload(i, uri, win, fail, options);
-        defs.push(def.promise());
+//         var ft = new FileTransfer();
+//         ft.upload(i, uri, win, fail, options);
+//         defs.push(def.promise());
 
-    });
+//     });
 
-    $.when.apply($, defs).then(function() {
-        console.log("all things done");
-        console.dir(arguments);
-    });
+//     $.when.apply($, defs).then(function() {
+//         console.log("all things done");
+//         console.dir(arguments);
+//     });
 
-}
+// }
 
 // function calldialog() {
 //     cordova.dialogGPS();
