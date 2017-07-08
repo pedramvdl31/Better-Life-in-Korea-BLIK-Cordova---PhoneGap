@@ -70,7 +70,11 @@ GVar = {
     'lzs':6,
     'lgns_f':0,//LOGIN-SESSION-FLAG:1 OR 0
     'lgns_d':'',//LOGIN-SESSION-DATA:CLASS OR ID NAME
-    'got_loc':0
+    'got_loc':0,
+    'obfuscate_email':'',
+    'cur_user_no_posts':0,
+    'cur_user_img': '',
+    'post_tobe_deleted':0
 }
 
 
@@ -105,9 +109,9 @@ var app = {
             PostAdInit();
         }, 500);
 
-                            GVar.lndinglat = 36.5802466;
-                            GVar.lndinglng = 127.95776367;
-                            GVar.got_loc = 1;
+        GVar.lndinglat = 36.5802466;
+        GVar.lndinglng = 127.95776367;
+        GVar.got_loc = 1;
         if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
             //PHONE
             document.addEventListener("online", onOnline, false);
@@ -234,7 +238,6 @@ function ViewCurrentLoc(position){
     qkpmUpdate(position.coords.latitude,position.coords.longitude);
 }
 function CheckToken(a_t,position){
-
     var data ={"token":a_t}
     $.ajax({
         url: GVar.ajax_url+'/api/init',
@@ -245,15 +248,16 @@ function CheckToken(a_t,position){
             GVar.auth=1;
             GVar.utoken=a_t;
             $('#_auth').attr('data','1');
-            SetStatusBtn();
             $('#ctu').css('color','#5cb85c');
+            SetStatusBtn();
             setTimeout(function(){
                 $('#lw4').addClass('hide');
                 ViewCurrentLoc(position);
             }, 1000);
-            InjectDashboard();
+            get_profile_info();
         },
         error: function (xhr, ajaxOptions, thrownError) {
+
             $('#ctu').css('color','#5cb85c');
             setTimeout(function(){
                 $('#lw4').addClass('hide');
@@ -669,7 +673,6 @@ function PhotoUpload() {
 }
 function SetStates() {
     window.user_state = document.getElementById('user-status').value;
-
 }
 function SetAjaxHeader() {
     $.ajaxSetup({
@@ -773,6 +776,45 @@ function Events() {
         }
      });
     });
+
+    $("#change-pro-img").on('touchstart', function(e) {
+
+        window.imagePicker.getPictures(
+            function(results) {
+                for (var i = 0; i < results.length; i++) {
+                    var auth_token = localStorage.getItem("auth_token");
+                    var imageURI = results[i];
+                    var options = new FileUploadOptions();
+                    options.fileKey = "file";
+                    options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+                    options.mimeType = "image/jpeg";
+                    var params = new Object();
+                    params.usertoken = auth_token;
+                    options.params = params;
+                    options.chunkedMode = false;
+                    var ft = new FileTransfer();
+                    ft.upload(imageURI, GVar.ajax_url+"/api/upload-profile-image", function(data){
+                        var result = data['response'];
+                        var parsed_result = JSON.parse(result);
+                        var new_path = parsed_result['newpath'];
+                        $('#user_image_dash').css("background-image", "url("+new_path+")"); 
+                    }, function(error){
+                        alert('E122. Error.');
+                        console.log(JSON.stringify(error));
+                    }, options);
+                }
+
+            }, function (error) {
+                console.log('Error: ' + error);
+            }, {
+                maximumImagesCount: 1,
+                quality:50
+            }
+        );
+
+    });
+
+
     $(document).on('touchstart','#can_post',function(){
         CancelPost();
     });
@@ -820,6 +862,18 @@ function Events() {
     $(document).on('touchstart','#dtl',function(){
         OpenGeoApps();
     });
+    $(document).on('touchstart','.posdelete',function(){
+        GVar.post_tobe_deleted = $(this).attr('this-id');
+    });
+    $(document).on('touchstart','#delete-post-f',function(){
+        myApp.closeModal('.popover-delete',1);
+        $('#confirm-delete').modal('show');
+    });
+    $(document).on('touchstart','#delete-post-ok',function(){
+        $('#confirm-delete').modal('hide');
+        DeleteProfilePostById(GVar.post_tobe_deleted);
+    });
+
     $("#_rc").on('touchstart', function(e) {
         e.preventDefault();
         $(this).addClass('hide');
@@ -867,29 +921,35 @@ function Events() {
 
     $('#vw1').on('touchstart', function() {
         setTimeout(function(){
-            // ResetLandingAndReasin();
-        }, 50);
+            ResetLandingAndReasin();
+        }, 500);
         setTimeout(function(){
             _ctpral();
         }, 100);
         GVar.curpg=1;
         $('.tab-link').removeClass('active');
         $(this).addClass('active');
+        myApp.showTab('#view-1');
     });
-    $("#vw3").on('touchstart', function() {
-        myApp.showTab('#view-7');
-        // var _auth = parseInt($('#_auth').attr('data'));
-        // if (_auth == 1) {
-        //     GVar.curpg=3;
-        //     $('.tab-link').removeClass('active');
-        //     $('#vw3').addClass('active');
-        //     myApp.showTab('#view-7');
-        // } else {
-        //     GVar.lgns_f = 1;
-        //     GVar.lgns_d = '#vw3';
-        //     $('#login-modal').modal('show');
-        // }
+    $("#vw7").on('touchstart', function() {
+        var _auth = parseInt($('#_auth').attr('data'));
+        if (_auth == 1) {
+            ShowDashboardAds();
+            setTimeout(function(){
+                get_profile_info();
+            }, 100);
+            GVar.curpg=7;
+            $('.tab-link').removeClass('active');
+            $('#vw7').addClass('active');
+            myApp.showTab('#view-7');
+        } else {
+            GVar.lgns_f = 1;
+            GVar.lgns_d = '#vw7';
+            $('#login-modal').modal('show');
+        }
     });
+
+
     $('#vw4').on('touchstart', function() {
         GVar.curpg=4;
         $('.tab-link').removeClass('active');
@@ -911,11 +971,6 @@ function Events() {
         }
     });
 
- 
-
-
-
-
     $('#lform').submit(function(e){
         e.preventDefault();
         var reg_form = $('#lform').serialize();
@@ -924,15 +979,6 @@ function Events() {
     $(document).on('touchstart','.logout-btn',function(){
         $('#logout-modal').modal('show');
     });
-    // $(document).on('touchend','.mlc',function(){
-    //     $('#vw6').removeClass('active');
-    //     findAndViewAd($(this).attr('item-id'));
-    // });
-
-
-
-
-
 
     $(document).on('touchstart','#reg-btn',function(){
         $('#login-modal').modal('hide');
@@ -1133,8 +1179,10 @@ function fb_login(tkn,email) {
                 $('#user-status').attr('value','1');
                 $('#lginlbl').text('Logout');
                 $('#login-modal').modal('hide');
-                InjectDashboard();
                 BeforeSession();
+                setTimeout(function(){
+                    myApp.showTab('#view-1');
+                }, 100);
             } else{
                 alert('Unable To Login');
             }
@@ -1160,8 +1208,10 @@ function app_login(data) {
                 $('#user-status').attr('value','1');
                 $('#lginlbl').text('Logout');
                 $('#login-modal').modal('hide');
-                InjectDashboard();
                 BeforeSession();
+                setTimeout(function(){
+                    myApp.showTab('#view-1');
+                }, 100);
             } else {
                 $('#lnot').removeClass('hide');
             }
@@ -1734,6 +1784,12 @@ function process_qkpost(_form,cat_id) {
                         myApp.showTab('#view-1');
                     }, 100);
                     setTimeout(function(){
+                        ShowDashboardAds();
+                    }, 150);
+                    setTimeout(function(){
+                        ShowDashboardAds();
+                    }, 300);
+                    setTimeout(function(){
                         ResetLandingAndReasin();
                         _ctpd();
                     }, 300);
@@ -1787,15 +1843,54 @@ function reg_submit(reg_form) {
         type: 'post',
         dataType: 'json',
         'data': data,
-        success: function(result) {
-            var status = result.status;
+        success: function(data) {
+            var status = data.status;
             if (status==200) {
-                localStorage.setItem("auth_token", result.tkn);
+                localStorage.setItem("auth_token", data.tkn);
                 GVar.auth=1;
+                get_profile_info();
                 $('#_auth').attr('data','1');
                 $('#user-status').attr('value','1');
                 $('#lginlbl').text('Logout');
                 $('#register-modal').modal('hide');
+            }
+        }
+    });
+}
+function get_profile_info() {
+    var data ={"tkn":localStorage.getItem("auth_token")}
+    $.ajax({
+        url: GVar.ajax_url+'/api/get-profile-info',
+        type: 'post',
+        dataType: 'json',
+        'data': data,
+        success: function(data) {
+            var status = data.status;
+            if (status==200) {
+                GVar.obfuscate_email=data.obf_email;
+                GVar.cur_user_no_posts=data.num_posts;
+                GVar.cur_user_img=data.user_avatar;
+                SetupProfileDetails();
+            }
+        }
+    });
+}
+function DeleteProfilePostById(ad_id) {
+    var data ={"tkn":localStorage.getItem("auth_token"),"ad_id":ad_id}
+    $.ajax({
+        url: GVar.ajax_url+'/api/delete-post',
+        type: 'post',
+        dataType: 'json',
+        'data': data,
+        success: function(data) {
+            var status = data.status;
+            GVar.post_tobe_deleted = 0;
+            if (status==200) {
+                GVar.cur_user_no_posts=data.num_posts;
+                ShowDashboardAds();
+                SetupProfileDetails();
+            } else {
+                alert('Error '+status);
             }
         }
     });
@@ -2233,18 +2328,10 @@ function LandingUpdate(lat,lng) {
     GVar.lmarkers.push(marker);
     setTimeout(function(){ marker.setAnimation(null); }, 3000);
 }
-function InjectDashboard(){
-    var _auth = parseInt($('#_auth').attr('data'));
-    if (_auth == 1) {
-        var auth_token = localStorage.getItem("auth_token");
-        if (!$.isBlank(auth_token)) {
-            var thtml = '<iframe id="dif" src="'+GVar.ajax_url+'/api/dashboard/'+auth_token+' "></iframe>';
-            $('#p4c').html(thtml);
-            GVar.dash=1;
-        }
-    } else {
-        $('#login-modal').modal('show');
-    }
+function SetupProfileDetails(){
+    $('#prof_obf_email').text(GVar.obfuscate_email);
+    $('#prof_num_posts').text(GVar.cur_user_no_posts);
+    $('#user_image_dash').css("background-image", "url("+GVar.baseurl+GVar.cur_user_img+")"); 
 }
 function ClearDashboard(){
     $('#p4c').html('');
@@ -2344,54 +2431,6 @@ function ViewMapClearMarker() {
       GVar.viewaddmarker[i].setMap(null);
     }
 }
-// function uploadPics() {
-//     console.log("Ok, going to upload "+images.length+" images.");
-//     var defs = [];
-
-//     images.forEach(function(i) {
-//         console.log('processing '+i);
-//         var def = $.Deferred();
-
-//         function win(r) {
-//             console.log("thing done");
-//             if($.trim(r.response) === "0") {
-//                 console.log("this one failed");
-//                 def.resolve(0);
-//             } else {
-//                 console.log("this one passed");
-//                 def.resolve(1);
-//             }
-//         }
-
-//         function fail(error) {
-//             console.log("upload error source " + error.source);
-//             console.log("upload error target " + error.target);
-//             def.resolve(0);
-//         }
-
-//         var uri = encodeURI("http://localhost/testingzone/test.cfm");
-
-//         var options = new FileUploadOptions();
-//         options.fileKey="file";
-//         options.fileName=i.substr(i.lastIndexOf('/')+1);
-//         options.mimeType="image/jpeg";
-
-//         var ft = new FileTransfer();
-//         ft.upload(i, uri, win, fail, options);
-//         defs.push(def.promise());
-
-//     });
-
-//     $.when.apply($, defs).then(function() {
-//         console.log("all things done");
-//         console.dir(arguments);
-//     });
-
-// }
-
-// function calldialog() {
-//     cordova.dialogGPS();
-// }
 
 function calldialog() {
   cordova.dialogGPS("Your GPS is Disabled, this app needs to be enable to works.",//message
@@ -2414,7 +2453,8 @@ function calldialog() {
                         break;//cancel
                       }},
                       "Please Turn on GPS",//title
-                      ["Cancel","Later","Go"]);//buttons
+                      ["Cancel","Later","Go"]
+                    );//buttons
 }
 function getloc(controlDiv, map) {
     // Set CSS for the control border.
@@ -2585,5 +2625,4 @@ function CancelPost(){
         _ctpd();
 
     }, 300);
-
 }
