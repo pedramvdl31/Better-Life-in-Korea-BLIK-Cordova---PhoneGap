@@ -66,6 +66,138 @@
    </head>
    <body>
 
+    <style type="text/css">
+
+      #ptr {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        color: #fff;
+        z-index: 10;
+        text-align: center;
+        height: 50px;
+      }
+
+      #ptr .genericon {
+        opacity: .6;
+        font-size: 34px;
+        width: auto;
+        height: auto;
+        transition: all .25s ease;
+        -webkit-transform: rotate(90deg);
+        transform: rotate(90deg);
+        margin-top: 5px;
+      }
+      .ptr-refresh #ptr .genericon {
+        -webkit-transform: rotate(270deg);
+        transform: rotate(270deg);
+      }
+      .ptr-loading #ptr .genericon,
+      .ptr-reset #ptr .genericon {
+        display: none;
+      }
+
+      .loading {
+        display: inline-block;
+        text-align: center;
+        opacity: .4;
+        margin: 12px 0 0 5px;
+        display: none;
+      }
+      .ptr-loading .loading {
+        display: block;
+      }
+
+      .loading span {
+        display: inline-block;
+        vertical-align: middle;
+        width: 10px;
+        height: 10px;
+        margin-right: 3px;
+        -webkit-transform: scale(0.3);
+        transform: scale(0.3);
+        border-radius: 50%;
+        -webkit-animation: ptr-loading 0.4s infinite alternate;
+        animation: ptr-loading 0.4s infinite alternate;
+      }
+
+      #l1 {
+        -webkit-animation-delay: 0;
+        animation-delay: 0;
+      }
+
+      #l2 {
+        -webkit-animation-delay: 0.2s;
+        animation-delay: 0.2s;
+      }
+
+      #l3 {
+        -webkit-animation-delay: 0.4s;
+        animation-delay: 0.4s;
+      }
+
+      @-webkit-keyframes ptr-loading {
+        0% {
+          -webkit-transform: translateY(0) scale(0.3);
+          transform: translateY(0) scale(0.3);
+          opacity: 0;
+        }
+
+        100% {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+          background-color: #fff;
+          opacity: 1;
+        }
+      }
+
+      @keyframes ptr-loading {
+        0% {
+          -webkit-transform: translateY(0) scale(0.3);
+          transform: translateY(0) scale(0.3);
+          opacity: 0;
+        }
+
+        100% {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+          background-color: #fff;
+          opacity: 1;
+        }
+      }
+
+      #pullme {
+        background: #fff;
+        min-height: 100%;
+        z-index: 20;
+        -webkit-backface-visibility: hidden;
+        -webkit-perspective: 1000;
+        padding: 50px 20px;
+        text-align: center;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 24px;
+        font-weight: 200;
+        color: #555;
+        box-sizing: border-box;
+      }
+
+      .ptr-loading #pullme, .ptr-reset #pullme,
+      .ptr-loading #ptr, .ptr-reset #ptr {
+        transition: all .25s ease;
+      }
+
+      .ptr-reset #pullme {
+        -webkit-transform: translate3d( 0, 0, 0 );
+        transform: translate3d( 0, 0, 0 );
+      }
+
+      .ptr-loading #pullme {
+        -webkit-transform: translate3d( 0, 50px, 0 );
+        transform: translate3d( 0, 50px, 0 );
+      }
+    </style>
+
     <!-- Left Panel with Reveal effect -->
     <div class="page-content panel panel-left panel-cover" style="border-radius: 0;opacity: 0.9">
         <div class="content-block">
@@ -436,7 +568,7 @@
       <div class="panel-overlay"></div>
       <!-- Views, and they are tabs-->
       <!-- We need to set "toolbar-through" class on it to keep space for our tab bar-->
-      <div class="views tabs toolbar-through">
+      <div class="views tabs toolbar-through" style="">
          <!-- Your first view, it is also a .tab and should have "active" class to make it visible by default-->
          <div id="view-1" class="view view-main tab active ps psa" pid="1">
             <!-- Pages-->
@@ -662,20 +794,21 @@
                         <div class="infinite-scroll-preloader">
                           <div class="preloader"></div>
                         </div>
-
-
-
-
                     </div>
                 </div>
             </div>
          </div>
          <!-- DASHBOARDPAGE2 -->
          <div id="view-7" class="view tab ps" pid="7">
-            <div class="pages navbar-fixed">
+            <div class="pages navbar-fixed" id="pullme">
                <div data-page="index-7" class="page">
-                  <div id="p7c" class="page-content infinite-scroll" style="padding: 0">
-                    <div class="container">
+                  <div id="p7c" class="page-content ptr-refresh infinite-scroll2" style="padding: 0">
+                    <div class="ptrwrap hide">
+                      <div class="ptriwrapper">
+                        <i class="fa fa-refresh fa-spin fa-3x fa-fw ptricon"></i>
+                      </div>
+                    </div>
+                    <section class="container ">
                       <div class="row">
                         <!-- code start -->
                         <div class="twPc-div">
@@ -728,125 +861,77 @@
 
                               </ul>
                             </div>
-                            <!-- Preloader -->
-                            <div class="infinite-scroll-preloader infinite-scroll-preloader2">
-                              <div class="end-ads hide">You've seen it all</div>
-                              <div class="preloader preloader2"></div>
+                            <div id="load-more-dash" class="text-center opacity-0">
+                              <button id="load-dash-ads" class="btn btn-primary btn-sm">Load more</button>
                             </div>
                       </div>
-                    </div>
+                    </section>
                   </div>
                </div>
             </div>
          </div>
 
-         <!-- PROFILES -->
-        <div id="view-8" class="view tab ps" pid="8">
-          <div class="pages">
-            <div class="page navbar-fixed">
-            <div class="navbar">
-            <div class="navbar-inner">
-            <div class="center">Chips</div>
-            </div>
-            </div>
-            <div class="page-content">
-            <div class="content-block-title">Chips With Text</div>
-            <div class="content-block">
-            <div class="chip">
-            <div class="chip-label">Example Chip</div>
-            </div>
-            <div class="chip">
-            <div class="chip-label">Another Chip</div>
-            </div>
-            <div class="chip">
-            <div class="chip-label">One More Chip</div>
-            </div>
-            <div class="chip">
-            <div class="chip-label">Fourth Chip</div>
-            </div>
-            <div class="chip">
-            <div class="chip-label">Last One</div>
-            </div>
-            </div>
-            <div class="content-block-title">Icon Chips</div>
-            <div class="content-block">
-            <div class="chip">
-            <div class="chip-media bg-blue"><i class="icon demo-icon-calendar"></i></div>
-            <div class="chip-label">Set Date</div>
-            </div>
-            <div class="chip">
-            <div class="chip-media bg-purple"><i class="icon demo-icon-email"></i></div>
-            <div class="chip-label">Sent</div>
-            </div>
-            <div class="chip">
-            <div class="chip-media bg-red"><i class="icon demo-icon-upload"></i></div>
-            <div class="chip-label">Uploaded</div>
-            </div>
-            </div>
-            <div class="content-block-title">Contact Chips</div>
-            <div class="content-block">
-            <div class="chip">
-            <div class="chip-media"><img src="http://lorempixel.com/100/100/people/9/"></div>
-            <div class="chip-label">Jane Doe</div>
-            </div>
-            <div class="chip">
-            <div class="chip-media"><img src="http://lorempixel.com/100/100/people/3/"></div>
-            <div class="chip-label">John Doe</div>
-            </div>
-            <div class="chip">
-            <div class="chip-media"><img src="http://lorempixel.com/100/100/people/7/"></div>
-            <div class="chip-label">Adam Smith</div>
-            </div>
-            <div class="chip">
-            <div class="chip-media bg-pink">J</div>
-            <div class="chip-label">Jennifer</div>
-            </div>
-            <div class="chip">
-            <div class="chip-media bg-teal">C</div>
-            <div class="chip-label">Chris</div>
-            </div>
-            <div class="chip">
-            <div class="chip-media bg-red">K</div>
-            <div class="chip-label">Kate</div>
-            </div>
-            </div>
-            <div class="content-block-title">Deletable Chips / Tags</div>
-            <div class="content-block">
-            <div class="chip">
-            <div class="chip-label">Example Chip</div><a href="#" class="chip-delete"></a>
-            </div>
-            <div class="chip">
-            <div class="chip-media bg-teal">C</div>
-            <div class="chip-label">Chris</div><a href="#" class="chip-delete"></a>
-            </div>
-            <div class="chip">
-            <div class="chip-media bg-purple"><i class="icon demo-icon-email"></i></div>
-            <div class="chip-label">Sent</div><a href="#" class="chip-delete"></a>
-            </div>
-            <div class="chip">
-            <div class="chip-media"><img src="http://lorempixel.com/100/100/people/9/"></div>
-            <div class="chip-label">Jane Doe</div><a href="#" class="chip-delete"></a>
-            </div>
-            <div class="chip">
-            <div class="chip-label">One More Chip</div><a href="#" class="chip-delete"></a>
-            </div>
-            <div class="chip">
-            <div class="chip-media bg-pink">J</div>
-            <div class="chip-label">Jennifer</div><a href="#" class="chip-delete"></a>
-            </div>
-            <div class="chip">
-            <div class="chip-media"><img src="http://lorempixel.com/100/100/people/7/"></div>
-            <div class="chip-label">Adam Smith</div><a href="#" class="chip-delete"></a>
-            </div>
-            <div class="chip">
-            <div class="chip-media bg-blue"><i class="icon demo-icon-calendar"></i></div>
-            <div class="chip-label">Set Date</div><a href="#" class="chip-delete"></a>
-            </div>
-            </div>
-            </div>
+           <!-- PROFILES -->
+          <div id="view-8" class="view tab ps" pid="8">
+            <div class="pages navbar-fixed" id="pullme">
+               <div data-page="index-7" class="page">
+                  <div id="p7c" class="page-content ptr-refresh infinite-scroll2" style="padding: 0">
+                    <section class="container ">
+                      <div class="row">
+                        <!-- code start -->
+                        <div class="twPc-div">
+                            <a class="twPc-bg twPc-block"></a>
+                          <div>
+                            <a title="Mert Salih Kaplan" href="#" class="twPc-avatarLink">
+                              <div id="user_image_dash" class="center-cropped twPc-avatarImg"> 
+                                <span class="btn btn-default btn-sm" id="change-pro-img">
+                                  <i class="fa fa-refresh" aria-hidden="true"></i>
+                                  <form class="" id="change_image" style="display: none;">
+                                    <div id="file-image"></div>
+                                  </form>
+                                </span>
+                              </div>
+                            </a>
+                            <div class="twPc-divUser">
+                              <div class="twPc-divName">
+                                <a id="prof_obf_email"></a>
+                              </div>
+                            </div>
+                            <div class="twPc-divStats">
+                              <ul class="twPc-Arrange">
+                                <li class="twPc-ArrangeSizeFit">
+                                  <a href="#" title="9.840 Tweet">
+                                    <span class="twPc-StatLabel twPc-block">Posts</span>
+                                    <span class="twPc-StatValue" id="prof_num_posts">0</span>
+                                  </a>
+                                </li>
+                                <li class="twPc-ArrangeSizeFit">
+                                  <a href="#" title="885 Following">
+                                    <span class="twPc-StatLabel twPc-block">Friends</span>
+                                    <span class="twPc-StatValue">0</span>
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- code end -->
+                      </div>
+                      <div class="dash-body " >
+                        <div class="list-block mlb2 list-block2 ">
+                          <ul>
+                            <!-- AJAX ADS GOES HERE -->
+                          </ul>
+                        </div>
+                        <div id="load-more-dash" class="text-center opacity-0">
+                          <button id="load-dash-ads" class="btn btn-primary btn-sm">Load more</button>
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+               </div>
             </div>
           </div>
-        </div>
          <!-- PROFILES -->
          <!-- Bottom Tabbar-->
          <div class="toolbar tabbar tabbar-labels">
@@ -905,13 +990,13 @@
                <!-- /.modal-dialog -->
             </div>
             <!-- /.modal -->  
-            <div class="popover popover-links"> 
+            <div class="popover popover-viewprofile"> 
               <div class="popover-angle"></div>
               <div class="popover-inner"> 
                 <div class="list-block"> 
                   <ul> 
                     <li>
-                      <a href="#" class="list-button item-link">View Profile</a>
+                      <a id="view-user-profile" class="list-button item-link">View Profile</a>
                     </li>
                   </ul> 
                 </div>
@@ -926,7 +1011,7 @@
                 <div class="list-block"> 
                   <ul> 
                     <li>
-                      <a href="#" id="delete-post-f" class="list-button item-link">Delete Post</a>
+                      <a id="delete-post-f" class="list-button item-link">Delete Post</a>
                     </li>
                   </ul> 
                 </div>
@@ -1108,7 +1193,7 @@
           </div>
         </div>
       </div>
-
+      
       <script src="plugins/jQueryUI/jquery-ui.min.js"></script>
       <script type="text/javascript" src="js/Toast.js"></script>
       <script src="plugins/bootstrap/js/bootstrap.min.js"></script>
