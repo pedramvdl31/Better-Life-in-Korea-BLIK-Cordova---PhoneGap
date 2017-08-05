@@ -57,6 +57,7 @@ setTimeout(function () {
 						    // Append new items
 						    $$('.mlb ul').html('');
 						    $$('.mlb ul').append(htmlx);
+						    $(".posthu").swipe("destroy");
 						    $(".posthu").swipe({
 						        hold:function(event, target) {
 							        $('#vw6').removeClass('active');
@@ -175,6 +176,58 @@ setTimeout(function () {
 
 }, 1000);
 
+function AllAdsReload(){
+    // Generate new items HTML
+    var current_ulat = GVar.lndinglat;
+    var current_ulng = GVar.lndinglng;
+    var take_ad = 5;
+    var skip_ad = 0;
+    var data ={"lat":current_ulat,"lng":current_ulng,"take_ad":take_ad,"skip_ad":skip_ad};
+    $.ajax({
+        url: GVar.ajax_url+'/api/load-ads',
+        type: 'post',
+        dataType: 'json',
+        'data': data,
+        success: function(data) {
+            var status = data.status;
+            var ads = data.ads;
+            switch(status){
+                case 200:
+                    var htmlx = '';
+                    if (!isBlank(ads)) {
+                        if ($.isArray(ads)) {
+                            
+                            $.each( ads, function( ke, va ) {
+                                if (!isBlank(va)) { 
+                                    htmlx += CreateAdBox('posthu',va['user_email'],va['id'],va['imgsrc'],va['title'],va['des'],va['dis'],va['time_ago'],va['img_w'],va['img_h']);
+                                }
+                            });
+                        }
+                    } else {
+                        window.plugins.toast.showLongBottom("Ads Returned Empty.");
+                    }
+                    // Append new items
+                    $$('.mlb ul').html(htmlx);
+                    $(".posthu").swipe("destroy");
+                    $(".posthu").swipe({
+                        hold:function(event, target) {
+                            $('#vw6').removeClass('active');
+                            findAndViewAd($(this).attr('item-id'));
+                        }
+                    });
+                break;
+
+                case 400:
+                    alert("Somthing Went Wrong! Try Again.");
+                break;
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+
+        }
+    });
+}
+
 function ShowDashboardAds(){
     var dtake_ad = GVar.dash_take_default;
     var dskip_ad = 0;
@@ -203,15 +256,16 @@ function ShowDashboardAds(){
                             });
                         }
                     } else {
-                        // window.plugins.toast.showLongBottom("No posts to view!"); xxx
+                        window.plugins.toast.showLongBottom("No posts to view!");
                         $("#load-more-dash").addClass('opacity-0');
                     }
                     // Append new items
                     $$('.mlb2 ul').html('');
                     $$('.mlb2 ul').append(htmlx);
+                    $(".posthu2").swipe('destroy');
                     $(".posthu2").swipe({
                         hold:function(event, target) {
-                            $('#vw6').removeClass('active');
+                            $('#vw7').removeClass('active');
                             findAndViewAd($(this).attr('item-id'));
                         }
                     });
@@ -262,11 +316,12 @@ function ShowDashboardAdsLoadMore(){
                         }
                         
                     } else {
-                        // window.plugins.toast.showLongBottom("No posts to view!"); xxx
+                        window.plugins.toast.showLongBottom("No posts to view!");
                         $("#load-more-dash").addClass('opacity-0');
                     }
                     // Append new items
                     $$('.mlb2 ul').append(htmlx);
+                    $(".posthu2").swipe('destroy');
                     $(".posthu2").swipe({
                         hold:function(event, target) {
                             $('#vw6').removeClass('active');
@@ -288,6 +343,121 @@ function ShowDashboardAdsLoadMore(){
 
 }
 
+function ViewThisProfile(profile_id) {
+	$('#lwposting').removeClass('hide');
+    var dtake_ad = 5;
+    var dskip_ad = 0;
+    var current_ulat = GVar.lndinglat;
+    var current_ulng = GVar.lndinglng;
+    GVar.current_profile_view8 = profile_id;
+    var data ={"profile_id":profile_id,"lat":current_ulat,"lng":current_ulng,"tkn":localStorage.getItem("auth_token"),"take_ad":dtake_ad,"skip_ad":dskip_ad};
+    $.ajax({
+        url: GVar.ajax_url+'/api/view-profile-ads',
+        type: 'post',
+        dataType: 'json',
+        'data': data,
+        success: function(data) {
+            var status = data.status;
+            var ads = data.ads;
+            switch(status){
+                case 200:
+                    var htmlx = '';
+                    GVar.cur_profile_no_posts = data.num_posts;
+					$('#profile_obf_email').text(data.obf_email);
+					$('#profile_num_posts').text(data.num_posts);
+					$('#profile_image_dash').css("background-image", "url("+GVar.baseurl+data.user_avatar+")"); 
+                    if (!isBlank(ads)) {
+                        if ($.isArray(ads)) {
+                            $.each( ads, function( ke, va ) {
+                                if (!isBlank(va)) { 
+                                    htmlx +=  CreateAdBox('posthu3',va['user_email'],va['id'],va['imgsrc'],va['title'],va['des'],va['dis'],va['time_ago'],va['img_w'],va['img_h']);
+                                }
+                            });
+                        }
+                    } else {
+                        window.plugins.toast.showLongBottom("No posts to view!");
+                        $("#load-more-profile").addClass('opacity-0');
+                    }
+                    // Append new items
+                    $$('.mlb3 ul').html('');
+                    $$('.mlb3 ul').append(htmlx);
+                    $('#vw6').removeClass('active');
+                    $(".posthu3").swipe('destroy');
+                    $(".posthu3").swipe({
+                        hold:function(event, target) {
+                            findAndViewAd($(this).attr('item-id'));
+                        }
+                    });
+                    AdjustLoadMoreBtnProfile();
+                    myApp.showTab('#view-8');
+                    $("#p8c").scrollTop();
+                break;
+                case 400:
+                    alert("Somthing Went Wrong! Try Again.");
+                break;
+            }
+            $('#lwposting').addClass('hide');
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+
+        }
+    });
+}
+function ViewThisProfileLoadMore(){
+    var dtake_ad = 5;
+    var dskip_ad = $$('.mlb3 li').length;
+    GVar.dash_take = dtake_ad;
+	GVar.dash_skip = dskip_ad;
+    var current_ulat = GVar.lndinglat;
+    var current_ulng = GVar.lndinglng;
+    var profile_id = GVar.current_profile_view8;
+    var data ={"profile_id":profile_id,"lat":current_ulat,"lng":current_ulng,"tkn":localStorage.getItem("auth_token"),"take_ad":dtake_ad,"skip_ad":dskip_ad};
+    $.ajax({
+        url: GVar.ajax_url+'/api/view-profile-ads',
+        type: 'post',
+        dataType: 'json',
+        'data': data,
+        success: function(data) {
+            var status = data.status;
+            var ads = data.ads;
+            switch(status){
+                case 200:
+                    var htmlx = '';
+                    if (!isBlank(ads)) {
+                        if ($.isArray(ads)) {
+                            $.each( ads, function( ke, va ) {
+                                if (!isBlank(va)) { 
+                                    htmlx +=  CreateAdBox('posthu3',va['user_email'],va['id'],va['imgsrc'],va['title'],va['des'],va['dis'],va['time_ago'],va['img_w'],va['img_h']);
+                                }
+                            });
+                        }
+                        
+                    } else {
+                        window.plugins.toast.showLongBottom("No posts to view!");
+                        $("#load-more-profile").addClass('opacity-0');
+                    }
+                    // Append new items
+                    $$('.mlb3 ul').append(htmlx);
+                    $(".posthu3").swipe('destroy');
+                    $(".posthu3").swipe({
+                        hold:function(event, target) {
+                            findAndViewAd($(this).attr('item-id'));
+                        }
+                    });
+                    AdjustLoadMoreBtnProfile();
+                break;
+
+                case 400:
+                    alert("Somthing Went Wrong! Try Again.");
+                break;
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+
+        }
+    });
+
+}
 function CreateAdBox($kind,$user_email,$item_id,$img_src,$title,$des,$distance,$time_ago,img_w,img_h){
 	var show_cover = "hide";
 	var cut_image = "";
@@ -306,5 +476,12 @@ function AdjustLoadMoreBtn(){
     	$("#load-more-dash").addClass('opacity-0');
     } else {
     	$("#load-more-dash").removeClass('opacity-0');
+    }
+}function AdjustLoadMoreBtnProfile(){
+    //load btn config
+    if (GVar.cur_profile_no_posts<=$$('.mlb3 li').length) {
+    	$("#load-more-profile").addClass('opacity-0');
+    } else {
+    	$("#load-more-profile").removeClass('opacity-0');
     }
 }

@@ -24,7 +24,6 @@
 
 //GLOBAL VARIABLES
 GVar = {
-    // 'ajax_url':'http://kora.app:8000',
     'debug':'1',
     'baseurl':'https://www.betterlifeinkorea.com',
     'ajax_url':'https://www.betterlifeinkorea.com',
@@ -80,7 +79,10 @@ GVar = {
     'dash_take':0,
     'dash_skip':0,
     'dash_loaded':0,
-    'dash_take_default':2
+    'dash_take_default':2,
+    'cur_profile_no_posts':0,
+    'current_profile_view8':0,
+    'loader_flag':0
 }
 
 
@@ -192,7 +194,6 @@ function ManageLocation(){
                         GVar.l = 9;
                         $('#lw4').removeClass('hide');
                         autogpson();
-                        // calldialog();
                     }
                     navigator.geolocation.getCurrentPosition(onSuccess, onError);
                   },
@@ -201,7 +202,6 @@ function ManageLocation(){
                     GVar.l = 9;
                     $('#lw4').removeClass('hide');
                     autogpson();
-                    // calldialog();
                   });
             }
         }, 2000);
@@ -768,30 +768,75 @@ function InitiateAutoComplete() {
 function Events() {
 
     $("#p7c").swipe( {
-    swipeStatus:function(event, phase, direction, distance, duration, fingers, fingerData, currentDirection)
+    swipeStatus:function(event, ph, di, d, duration, fingers, fingerData, currentDirection)
     {
-        var pos = $('#p7c').scrollTop();
-        if (pos == 0) {
-            if (direction=='down') {
-                $('.ptrwrap').removeClass('hide');
-                var this_dis = distance/300;
-                var cur_opca = $('.ptrwrap').css('opacity');
-                if (this_dis<1&&this_dis>cur_opca) {
-                    $('.ptrwrap').css('opacity',this_dis); 
-                }
-                if (phase=="cancel"){
-                    $('.ptrwrap').css('opacity',0);
-                    $('.ptrwrap').addClass('hide');
-                }
-                if (phase=="end"){
-                    if (distance>=300){
-                        ShowDashboardAdsReload();
-                        $('.ptrwrap').css('opacity',1);
-                         setTimeout(function(){
-                            $('.ptrwrap').css('opacity',0);  
-                            $('.ptrwrap').addClass('hide');
-                        }, 2000);
+        var p = $('#p7c').scrollTop();
+        if (p == 0) {
+            if (di=='down') {
+                var pt = $('.ptrwrap');
+                if (d<300){
+                    if (pt.hasClass('hide')) {
+                        pt.removeClass('hide');
                     }
+                    var t = (d/300).toFixed(2);
+                    var c = pt.css('opacity');
+                    if (t<=1&&t>c) {
+                        pt.css('opacity',t); 
+                    }
+                }
+                if (ph=="cancel"){
+                    pt.css('opacity',0);
+                    pt.addClass('hide');
+                }
+                if (ph=="end"){
+                    if (d>=300){
+                        AllAdsReload();
+                        pt.css('opacity',1);
+                    }
+                    setTimeout(function(){
+                        pt.css('opacity',0);  
+                        pt.addClass('hide');
+                    }, 2000);
+                }
+            }
+        }
+    },
+        threshold:300,
+        maxTimeThreshold:5000,
+        fingers:'all', 
+        allowPageScroll:"auto"
+    });
+
+    $("#v6pc").swipe( {
+    swipeStatus:function(event, ph, di, d, duration, fingers, fingerData, currentDirection)
+    {
+        var p = $('#v6pc').scrollTop();
+        if (p == 0) {
+            if (di=='down') {
+                var pt = $('.ptrwrapa');
+                if (d<300){
+                    if (pt.hasClass('hide')) {
+                        pt.removeClass('hide');
+                    }
+                    var t = (d/300).toFixed(2);
+                    var c = pt.css('opacity');
+                    if (t<=1&&t>c) {
+                        pt.css('opacity',t); 
+                    }
+                }
+                if (ph=="cancel"){
+                    pt.css('opacity',0);
+                    pt.addClass('hide');
+                }
+                if (ph=="end"){
+                    if (d>=300){
+                        AllAdsReload();
+                        pt.css('opacity',1);
+                    }
+                    setTimeout(function(){
+                        pt.css('opacity',0);  
+                        pt.addClass('hide');
+                    }, 2000);
                 }
             }
         }
@@ -919,10 +964,10 @@ function Events() {
     });
     $(document).on('touchstart click','._vaprofile',function(){
         GVar.profile_tobe_viewd = $(this).attr('this-id');
-        console.log($(this).attr('this-id'));
     });
     $(document).on('touchstart click','#view-user-profile',function(){
-        console.log(GVar.profile_tobe_viewd);
+        myApp.closeModal('.popover-viewprofile',1);
+        ViewThisProfile(GVar.profile_tobe_viewd);
     });
     $(document).on('touchstart','#delete-post-f',function(){
         myApp.closeModal('.popover-delete',1);
@@ -942,6 +987,10 @@ function Events() {
     $("#load-dash-ads").on('click', function(e) {
         e.preventDefault();
         ShowDashboardAdsLoadMore();
+    });
+    $("#load-profile-ads").on('click', function(e) {
+        e.preventDefault();
+        ViewThisProfileLoadMore();
     });
 
     $("#gobtn").on('touchstart', function(e) {
@@ -966,12 +1015,16 @@ function Events() {
         }
 
     });
-    $('#hashtagsearch').on('input',function(e){
-        var this_val = $(this).val();
-        if (this_val != '' && this_val != ' ' && this_val.charAt(0)!='#') {
-            $(this).val('#'+this_val);
-        }
-    });
+
+
+    $( "#hashtagsearch" ).focus(function() {
+        $(this).val() == '' ? $(this).val('#') : null ;
+    });    
+
+    $( "#hashtagsearch" ).blur(function() {
+        $(this).val() == '#' ? $(this).val('') : null ;
+    });  
+
     $(".itx").tap(function() {
         $('#acde').val($(this).text());
     });
@@ -999,7 +1052,7 @@ function Events() {
         GVar.curpg=1;
         myApp.showTab('#view-1');
     });
-    $("#vw7").on('touchstart click', function() {
+    $("#vw7").on('touchstart', function() {
         var _auth = parseInt($('#_auth').attr('data'));
         if (_auth == 1) {
             if (GVar.dash_loaded == 0) {
@@ -2116,6 +2169,7 @@ function PostAdInit() {
     window.postmap = new google.maps.Map(document.getElementById('postmap'), {
         center: myLatLng,
         zoom: 6,
+        gestureHandling: 'cooperative',
         mapTypeControl: false,
         streetViewControl: false,
         disableDefaultUI: true,
@@ -2220,6 +2274,7 @@ function PostAdInit() {
           console.log("Returned place contains no geometry");
           return;
         }
+        qkpmClearMarker();
         PostMapClearMarker();
         //MARKER
         window.PostAdMarker2 = new google.maps.Marker({
@@ -2229,7 +2284,6 @@ function PostAdInit() {
           draggable: true
         });
         GVar.pmmarkers.push(PostAdMarker2);
-
         google.maps.event.addListener(PostAdMarker2, 'dragend', function (event) {
             var latlng = {lat: this.getPosition().lat(), lng: this.getPosition().lng()};
             geocoder.geocode({'location': latlng}, function(results, status) {

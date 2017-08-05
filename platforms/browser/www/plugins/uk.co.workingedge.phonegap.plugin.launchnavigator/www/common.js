@@ -551,7 +551,7 @@ ln.util.extractCoordsFromLocationString = function(location){
  * Internal properties
  *********************/
 
-var DEFAULT_appSelectionDialogHeader = "Select app for navigation",
+var DEFAULT_appSelectionDialogHeader = "Select app for navigation3",
     DEFAULT_appSelectionCancelButton = "Cancel";
 
 /********************
