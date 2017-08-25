@@ -26,6 +26,19 @@
     bottom: 20px;
     margin-bottom: 40px;
 }
+.modalb hr{
+  margin-top: 0 !important; 
+  margin-bottom: 0 !important; 
+}
+
+._nw{
+  padding: 15px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.modalb ._nw:last-child {
+    border-bottom: none !important;
+}
 .opacity-0{
   opacity: 0 !important;
 }
@@ -328,8 +341,14 @@
     font-weight: 700;
     line-height: 21px;
 }
+.follow-user,.unfollow-user{
+  color:#438eff !important;
+}
+#all-post-preloader{
+  padding-top: 10px !important;
+}
 .twPc-divName a {
-    color: inherit !important;
+    color: inherit;
 }
 .twPc-divStats {
     margin-left: 11px;
@@ -424,10 +443,11 @@ ul.twPc-Arrange {
     /*height: 300px;*/
   }
   ._cutimage{
-    height: 300px;
+    /*height: 800px;*/
     overflow: hidden;
     border-radius: 0 !important;
   }
+
   ._imgwrap{
     position: relative;
   }
@@ -973,7 +993,7 @@ ul.twPc-Arrange {
 
   }
 
-  .controls {
+  .controls,.e_controls {
     margin-top: 10px;
     border: 1px solid transparent;
     border-radius: 2px 0 0 2px;
@@ -983,7 +1003,7 @@ ul.twPc-Arrange {
     outline: none;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   }
-  #pac-input {
+  #pac-input, #e_pac-input {
     background-color: #fff;
     font-family: Roboto;
     font-size: 17px;
@@ -991,57 +1011,31 @@ ul.twPc-Arrange {
     margin-left: 12px;
     padding: 0 11px 0 13px;
     text-overflow: ellipsis;
-    width: 300px;
+    width: 80% !important;
+    margin: 3px 0 0 3px !important;
+    height: 36px !important;
   }
-  #pac-input:focus {
+
+  #pac-input:focus, #e_pac-input:focus {
     z-index: 9999;
     border-color: #4d90fe;
   }
-  .pac-container {
+  .pac-container, .e_pac-container {
     z-index: 9999;
     font-family: Roboto;
   }
-  .pac-item{
+  .pac-item, .e_pac-item{
     z-index: 9999;
   }
-  #type-selector {
+  #type-selector, #e_type-selector {
     color: #fff;
     background-color: #4d90fe;
     padding: 5px 11px 0px 11px;
   }
-  #type-selector label {
+  #type-selector label, #e_type-selector label {
     font-family: Roboto;
     font-size: 13px;
     font-weight: 300;
-  }
-  #a{
-    position: absolute;
-    width: 100%;
-    -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
-    -o-transition: all 1s ease;
-    -ms-transition: all 1s ease;
-    transition: all 1s ease;
-  }
-  #b{
-    position: absolute;
-    width: 100%;
-    left: 100%;
-    -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
-    -o-transition: all 1s ease;
-    -ms-transition: all 1s ease;
-    transition: all 1s ease;
-  }
-  #c{
-    position: absolute;
-    width: 100%;
-    left: 100%;
-    -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
-    -o-transition: all 1s ease;
-    -ms-transition: all 1s ease;
-    transition: all 1s ease;
   }
   #mylocation1{
     right: 0 !important;
@@ -1147,11 +1141,7 @@ ul.twPc-Arrange {
     bottom: 0;
     text-align: center;    
   }
-  #pac-input{
-    width: 80% !important;
-    margin: 3px 0 0 3px !important;
-    height: 36px !important;
-  }
+
   @keyframes blink {50% { color: transparent }}
   .loader__dot { animation: 1s blink infinite }
   .loader__dot:nth-child(2) { animation-delay: 250ms }
@@ -1607,3 +1597,18 @@ p.m-vad {
   line-height: 30px;
   font-weight: 800;
 }
+.post-images-div, .e-post-images-div {
+    width: 100%;
+    position: relative;
+    float: left;
+    margin-top: 10px;
+}
+.post-images-div span, .e-post-images-div span {
+    position: absolute;
+    padding: 0 10px;
+    background: rgb(193, 193, 193);
+    border-radius: 3px;
+    right: 0;
+    top: 0;
+}
+

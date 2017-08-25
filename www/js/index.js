@@ -28,7 +28,7 @@ GVar = {
     'baseurl':'https://www.betterlifeinkorea.com',
     'ajax_url':'https://www.betterlifeinkorea.com',
     'auth':'0',
-    'curpg':'1',
+    'curpg':'vw1',
     'take':8,
     'l':0,
     'll':0,
@@ -47,18 +47,26 @@ GVar = {
     'fbid':'',
     'lndinglat':36.5802466,
     'lndinglng':127.95776367,
+    'e_lndinglat':36.5802466,
+    'e_lndinglng':127.95776367,
     'utoken':0,
     'lmarkers':[],
     'admkrs':[],
     'qpmarkers':[],
+    'e_qpmarkers':[],
     'pmmarkers':[],
+    'e_pmmarkers':[],
     'viewaddmarker':[],
+    'editaddmarker':[],
     'lcircle':[],
     'iswaze':0,
     'imgcounter':0,
+    'e_imgcounter':0,
     'totalimgcounter':0,
+    'e_totalimgcounter':0,
     'drad':15,
     'icont':0,
+    'e_icont':0,
     'vaf':0,
     'curcat':0,
     'lmarkerinfo':[],
@@ -79,10 +87,11 @@ GVar = {
     'dash_take':0,
     'dash_skip':0,
     'dash_loaded':0,
-    'dash_take_default':2,
+    'dash_take_default':10,
     'cur_profile_no_posts':0,
     'current_profile_view8':0,
-    'loader_flag':0
+    'loader_flag':0,
+    'page_sessions':[]
 }
 
 
@@ -116,7 +125,7 @@ var app = {
         setTimeout(function(){
             PostAdInit();
         }, 500);
-
+        
         GVar.lndinglat = 36.5802466;
         GVar.lndinglng = 127.95776367;
         GVar.got_loc = 1;
@@ -159,6 +168,7 @@ function InitiateApp(){
     ClearUrl();
     // WindowScrollListener();
     PhotoUpload();
+    E_PhotoUpload();
     // InitFunctions.InitiateAutoComplete();
 }
 function EventHandler(){
@@ -441,165 +451,165 @@ function PageVisualSetup() {
             }
         }
     });
-var cats = ('Bar & Pub,Car Dealership,Coffee Shop,Entertainment,Food,Gas Station,Hotel,Medical Center,Movie Theater,Nightlife Spot,Outdoors & Recreation,Parking,Pharmacy,Real Estate,Supermarket,Taxi,Transport,Travel Agency,Cosmetic,Pet-Shop,Event,Mall,Institution,Sightseeing,Subway-Station,Government,Museum,Temple,Church,Kids,Beach,Nail-Shop,Convenient-Store,Health-Center,Acupuncture').split(',');
-var autocompleteDropdownExpand = myApp.autocomplete({
-    input: '#csb',
-    openIn: 'dropdown',
-    valueProperty: 'id',
-    expandInput: true, // expand input
-    source: function (autocomplete, query, render) {
-        var results = [];
-        if (query.length === 0) {
-            render(results);
-            return;
-        }
-        // Find matched items
-        for (var i = 0; i < cats.length; i++) {
-            if (cats[i].toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push(cats[i]);
-        }
-        // Render items by passing array with result items
-        render(results);
-    },
-    onChange: function (autocomplete, value) {
-        switch(value){
-            case 'Bar & Pub':
-                GVar.curcat = 1;
-            break;
-            case 'Car Dealership':
-                GVar.curcat = 2;
-            break;
-            case 'Coffee Shop':
-                GVar.curcat = 3;
-            break;
-            case 'Entertainment':
-                GVar.curcat = 4;
-            break;
-            case 'Food':
-                GVar.curcat = 5;
-            break;
-            case 'Gas Station':
-                GVar.curcat = 6;
-            break;
-            case 'Hotel':
-                GVar.curcat = 7;
-            break;
-            case 'Medical Center':
-                GVar.curcat = 8;
-            break;
-            case 'Movie Theater':
-                GVar.curcat = 9;
-            break;
-            case 'Nightlife Spot':
-                GVar.curcat = 10;
-            break;
-            case 'Outdoors & Recreation':
-                GVar.curcat = 11;
-            break;
-            case 'Parking':
-                GVar.curcat = 12;
-            break;
-            case 'Pharmacy':
-                GVar.curcat = 13;
-            break;
-            case 'Real Estate':
-                GVar.curcat = 14;
-            break;
-            case 'Supermarket':
-                GVar.curcat = 15;
-            break;
-            case 'Taxi':
-                GVar.curcat = 16;
-            break;
-            case 'Transport':
-                GVar.curcat = 17;
-            break;
-            case 'Travel Agency':
-                GVar.curcat = 18;
-            break;
-            case 'Cosmetic':
-                GVar.curcat = 19;
-            break;
-            case 'Pet-Shop':
-                GVar.curcat = 20;
-            break;
-            case 'Event':
-                GVar.curcat = 21;
-            break;
-            case 'Mall':
-                GVar.curcat = 22;
-            break;
-            case 'Institution':
-                GVar.curcat = 23;
-            break;
-            case 'Sightseeing':
-                GVar.curcat = 24;
-            break;
-            case 'Subway-Station':
-                GVar.curcat = 25;
-            break;
-            case 'Government':
-                GVar.curcat = 26;
-            break;
-            case 'Museum':
-                GVar.curcat = 27;
-            break;
-            case 'Temple':
-                GVar.curcat = 28;
-            break;
-            case 'Church':
-                GVar.curcat = 39;
-            break;
-            case 'Kids':
-                GVar.curcat = 30;
-            break;
-            case 'Beach':
-                GVar.curcat = 31;
-            break;
-            case 'Nail-Shop':
-                GVar.curcat = 32;
-            break;
-            case 'Convenient-Store':
-                GVar.curcat = 33;
-            break;
-            case 'Health-Center':
-                GVar.curcat = 34;
-            break;
-            case 'Acupuncture':
-                GVar.curcat = 35;
-            break;
-            default:
-                alert('Somthing Went Wrong!');
+    var cats = ('Bar & Pub,Car Dealership,Coffee Shop,Entertainment,Food,Gas Station,Hotel,Medical Center,Movie Theater,Nightlife Spot,Outdoors & Recreation,Parking,Pharmacy,Real Estate,Supermarket,Taxi,Transport,Travel Agency,Cosmetic,Pet-Shop,Event,Mall,Institution,Sightseeing,Subway-Station,Government,Museum,Temple,Church,Kids,Beach,Nail-Shop,Convenient-Store,Health-Center,Acupuncture').split(',');
+    var autocompleteDropdownExpand = myApp.autocomplete({
+        input: '#csb',
+        openIn: 'dropdown',
+        valueProperty: 'id',
+        expandInput: true, // expand input
+        source: function (autocomplete, query, render) {
+            var results = [];
+            if (query.length === 0) {
+                render(results);
+                return;
             }
-            setTimeout(function(){
-                myApp.closePanel('left');
-            }, 100);
-            setTimeout(function(){
-                if (GVar.vaf==0) {
-                    VAOM(GVar.lndinglat,GVar.lndinglng,GVar.curcat,GVar.drad);
+            // Find matched items
+            for (var i = 0; i < cats.length; i++) {
+                if (cats[i].toLowerCase().indexOf(query.toLowerCase()) >= 0) results.push(cats[i]);
+            }
+            // Render items by passing array with result items
+            render(results);
+        },
+        onChange: function (autocomplete, value) {
+            switch(value){
+                case 'Bar & Pub':
+                    GVar.curcat = 1;
+                break;
+                case 'Car Dealership':
+                    GVar.curcat = 2;
+                break;
+                case 'Coffee Shop':
+                    GVar.curcat = 3;
+                break;
+                case 'Entertainment':
+                    GVar.curcat = 4;
+                break;
+                case 'Food':
+                    GVar.curcat = 5;
+                break;
+                case 'Gas Station':
+                    GVar.curcat = 6;
+                break;
+                case 'Hotel':
+                    GVar.curcat = 7;
+                break;
+                case 'Medical Center':
+                    GVar.curcat = 8;
+                break;
+                case 'Movie Theater':
+                    GVar.curcat = 9;
+                break;
+                case 'Nightlife Spot':
+                    GVar.curcat = 10;
+                break;
+                case 'Outdoors & Recreation':
+                    GVar.curcat = 11;
+                break;
+                case 'Parking':
+                    GVar.curcat = 12;
+                break;
+                case 'Pharmacy':
+                    GVar.curcat = 13;
+                break;
+                case 'Real Estate':
+                    GVar.curcat = 14;
+                break;
+                case 'Supermarket':
+                    GVar.curcat = 15;
+                break;
+                case 'Taxi':
+                    GVar.curcat = 16;
+                break;
+                case 'Transport':
+                    GVar.curcat = 17;
+                break;
+                case 'Travel Agency':
+                    GVar.curcat = 18;
+                break;
+                case 'Cosmetic':
+                    GVar.curcat = 19;
+                break;
+                case 'Pet-Shop':
+                    GVar.curcat = 20;
+                break;
+                case 'Event':
+                    GVar.curcat = 21;
+                break;
+                case 'Mall':
+                    GVar.curcat = 22;
+                break;
+                case 'Institution':
+                    GVar.curcat = 23;
+                break;
+                case 'Sightseeing':
+                    GVar.curcat = 24;
+                break;
+                case 'Subway-Station':
+                    GVar.curcat = 25;
+                break;
+                case 'Government':
+                    GVar.curcat = 26;
+                break;
+                case 'Museum':
+                    GVar.curcat = 27;
+                break;
+                case 'Temple':
+                    GVar.curcat = 28;
+                break;
+                case 'Church':
+                    GVar.curcat = 39;
+                break;
+                case 'Kids':
+                    GVar.curcat = 30;
+                break;
+                case 'Beach':
+                    GVar.curcat = 31;
+                break;
+                case 'Nail-Shop':
+                    GVar.curcat = 32;
+                break;
+                case 'Convenient-Store':
+                    GVar.curcat = 33;
+                break;
+                case 'Health-Center':
+                    GVar.curcat = 34;
+                break;
+                case 'Acupuncture':
+                    GVar.curcat = 35;
+                break;
+                default:
+                    alert('Somthing Went Wrong!');
                 }
-                GVar.vaf = 1;
-            }, 500);
-        }
-    });
-    window.flag = 0;
-    $('#nav').affix({
-        offset: {
-            top: 70
-        }
-    });
-    $("#nav").on('affix.bs.affix', function(){
-        $('#app-view').css('margin-top','50px');
-    });
-    $("#nav").on('affix-top.bs.affix', function(){
-        $('#app-view').css('margin-top','0');
-    });
-    $('[data-toggle="tooltip"]').tooltip();
+                setTimeout(function(){
+                    myApp.closePanel('left');
+                }, 100);
+                setTimeout(function(){
+                    if (GVar.vaf==0) {
+                        VAOM(GVar.lndinglat,GVar.lndinglng,GVar.curcat,GVar.drad);
+                    }
+                    GVar.vaf = 1;
+                }, 500);
+            }
+        });
+        window.flag = 0;
+        $('#nav').affix({
+            offset: {
+                top: 70
+            }
+        });
+        $("#nav").on('affix.bs.affix', function(){
+            $('#app-view').css('margin-top','50px');
+        });
+        $("#nav").on('affix-top.bs.affix', function(){
+            $('#app-view').css('margin-top','0');
+        });
+        $('[data-toggle="tooltip"]').tooltip();
 
 }
 
 function PhotoUpload() {
     $(document).on('touchstart','.addPicture',function(){
-        $imagesDiv = $(document).find("#images");
+        var imagesDiv = $(document).find("#images");
         var imcount = $(document).find('.uimg').length;
         window.mxupld = 10 - imcount;
         window.imagePicker.getPictures(
@@ -628,18 +638,20 @@ function PhotoUpload() {
                             $(document).find('#pco').text(percent);
                         };
                         ft.upload(imageURI, GVar.ajax_url+"/api/upload-ads-tmp", function(data){
-                            var newHtml = "<img class='uimg uplimg-"+$(document).find('.uimg').length+"' style='padding:3px;border-radius:5px;' width='25%' src='"+results[GVar.imgcounter]+"'>";
-                            $imagesDiv.append(newHtml);
-                            GVar.imgcounter = GVar.imgcounter+1;
-                            GVar.totalimgcounter = GVar.totalimgcounter+1;
-                            if (GVar.totalimgcounter>9) {
-                                $(document).find(".addPicture").attr('disabled','disabled');
-                            }
                             var result = data['response'];
                             var parsed_result = JSON.parse(result);
                             var new_name = parsed_result['img_name'];
                             var old_name = parsed_result['old_name'];
                             var base_type = parsed_result['base_type'];
+                            // xxx
+                            var newHtml = "<div class='post-images-div' base-type='"+base_type+"'  new-name='"+new_name+"'><span this-old-name='"+old_name+"' class='delete-qpi' aria-hidden='true'>&times;</span><img class='uimg uplimg-"+$(document).find('.uimg').length+"' style='' width='100%' src='"+results[GVar.imgcounter]+"'></div>";
+                            imagesDiv.append(newHtml);
+                            GVar.imgcounter = GVar.imgcounter+1;
+                            GVar.totalimgcounter = GVar.totalimgcounter+1;
+                            if (GVar.totalimgcounter>9) {
+                                $(document).find(".addPicture").attr('disabled','disabled');
+                            }
+
                             var new_input = create_input(new_name,old_name,base_type);
                             $(document).find("#file-div").append(new_input);
                             $(document).find('#qkpmb').animate({
@@ -682,8 +694,95 @@ function PhotoUpload() {
 
     });
 }
+function E_PhotoUpload() {
+    $(document).on('touchstart','.e_addPicture',function(){
+        $imagesDiv = $(document).find("#e_images");
+        var imcount = $(document).find('.e_uimg').length;
+        window.mxupld = 10 - imcount;
+        window.imagePicker.getPictures(
+            function(results) {
+                if (results.length!=0) {
+                    $(document).find('#e_qk-post-btn').attr('disabled','1');
+                    $(document).find('#e__upp').removeClass('hide');
+                }
+                GVar.e_icont = GVar.e_icont + results.length;
+                for (var i = 0; i < results.length; i++) {
+                    var auth_token = localStorage.getItem("auth_token");
+                    if (!$.isBlank(auth_token)) {
+                        var imageURI = results[i];
+                        var options = new FileUploadOptions();
+                        options.fileKey = "file";
+                        options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+                        options.mimeType = "image/jpeg";
+                        var params = new Object();
+                        params.usertoken = auth_token;
+                        options.params = params;
+                        options.chunkedMode = false;
+                        var ft = new FileTransfer();
+                        ft.onprogress = function(progressEvent) {
+                            var percent =  progressEvent.loaded / progressEvent.total * 100;
+                            percent = Math.round(percent);
+                            $(document).find('#e_pco').text(percent);
+                        };
+                        ft.upload(imageURI, GVar.ajax_url+"/api/upload-ads-tmp", function(data){
+                            var result = data['response'];
+                            var parsed_result = JSON.parse(result);
+                            var new_name = parsed_result['img_name'];
+                            var old_name = parsed_result['old_name'];
+                            var base_type = parsed_result['base_type'];
+                            var newHtml = "<div class='e-post-images-div' base-type='"+base_type+"' new-name='"+new_name+"'><span this-old-name='"+old_name+"' class='e_delete-qpi' aria-hidden='true'>&times;</span><img class='e_uimg e_uplimg-"+$(document).find('.uimg').length+"' style='' width='100%' src='"+results[GVar.imgcounter]+"'></div>";
+                            $imagesDiv.append(newHtml);
+                            GVar.e_imgcounter = GVar.e_imgcounter+1;
+                            GVar.e_totalimgcounter = GVar.e_totalimgcounter+1;
+                            if (GVar.e_totalimgcounter>9) {
+                                $(document).find(".e_addPicture").attr('disabled','disabled');
+                            }
+
+                            var new_input = create_input(new_name,old_name,base_type);
+                            $(document).find("#e_file-div").append(new_input);
+                            $(document).find('#qkpmb').animate({
+                                scrollTop: $(document).find('#qkpmb').height()
+                            },'slow');
+                            GVar.e_icont = GVar.e_icont - 1;
+                            if (GVar.e_icont==0) {
+                                $(document).find('#e__upp').addClass('hide');
+                                $(document).find('#e_qk-post-btn').removeAttr('disabled');
+                            }
+
+                        }, function(error){
+                            alert('E122. Error.');
+                            $(document).find('#e__upp').addClass('hide');
+                            GVar.icont = GVar.icont - 1;
+                            if (GVar.icont==0) {
+                                $(document).find('#e__upp').addClass('hide');
+                            }
+                            $(document).find('#e_qk-post-btn').removeAttr('disabled');
+                            $(document).find('#qppl').addClass('hide');
+                            console.log(JSON.stringify(error));
+                        }, options);
+
+                    } else {
+                        $(document).find('#e_qk-post-btn').removeAttr('disabled');
+                        alert('Please Try to Login Again.')
+                    }
+
+                    GVar.e_imgcounter = 0;
+                }
+
+            }, function (error) {
+                $(document).find('#e_qk-post-btn').removeAttr('disabled');
+                console.log('Error: ' + error);
+            }, {
+                maximumImagesCount: mxupld,
+                quality:50
+            }
+        );
+
+    });
+}
 function SetStates() {
     window.user_state = document.getElementById('user-status').value;
+    GVar.page_sessions.push('vw1');
 }
 function SetAjaxHeader() {
     $.ajaxSetup({
@@ -772,13 +871,14 @@ function Events() {
     {
         var p = $('#p7c').scrollTop();
         if (p == 0) {
+            var pt = $('.ptrwrap');
             if (di=='down') {
-                var pt = $('.ptrwrap');
-                if (d<300){
+                
+                if (d<200){
                     if (pt.hasClass('hide')) {
                         pt.removeClass('hide');
                     }
-                    var t = (d/300).toFixed(2);
+                    var t = (d/200).toFixed(2);
                     var c = pt.css('opacity');
                     if (t<=1&&t>c) {
                         pt.css('opacity',t); 
@@ -789,8 +889,8 @@ function Events() {
                     pt.addClass('hide');
                 }
                 if (ph=="end"){
-                    if (d>=300){
-                        AllAdsReload();
+                    if (d>=200){
+                        ShowDashboardAdsReload()
                         pt.css('opacity',1);
                     }
                     setTimeout(function(){
@@ -799,9 +899,13 @@ function Events() {
                     }, 2000);
                 }
             }
+            if (di=='up') {
+                pt.css('opacity',0);  
+                pt.addClass('hide');
+            }
         }
     },
-        threshold:300,
+        threshold:200,
         maxTimeThreshold:5000,
         fingers:'all', 
         allowPageScroll:"auto"
@@ -812,13 +916,13 @@ function Events() {
     {
         var p = $('#v6pc').scrollTop();
         if (p == 0) {
+            var pt = $('.ptrwrapa');
             if (di=='down') {
-                var pt = $('.ptrwrapa');
-                if (d<300){
+                if (d<200){
                     if (pt.hasClass('hide')) {
                         pt.removeClass('hide');
                     }
-                    var t = (d/300).toFixed(2);
+                    var t = (d/200).toFixed(2);
                     var c = pt.css('opacity');
                     if (t<=1&&t>c) {
                         pt.css('opacity',t); 
@@ -829,7 +933,8 @@ function Events() {
                     pt.addClass('hide');
                 }
                 if (ph=="end"){
-                    if (d>=300){
+                    if (d>=200){
+
                         AllAdsReload();
                         pt.css('opacity',1);
                     }
@@ -839,9 +944,13 @@ function Events() {
                     }, 2000);
                 }
             }
+            if (di=='up') {
+                pt.css('opacity',0);  
+                pt.addClass('hide');
+            }
         }
     },
-        threshold:300,
+        threshold:200,
         maxTimeThreshold:5000,
         fingers:'all', 
         allowPageScroll:"auto"
@@ -852,7 +961,8 @@ function Events() {
         $(this).addClass('active');
     });
 
-    // document.addEventListener("backbutton", onBackKeyDown, false);
+    document.addEventListener("backbutton", onBackKeyDown, false);
+
     $('#qkpost-modal').on('hidden.bs.modal', function () {
         clear_qp_modal();
     });
@@ -915,6 +1025,56 @@ function Events() {
     $(document).on('touchstart','#can_post',function(){
         CancelPost();
     });
+    $(document).on('touchstart','#e_can_post',function(){
+        e_CancelPost();
+    });
+
+    $(document).on('touchstart','.delete-qpi',function(){
+        var thisoldname = $(this).attr('this-old-name');
+        $('input[old-name="'+thisoldname+'"]').remove();
+        $(this).parents('.post-images-div').remove();
+    });
+
+    $(document).on('touchstart','.e_delete-qpi',function(){
+        var thisoldname = $(this).attr('this-old-name');
+        $('input[old-name="'+thisoldname+'"]').remove();
+        $(this).parents('.e-post-images-div').remove();
+    });
+    $(document).on('touchstart','.delete-old-image-edit',function(){
+        var thisid = $(this).attr('this-id');
+        $('.e-posted-files[this_id="'+thisid+'"]').remove();
+        $(this).parents('.e-post-images-div').remove();
+    });
+
+    $(document).on('touchstart','.follow-user',function(){
+        var this_id = $(this).attr('this_id');
+        var _auth = parseInt($('#_auth').attr('data'));
+        if (_auth == 1) {
+            FollowUserRequest(this_id);
+        } else {
+            $('#login-modal').modal('show');
+        }
+        
+    });
+    $(document).on('touchstart','.unfollow-user',function(){
+        var this_id = $(this).attr('this_id');
+        var _auth = parseInt($('#_auth').attr('data'));
+        if (_auth == 1) {
+            UnFollowUserRequest(this_id);
+        } else {
+            $('#login-modal').modal('show');
+        }
+        
+    });
+
+
+    $(document).on('touchstart','._dwt',function(){
+        var lat = parseFloat(GVar.curadlat);
+        var lng = parseFloat(GVar.curadlng);
+        launchnavigator.navigate([lat, lng], {
+            app: $(this).attr('tau')
+        });
+    });
     $(document).on('touchstart','.rvcom',function(){
         var _auth = parseInt($('#_auth').attr('data'));
         var this_star = parseInt($(this).attr('revstar'));
@@ -962,10 +1122,13 @@ function Events() {
     $(document).on('touchstart','.posdelete',function(){
         GVar.post_tobe_deleted = $(this).attr('this-id');
     });
-    $(document).on('touchstart click','._vaprofile',function(){
+    $(document).on('touchstart','.posedit',function(){
+        $(this).attr('this-id');
+    });
+    $(document).on('touchstart','._vaprofile',function(){
         GVar.profile_tobe_viewd = $(this).attr('this-id');
     });
-    $(document).on('touchstart click','#view-user-profile',function(){
+    $(document).on('touchstart','#view-user-profile',function(){
         myApp.closeModal('.popover-viewprofile',1);
         ViewThisProfile(GVar.profile_tobe_viewd);
     });
@@ -973,6 +1136,20 @@ function Events() {
         myApp.closeModal('.popover-delete',1);
         $('#confirm-delete').modal('show');
     });
+    $(document).on('touchstart','#edit-post-f',function(){
+
+        myApp.closeModal('.popover-delete',1);
+
+
+        var this_id = $(this).attr('data');
+        // $('#atwl-btn').attr('data',this_id);
+        // $('.fbc').html('');
+        e_vwad(GVar.post_tobe_deleted);
+
+
+
+    });
+
     $(document).on('touchstart','#delete-post-ok',function(){
         $('#confirm-delete').modal('hide');
         DeleteProfilePostById(GVar.post_tobe_deleted);
@@ -1042,39 +1219,33 @@ function Events() {
         }, 500);
     });
 
-    $('#vw1').on('touchstart', function() {
-        setTimeout(function(){
-            ResetLandingAndReasin();
-        }, 500);
-        setTimeout(function(){
-            _ctpral();
-        }, 100);
-        GVar.curpg=1;
-        myApp.showTab('#view-1');
-    });
-    $("#vw7").on('touchstart', function() {
-        var _auth = parseInt($('#_auth').attr('data'));
-        if (_auth == 1) {
-            if (GVar.dash_loaded == 0) {
-                GVar.dash_loaded = 1;
-                ShowDashboardAds();
-                setTimeout(function(){
-                    get_profile_info();
-                }, 100);
-            }
-            GVar.curpg=7;
-            myApp.showTab('#view-7');
-        } else {
-            GVar.lgns_f = 1;
-            GVar.lgns_d = '#vw7';
-            $('#login-modal').modal('show');
+    $('.page-session').on('touchstart', function() {
+        var ti = $(this).attr('id');
+        GVar.curpg = ti;
+        var last_ele = GVar.page_sessions[GVar.page_sessions.length-1];
+        if (ti!=last_ele) {
+            GVar.page_sessions.push(ti);
         }
+    });
+    // $('.backbtn').on('touchstart', function() {
+    //     onBackKeyDown();
+    // });
+
+    $('#vw1').on('touchstart', function() {
+        VW1Triggered();
+    });
+
+    $('#vw6').on('touchstart', function() {
+        VW6Triggered();
+    });
+
+    $("#vw7").on('touchstart', function() {
+        VW7Triggered();
     });
 
 
 
     $('#vw4').on('touchstart', function() {
-        GVar.curpg=4;
         setTimeout(function(){
             $('#vw4').removeClass('active');
         }, 2000);
@@ -1105,25 +1276,14 @@ function Events() {
         $('#login-modal').modal('hide');
         $('#register-modal').modal('show');
     });
-    $(document).on('touchstart','.m-vad',function(){
-        var this_id = $(this).attr('data');
-        $('#atwl-btn').attr('data',this_id);
-        $('.fbc').html('');
-        findAndViewAd(this_id);
-    });
+    // $(document).on('touchstart','.m-vad',function(){
+    //     var this_id = $(this).attr('data');
+    //     // $('#atwl-btn').attr('data',this_id);
+    //     // $('.fbc').html('');
+    //     findAndViewAd(this_id);
+    // });
     $("#qbtn-wrap").on('touchstart', function(e) {
-        var _auth = parseInt($('#_auth').attr('data'));
-        if (_auth == 1) {
-            myApp.showTab('#view-2');
-            GVar.qkpost_map = 1;
-            var center = postmap.getCenter();
-            google.maps.event.trigger(postmap, "resize");
-            postmap.setCenter(center);
-        } else {
-            GVar.lgns_f = 1;
-            GVar.lgns_d = '#qbtn-wrap';
-            $('#login-modal').modal('show');
-        }
+        QPTriggered();
     });
     $(document).on('touchstart','.remove-ad-wl',function(){
         $t_id = $(this).attr('data');
@@ -1142,6 +1302,23 @@ function Events() {
             $('#lw3').addClass('hide');
             var onSuccess = function(position) {
                 qkpmUpdate(position.coords.latitude,position.coords.longitude);
+            };
+            function onError(error) {
+                calldialog();
+            }
+            navigator.geolocation.getCurrentPosition(onSuccess, onError);
+          },
+          function fail(){
+            $('#lw3').addClass('hide');
+            calldialog();
+          });
+    });
+    $(document).on('touchstart','#e_curlocqp',function(){
+        $('#lw3').removeClass('hide');
+        CheckGPS.check(function win(){
+            $('#lw3').addClass('hide');
+            var onSuccess = function(position) {
+                e_qkpmUpdate(position.coords.latitude,position.coords.longitude);
             };
             function onError(error) {
                 calldialog();
@@ -1882,6 +2059,75 @@ function vwad(data_id) {
         }
     });
 }
+function e_vwad(data_id) {
+    $('#lwgen').removeClass('hide');
+
+    myApp.showTab('#view-9');
+
+
+    //clear reviews
+    var user_token = 0;
+    var _auth = parseInt($('#_auth').attr('data'));
+    if (_auth == 1) {
+        var auth_token = localStorage.getItem("auth_token");
+        if (!$.isBlank(auth_token)) {
+            user_token = auth_token;
+        }
+    }
+    var data ={"data_id":data_id,"user_token":user_token};
+    $.ajax({
+        url: GVar.ajax_url+'/api/e_prepare-ad',
+        type: 'post',
+        dataType: 'json',
+        'data': data,
+        success: function(result) {
+            var status = result.status;
+             var status = result.status;
+            var ad_array = result.ad_array;
+            var photos = ad_array.images_array;
+            if (status==200) {
+
+
+
+                setTimeout(function(){
+                    // xxx
+                    InitEditPostPage();
+
+                    $('#e__qt').val(ad_array['title_txt']);
+                    $('#e_desqp').val(ad_array['des_txt']);
+
+                    var images_html = '';
+                    var images_input = '';
+                    var image_counter = 0;
+                    $.each(photos, function (index, photo) {
+                        images_html += "<div class='e-post-images-div'  new-name='"+image_counter+"'><span this-id='"+image_counter+"' class='delete-old-image-edit' aria-hidden='true'>&times;</span><img class='e_uimg uplimg-"+$(document).find('.e_uimg').length+"' style='' width='100%' src='"+photo.src+"'></div>";
+                        images_input += edit_old_images_create_input(photo.src,image_counter);
+                        image_counter = image_counter + 1;
+
+                    });
+                    $(document).find("#e_images").empty().html(images_html);
+                    $(document).find("#e_file-div").empty().html(images_input);
+
+                    //REFRESH MAP
+                    EditPostMapRefreshAndSet(ad_array['lat'],ad_array['lng']);
+
+
+
+                    $('#lwgen').addClass('hide');
+
+                }, 300);
+
+                
+
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(xhr.responseText); // <- same here, your own div, p, span, whatever you wish to use
+        }
+    });
+}
+
+
 function process_qkpost(_form,cat_id) {
     $('#lwgen').removeClass('hide');
     $('._required').css('color','inherit');
@@ -2013,6 +2259,59 @@ function DeleteProfilePostById(ad_id) {
 function isBlank(obj) {
     return(!obj || $.trim(obj) === "");
 }
+
+
+
+
+
+
+function QPTriggered(){
+    var _auth = parseInt($('#_auth').attr('data'));
+    if (_auth == 1) {
+        myApp.showTab('#view-2');
+        GVar.qkpost_map = 1;
+        var center = postmap.getCenter();
+        google.maps.event.trigger(postmap, "resize");
+        postmap.setCenter(center);
+    } else {
+        GVar.lgns_f = 1;
+        GVar.lgns_d = '#qbtn-wrap';
+        $('#login-modal').modal('show');
+    }
+}
+function VW1Triggered(){
+    
+    setTimeout(function(){
+        ResetLandingAndReasin();
+    }, 500);
+    setTimeout(function(){
+        _ctpral();
+    }, 100);
+    myApp.showTab('#view-1');
+}
+function VW6Triggered(){
+
+    myApp.showTab('#view-6');
+}
+function VW7Triggered(){
+    var _auth = parseInt($('#_auth').attr('data'));
+    if (_auth == 1) {
+        if (GVar.dash_loaded == 0) {
+            GVar.dash_loaded = 1;
+            ShowDashboardAds();
+            setTimeout(function(){
+                get_profile_info();
+            }, 100);
+        }
+        myApp.showTab('#view-7');
+    } else {
+        GVar.lgns_f = 1;
+        GVar.lgns_d = '#vw7';
+        $('#login-modal').modal('show');
+    }
+}
+
+
 function hide_to_cat_button() {
     $('#tc').addClass('hide');
 }
@@ -2114,33 +2413,29 @@ function view_errors(data) {
 function create_input(name,old_name,base_type) {
     var count = $(document).find('.posted-files').length;
     return '<input old-name="'+old_name+'" class="posted-files" name="posted_files['+count+']['+base_type+'][name]" type="hidden" value="'+name+'"/>';
+}
 
+function edit_old_images_create_input(src,id) {
+    var count = $(document).find('.e-posted-files').length;
+    return '<input this_id="'+id+'" class="e-posted-files" name="e_posted_files[old]['+id+'][image][src]" type="hidden" value="'+src+'"/>';
 }
-function dropz_removefile(file) {
-    var name = file['name'];
-    var poste_input = $('.posted-files[old-name="'+name+'"]');
-    if (poste_input.length > 0) {
-        poste_input.remove();
-    } else {
-        alert('Somthing Went Wrong!');
-    }
-}
+
 function clear_qp_modal() {
-    $('.address-wrap').addClass('hide');
-    $('.address-wrap').css('visibility','hidden').css('opacity','0');
-    $('#address-checkbox').attr('checked', false);
+    // $('.address-wrap').addClass('hide');
+    // $('.address-wrap').css('visibility','hidden').css('opacity','0');
+    // $('#address-checkbox').attr('checked', false);
 
-    $('#subcat-wrap').addClass('hide');
-    $('#subcat-wrap').css('visibility','hidden').css('opacity','0');
+    // $('#subcat-wrap').addClass('hide');
+    // $('#subcat-wrap').css('visibility','hidden').css('opacity','0');
 
-    $('.2t-wrap').addClass('hide');
-    $('.2t-wrap').css('visibility','hidden').css('opacity','0');
+    // $('.2t-wrap').addClass('hide');
+    // $('.2t-wrap').css('visibility','hidden').css('opacity','0');
 
-    $('#title-wrap').addClass('hide');
-    $('#title-wrap').css('visibility','hidden').css('opacity','0');
+    // $('#title-wrap').addClass('hide');
+    // $('#title-wrap').css('visibility','hidden').css('opacity','0');
 
-    $('#des-wrap').addClass('hide');
-    $('#des-wrap').css('visibility','hidden').css('opacity','0');
+    // $('#des-wrap').addClass('hide');
+    // $('#des-wrap').css('visibility','hidden').css('opacity','0');
 
     $('.pk-form').val('');
     $(".qp-selects").val("0");
@@ -2337,6 +2632,29 @@ function qkpmUpdate(lat,lng) {
     GVar.qpmarkers.push(marker);
 }
 
+function e_qkpmUpdate(lat,lng) {
+    document.getElementById('e_qkp-lat').value = lat;
+    document.getElementById('e_qkp-lng').value = lng;
+    e_qkpmClearMarker();
+    e_PostMapClearMarker();
+    var myLatLng = {lat: lat, lng: lng};
+    e_postmap.setCenter(myLatLng);
+    e_postmap.setZoom(15);
+    var marker = new google.maps.Marker({
+      map: e_postmap,
+      icon:GVar.flag_image,
+      position:myLatLng,
+      draggable: true,
+      anchorPoint: new google.maps.Point(0, -29)
+    });
+    //AFTER DRAG AND DROP SHOWS THE LAT AND LONG
+    google.maps.event.addListener(marker, 'dragend', function (event) {
+        document.getElementById('e_qkp-lat').value = this.getPosition().lat();
+        document.getElementById('e_qkp-lng').value = this.getPosition().lng();
+    });
+    GVar.e_qpmarkers.push(marker);
+}
+
 function adClearMarker() {
     for (var i = 0; i < GVar.admkrs.length; i++) {
       GVar.admkrs[i].setMap(null);
@@ -2510,6 +2828,14 @@ function ViewPostMapRefreshAndSet(lat,lng) {
         ViewAdUpdate(lat,lng);
      }, 200);
 }
+function EditPostMapRefreshAndSet(lat,lng) {
+    e_qkpmClearMarker();
+    e_PostMapClearMarker();
+    setTimeout(function(){
+        google.maps.event.trigger(e_postmap, "resize");
+        EditAdUpdate(lat,lng);
+     }, 200);
+}
 function ViewAdUpdate(lat,lng) {
     var latpf = parseFloat(lat);
     var lngpf = parseFloat(lng);
@@ -2524,6 +2850,20 @@ function ViewAdUpdate(lat,lng) {
     });
     GVar.viewaddmarker.push(marker);
 }
+function EditAdUpdate(lat,lng) {
+    var latpf = parseFloat(lat);
+    var lngpf = parseFloat(lng);
+    var myLatLng = {lat: latpf, lng: lngpf};
+    e_postmap.setCenter(myLatLng);
+    var marker = new google.maps.Marker({
+      map: e_postmap,
+      icon:GVar.flag_image,
+      position:myLatLng,
+      draggable: false,
+      anchorPoint: new google.maps.Point(0, -29)
+    });
+    GVar.editaddmarker.push(marker);
+}
 function LandingClearMarker() {
     for (var i = 0; i < GVar.lmarkers.length; i++) {
       GVar.lmarkers[i].setMap(null);
@@ -2537,9 +2877,20 @@ function PostMapClearMarker() {
       GVar.pmmarkers[i].setMap(null);
     }
 }
+function e_PostMapClearMarker() {
+
+    for (var i = 0; i < GVar.e_pmmarkers.length; i++) {
+      GVar.e_pmmarkers[i].setMap(null);
+    }
+}
 function qkpmClearMarker() {
     for (var i = 0; i < GVar.qpmarkers.length; i++) {
       GVar.qpmarkers[i].setMap(null);
+    }
+}
+function e_qkpmClearMarker() {
+    for (var i = 0; i < GVar.e_qpmarkers.length; i++) {
+      GVar.e_qpmarkers[i].setMap(null);
     }
 }
 function ViewMapClearMarker() {
@@ -2547,7 +2898,6 @@ function ViewMapClearMarker() {
       GVar.viewaddmarker[i].setMap(null);
     }
 }
-
 function calldialog() {
   cordova.dialogGPS("Your GPS is Disabled, this app needs to be enable to works.",//message
                     "Use GPS, with wifi or 3G.",//description
@@ -2600,10 +2950,47 @@ function getloc(controlDiv, map) {
     controlText.innerHTML = '<i class="fa fa-crosshairs" aria-hidden="true"></i>';
     controlUI.appendChild(controlText);
 }
+function e_getloc(controlDiv, map) {
+    // Set CSS for the control border.
+    var controlUI = document.createElement('div');
+    controlUI.setAttribute("id", "e_curlocqp");
+    controlUI.style.backgroundColor = '#fff';
+    controlUI.style.border = '2px solid #fff';
+    controlUI.style.borderRadius = '3px';
+    controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+    controlUI.style.cursor = 'pointer';
+    controlUI.style.marginTop = '3px';
+    controlUI.style.marginBottom = '22px';
+    controlUI.style.marginRight = '3px';
+    controlUI.style.textAlign = 'center';
+    controlUI.title = 'Click to recenter the map';
+    controlDiv.appendChild(controlUI);
+
+    // Set CSS for the control interior.
+    var controlText = document.createElement('div');
+    controlText.style.color = 'rgb(25,25,25)';
+    controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+    controlText.style.fontSize = '23px';
+    controlText.style.lineHeight = '33px';
+    controlText.style.width = '33px';
+    controlText.style.paddingLeft = '0';
+    controlText.style.paddingRight = '0';
+    controlText.innerHTML = '<i class="fa fa-crosshairs" aria-hidden="true"></i>';
+    controlUI.appendChild(controlText);
+}
 function OpenGeoApps(){
-    var lat = parseFloat(GVar.curadlat);
-    var lng = parseFloat(GVar.curadlng);
-    launchnavigator.navigate([lat, lng]);
+    launchnavigator.availableApps(function(results){
+        var html = '';
+        for(var app in results){
+            if (results[app]) {
+                if (app!='com.skt.tmap.ku' && app!='kt.navi' && app!='com.nhn.android.nmap') {
+                    html += '<div class="_nw _dwt" tau='+app+'><a>'+launchnavigator.getAppDisplayName(app)+'</a></div>';
+                }
+            }
+        }
+        $('#chmb').empty().append(html);
+    });
+    $('#myModal').modal('show');
 }
 function GetGPSLocation(){
     $('#lw3').removeClass('hide');
@@ -2627,18 +3014,66 @@ function ClearCircles(){
       GVar.lcircle[j].setMap(null);
     }
 }
+
+
 window.lastTimeBackPress=0;
 window.timePeriodToExit=2000;
+
 function onBackKeyDown(e) {
     e.preventDefault();
     e.stopPropagation();
-    if(new Date().getTime() - lastTimeBackPress < timePeriodToExit){
-        navigator.app.exitApp();
-    }else{
-        window.plugins.toast.showLongBottom('Press back again to leave');
-        // window.timeout = setTimeout(function () { myApp.closeNotification(".notification-item"); }, 2000);
-        lastTimeBackPress=new Date().getTime();
+    var def = 0;
+    var current_page = GVar.curpg;
+    switch(GVar.page_sessions[GVar.page_sessions.length-2]){
+        case 'qbtn-wrap':
+            QPTriggered();
+            break;
+        case 'vw1':
+            $('.tab-link').removeClass('active');
+            if (GVar.page_sessions.length != 1) {
+                VW1Triggered();
+            }
+            $('#vw1').addClass('active');
+            def=1;
+            break;
+        case 'vw6':
+            $('.tab-link').removeClass('active');
+            $('#vw6').addClass('active');                
+            VW6Triggered();
+            break;
+        case 'vw7':
+            $('.tab-link').removeClass('active');
+            $('#vw7').addClass('active'); 
+            VW7Triggered();
+            break;
+        default:
+            $('.tab-link').removeClass('active');
+            $('#vw1').addClass('active');
+            if (GVar.page_sessions.length != 1) {
+                VW1Triggered();
+            }
+            def=1;
+            break;
     }
+
+    if (GVar.page_sessions.length == 1 && GVar.page_sessions[0] == 'vw1') {
+        if(new Date().getTime() - lastTimeBackPress < timePeriodToExit){
+            navigator.app.exitApp();
+        } else {
+            window.plugins.toast.showLongBottom('Press back again to leave');
+            lastTimeBackPress=new Date().getTime();
+        }
+    }
+
+    GVar.page_sessions.pop();
+    
+    if (def == 1) {
+        if (GVar.page_sessions.length == 0) {
+            GVar.page_sessions.push('vw1');
+        }
+        $('#login-modal').modal('hide');
+    }
+
 }
 
 
@@ -2686,14 +3121,14 @@ function RadiusToZoom(rad){
     return zm;
 }
 function _ctpral(){
-    $("#_drp").val('');
-    $("#_dp").val('');
+    // $("#_drp").val('');
+    // $("#_dp").val('');
 }
 function _ctpr(){
-    $("#_drp").val('');
+    // $("#_drp").val('');
 }
 function _ctpd(){
-    $("#_dp").val('');
+    // $("#_dp").val('');
 }
 
 function loadimage(imgsrc, change){
@@ -2733,6 +3168,7 @@ function BeforeSession(){
         
     }
 }
+
 function CancelPost(){
     window.plugins.toast.showLongBottom('Post Canceled!');
     setTimeout(function(){
@@ -2744,4 +3180,208 @@ function CancelPost(){
         _ctpd();
 
     }, 300);
+}
+
+function e_CancelPost(){
+    window.plugins.toast.showLongBottom('Edit Canceled!');
+    setTimeout(function(){
+        myApp.showTab('#view-1');
+        ResetView2();
+    }, 100);
+    setTimeout(function(){
+        ResetLandingAndReasin();
+        _ctpd();
+    }, 300);
+}
+
+function FollowUserRequest(profile_id) {
+    var data ={"tkn":localStorage.getItem("auth_token"),"profile_id":profile_id}
+    $.ajax({
+        url: GVar.ajax_url+'/api/follow-user',
+        type: 'post',
+        dataType: 'json',
+        'data': data,
+        success: function(data) {
+            var status = data.status;
+            if (status==200) {
+                var html = '<a class="unfollow-user" this_id="'+profile_id+'">Unfollow</span>';
+                $('#follow_action').html(html);
+                $('#profile_num_followers').text(data.followers);
+            } else {
+                
+            }
+        }
+    });
+}
+function UnFollowUserRequest(profile_id) {
+    var data ={"tkn":localStorage.getItem("auth_token"),"profile_id":profile_id}
+    $.ajax({
+        url: GVar.ajax_url+'/api/unfollow-user',
+        type: 'post',
+        dataType: 'json',
+        'data': data,
+        success: function(data) {
+            var status = data.status;
+            if (status==200) {
+                var html = '<a class="follow-user" this_id="'+profile_id+'">follow</span>';
+                $('#follow_action').html(html);
+                $('#profile_num_followers').text(data.followers);
+            } else {
+                
+            }
+        }
+    });
+}
+
+function InitEditPostPage(){
+    var myLatLng = {lat: GVar.e_lndinglat, lng: GVar.e_lndinglng};
+    document.getElementById('e_qkp-lat').value = myLatLng.lat;
+    document.getElementById('e_qkp-lng').value = myLatLng.lng;
+    window.e_postmap = new google.maps.Map(document.getElementById('e_postmap'), {
+        center: myLatLng,
+        zoom: 11,
+        gestureHandling: 'cooperative',
+        mapTypeControl: false,
+        streetViewControl: false,
+        disableDefaultUI: true,
+        mapTypeId: 'roadmap'
+    });
+
+    google.maps.event.addListener(e_postmap, 'click', function(event) {
+        e_qkpmClearMarker();
+        e_placeMarkerpm(event.latLng);
+    });
+    //MARKER
+    window.e_PostAdMarker = new google.maps.Marker({
+      map: e_postmap,
+      position:myLatLng,
+      icon:GVar.flag_image,
+      draggable: true,
+      anchorPoint: new google.maps.Point(0, -29)
+    });
+    GVar.e_pmmarkers.push(e_PostAdMarker);
+    function e_placeMarkerpm(location) {
+        e_PostMapClearMarker();
+        var marker = new google.maps.Marker({
+            position: location,
+            map: e_postmap,
+            icon: GVar.flag_image,
+            draggable: true,
+            anchorPoint: new google.maps.Point(0, -29)
+        });
+        document.getElementById('e_qkp-lat').value = marker.getPosition().lat();
+        document.getElementById('e_qkp-lng').value = marker.getPosition().lng();
+        GVar.e_pmmarkers.push(marker);
+    }
+
+    // GOOGLE MAP RESPONSIVENESS
+    google.maps.event.addDomListener(window, "resize", function() {
+     var center = e_postmap.getCenter();
+     google.maps.event.trigger(e_postmap, "resize");
+     e_postmap.setCenter(center);
+    });
+
+
+    //LOAD FROM CURRENT CITY
+    var geocoder = new google.maps.Geocoder();
+    //AFTER DRAG AND DROP SHOWS THE LAT AND LONG
+    google.maps.event.addListener(e_PostAdMarker, 'dragend', function (event) {
+        var latlng = {lat: this.getPosition().lat(), lng: this.getPosition().lng()};
+        geocoder.geocode({'location': latlng}, function(results, status) {
+          if (status === 'OK') {
+            if (results[1]) {
+                // saving to dom
+                document.getElementById('e_qkp-lat').value = latlng.lat;
+                document.getElementById('e_qkp-lng').value = latlng.lng;
+            } else {
+              window.alert('No results found');
+            }
+          } else {
+            window.alert('Geocoder failed due to: ' + status);
+          }
+        });
+    });
+    var getlocDiv = document.createElement('div');
+    var getlocvar = new e_getloc(getlocDiv, e_postmap);
+    getlocDiv.index = 1;
+    e_postmap.controls[google.maps.ControlPosition.TOP_RIGHT].push(getlocDiv);
+
+    // Create the search box and link it to the UI element.
+    var options = {
+        types: ['(cities)'],
+        componentRestrictions: {country: "kr"}
+    };
+    var htmlinput = '<input id="e_pac-input" class="e_controls" type="text" placeholder="Search Address">';
+    $('#e_qkpost-map-container').append(htmlinput);
+
+    var input = document.getElementById('e_pac-input');
+    var searchBox = new google.maps.places.SearchBox(input, options);
+    e_postmap.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+    // Bias the SearchBox results towards current map's viewport.
+    e_postmap.addListener('bounds_changed', function() {
+      searchBox.setBounds(e_postmap.getBounds());
+    });
+
+    var markers = [];
+    // Listen for the event fired when the user selects a prediction and retrieve
+    // more details for that place.
+    searchBox.addListener('places_changed', function() {
+      var places = searchBox.getPlaces();
+
+      if (places.length == 0) {
+        return;
+      }
+      // Clear out the old markers.
+      markers.forEach(function(marker) {
+        marker.setMap(null);
+      });
+      markers = [];
+
+      // For each place, get the icon, name and location.
+      var bounds = new google.maps.LatLngBounds();
+      places.forEach(function(place) {
+        if (!place.geometry) {
+          console.log("Returned place contains no geometry");
+          return;
+        }
+        e_qkpmClearMarker();
+        e_PostMapClearMarker();
+        //MARKER
+        window.e_PostAdMarker = new google.maps.Marker({
+          map: e_postmap,
+          icon:GVar.flag_image,
+          position: place.geometry.location,
+          draggable: true
+        });
+        GVar.e_pmmarkers.push(e_PostAdMarker);
+        google.maps.event.addListener(e_PostAdMarker, 'dragend', function (event) {
+            var latlng = {lat: this.getPosition().lat(), lng: this.getPosition().lng()};
+            geocoder.geocode({'location': latlng}, function(results, status) {
+              if (status === 'OK') {
+                if (results[1]) {
+                    // saving to dom
+                    document.getElementById('e_qkp-lat').value = latlng.lat;
+                    document.getElementById('e_qkp-lng').value = latlng.lng;
+                } else {
+                  window.alert('No results found');
+                }
+              } else {
+                window.alert('Geocoder failed due to: ' + status);
+              }
+            });
+        });
+
+        if (place.geometry.viewport) {
+          // Only geocodes have viewport.
+          bounds.union(place.geometry.viewport);
+        } else {
+          bounds.extend(place.geometry.location);
+        }
+      });
+      e_postmap.fitBounds(bounds);
+    });
+    $$('body').on('touchstart','.e_pac-container', function(e){
+        e.stopImmediatePropagation();
+    })   
 }

@@ -12,6 +12,7 @@ var view4 = myApp.addView('#view-4');
 var view6 = myApp.addView('#view-6');
 var view7 = myApp.addView('#view-7');
 var view7 = myApp.addView('#view-8');
+var view9 = myApp.addView('#view-9');
 
 var mySearchbar = myApp.searchbar('.searchbar', {
     searchList: '.list-block-search',
@@ -246,6 +247,8 @@ function ShowDashboardAds(){
             var ads = data.ads;
             switch(status){
                 case 200:
+                    GVar.cur_profile_no_posts = data.num_posts;
+                    $('#prof_num_posts').text(data.num_posts);
                     var htmlx = '';
                     if (!isBlank(ads)) {
                         if ($.isArray(ads)) {
@@ -363,8 +366,11 @@ function ViewThisProfile(profile_id) {
                 case 200:
                     var htmlx = '';
                     GVar.cur_profile_no_posts = data.num_posts;
-					$('#profile_obf_email').text(data.obf_email);
-					$('#profile_num_posts').text(data.num_posts);
+                    var followtext = data.followtext;
+                    $('#profile_obf_email').html('<span>'+data.obf_email+'</span>');
+                    $('#follow_action').html('<a class="'+data.followclass+'" this_id="'+data.user_id+'">'+followtext+'</span>');
+                    $('#profile_num_posts').text(data.num_posts);
+                    $('#profile_num_followers').text(data.followers);
 					$('#profile_image_dash').css("background-image", "url("+GVar.baseurl+data.user_avatar+")"); 
                     if (!isBlank(ads)) {
                         if ($.isArray(ads)) {
@@ -461,7 +467,7 @@ function ViewThisProfileLoadMore(){
 function CreateAdBox($kind,$user_email,$item_id,$img_src,$title,$des,$distance,$time_ago,img_w,img_h){
 	var show_cover = "hide";
 	var cut_image = "";
-	if ((img_w/img_h)<1) {
+	if ((img_w/img_h)<0.55 || img_w>1250) {
 		show_cover = "";
 		cut_image = "_cutimage";
 	}
