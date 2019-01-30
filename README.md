@@ -1,7 +1,7 @@
 # Better-Life-in-Korea-BLIK-Cordova---PhoneGap
 PhoneGap Cordova App.
 
-<h1>What Did I learned</h1>  
+<h1>What Did I learn?</h1>  
 <ul>
     <li>Mobile Application Development</li>
     <li>Cordova and PhoneGap</li>
