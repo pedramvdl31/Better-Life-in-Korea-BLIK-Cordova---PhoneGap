@@ -10,17 +10,3 @@ PhoneGap Cordova App.
     <li>Framework 7 UI design</li>
     <li>Android and iOS developer account. submission and rollouts</li>
 </ul>
-
-
-### Explanation of Key Files:
-- **`ai_logic.py`** – Implements the Q-learning algorithm for AI decision-making.
-- **`database/`** – Holds the SQLite database files.
-- **`q_table.pkl`** – Stores the trained Q-learning model data.
-- **`requirements.txt`** – Contains all required Python packages for installation.
-- **`server.py`** – The main entry point of the FastAPI backend server.
-- **`static/`** – Stores static assets such as JavaScript, CSS, and images.
-- **`.env/`** – Virtual environment folder (not included in version control).
-
----
-
-This addition makes the README more informative for anyone reviewing the project. Let me know if you need any modifications! 🚀
